@@ -267,13 +267,13 @@ export default function CommunityPage() {
 
                       <div className="community-actions-row">
                         <Link to={`/public/trips/${trip.publicId || trip.id}`} className="flex-1">
-                          <button className="px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-700 transition-all flex items-center justify-center gap-1.5 w-full">
+                          <button className="btn-secondary w-full">
                             <Eye size={14} />
                             <span>View Itinerary</span>
                           </button>
                         </Link>
                         <button
-                          className="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs shadow-md shadow-blue-500/20 transition-all flex items-center justify-center gap-1.5 flex-1"
+                          className="btn-primary flex-1"
                           onClick={() => handleOpenCopyModal(trip)}
                         >
                           <Copy size={14} />
