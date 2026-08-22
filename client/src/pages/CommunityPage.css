@@ -68,7 +68,7 @@
   }
   .community-post-img-side {
     width: 260px;
-    shrink: 0;
+    flex-shrink: 0;
   }
 }
 
@@ -162,6 +162,6 @@
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  pt-2;
+  padding-top: 0.5rem;
   border-top: 1px solid var(--border-color, #E2E8F0);
 }
