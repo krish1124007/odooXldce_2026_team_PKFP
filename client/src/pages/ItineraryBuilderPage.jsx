@@ -416,30 +416,31 @@ export default function ItineraryBuilderPage() {
         <div className="header-info-group">
           <div className="flex items-center gap-2">
             <span className="engine-badge">
-              Phase 4 Engine
+              ✨ Live Itinerary Builder
             </span>
-            <span className="text-xs text-slate-500 font-medium">ID: {tripId}</span>
           </div>
-          <h1 className="header-title-text">{trip?.name || 'Itinerary Builder'}</h1>
-          <p className="header-sub-text">
+          <h1 className="header-title-text font-extrabold text-2xl">
+            {trip?.name ? trip.name.charAt(0).toUpperCase() + trip.name.slice(1) : 'Itinerary Builder'}
+          </h1>
+          <p className="header-sub-text font-semibold">
             {formatDate(trip?.startDate)} — {formatDate(trip?.endDate)} • {stops.length} Scheduled Cities
           </p>
         </div>
 
         <div className="header-actions-row">
-          <Link to={`/trips/${tripId}/cities`} className="nav-action-btn secondary">
+          <Link to={`/trips/${tripId}/cities`} className="btn-secondary">
             <MapPin size={14} />
             <span>Discover Cities</span>
           </Link>
-          <Link to={`/trips/${tripId}/activities`} className="nav-action-btn secondary">
+          <Link to={`/trips/${tripId}/activities`} className="btn-secondary">
             <Compass size={14} />
             <span>Discover Activities</span>
           </Link>
-          <Link to={`/trips/${tripId}/calendar`} className="nav-action-btn secondary">
+          <Link to={`/trips/${tripId}/calendar`} className="btn-secondary">
             <Calendar size={14} />
             <span>Timeline View</span>
           </Link>
-          <Link to={`/trips/${tripId}/itinerary`} className="nav-action-btn primary">
+          <Link to={`/trips/${tripId}/itinerary`} className="btn-primary">
             <Eye size={14} />
             <span>View Final Itinerary</span>
           </Link>
@@ -475,7 +476,7 @@ export default function ItineraryBuilderPage() {
           </div>
           <button
             onClick={handleInitializeStops}
-            className="nav-action-btn primary shrink-0"
+            className="btn-primary shrink-0"
           >
             Initialize Stops Schedule
           </button>
@@ -485,10 +486,10 @@ export default function ItineraryBuilderPage() {
       {/* Action Toolbar */}
       <div className="section-toolbar-row">
         <h2 className="section-heading-text">
-          <Globe className="w-5 h-5 text-blue-600" />
+          <Globe className="w-5 h-5 text-blue-600 dark:text-cyan-400" />
           <span>Scheduled Cities & Stops</span>
         </h2>
-        <button className="nav-action-btn primary" onClick={openAddStopModal}>
+        <button className="btn-primary" onClick={openAddStopModal}>
           <Plus size={15} />
           <span>Add Stop / Destination</span>
         </button>
@@ -498,13 +499,13 @@ export default function ItineraryBuilderPage() {
       {stops.length === 0 ? (
         <div className="itinerary-empty-card">
           <div className="itinerary-empty-icon">
-            <MapPin size={30} />
+            <MapPin size={32} />
           </div>
           <h3 className="itinerary-empty-title">No destinations scheduled yet</h3>
           <p className="itinerary-empty-sub">
             Click "+ Add Stop / Destination" to schedule cities for your journey.
           </p>
-          <button className="nav-action-btn primary" onClick={openAddStopModal}>
+          <button className="btn-primary mt-2" onClick={openAddStopModal}>
             <Plus size={15} />
             <span>Add Stop / Destination</span>
           </button>
