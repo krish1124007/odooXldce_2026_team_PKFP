@@ -69,6 +69,20 @@ export default function LoginPage() {
     }
   };
 
+  const handleAdminLogin = async () => {
+    setEmail('admin@globetrotter.com');
+    setPassword('Admin123!');
+    setIsSubmitting(true);
+    const result = await login({ email: 'admin@globetrotter.com', password: 'Admin123!' });
+    setIsSubmitting(false);
+
+    if (result.success) {
+      navigate('/admin', { replace: true });
+    } else {
+      setErrorMessage(result.message || 'Admin login failed. Please sign in with an admin account.');
+    }
+  };
+
   const handleForgotPasswordSubmit = async (e) => {
     e.preventDefault();
     setForgotFeedback(null);
@@ -151,16 +165,28 @@ export default function LoginPage() {
                   </p>
                 </div>
 
-                {/* Quick Demo Login Button */}
-                <button 
-                  type="button" 
-                  onClick={handleDemoLogin} 
-                  className="demo-login-btn"
-                  title="Click for instant test login"
-                >
-                  <UserCheck size={16} />
-                  <span>One-Click Demo Account Login</span>
-                </button>
+                {/* Quick Demo Login Buttons */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  <button 
+                    type="button" 
+                    onClick={handleDemoLogin} 
+                    className="demo-login-btn"
+                    title="Click for instant traveler login"
+                  >
+                    <UserCheck size={16} />
+                    <span>Traveler Login</span>
+                  </button>
+
+                  <button 
+                    type="button" 
+                    onClick={handleAdminLogin} 
+                    className="demo-login-btn border-indigo-300 dark:border-indigo-700 hover:border-indigo-500"
+                    title="Click for instant Admin Portal login"
+                  >
+                    <UserCheck size={16} className="text-indigo-600 dark:text-indigo-400" />
+                    <span>Admin Login</span>
+                  </button>
+                </div>
 
                 <div className="divider-line-box">
                   <div className="divider-line" />

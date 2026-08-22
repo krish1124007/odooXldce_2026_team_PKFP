@@ -209,18 +209,20 @@ export default function Sidebar({ collapsed, setCollapsed, activeTab, setActiveT
           </button>
         </div>
 
-        {/* ADMINISTRATION SECTION */}
-        <div className="nav-group">
-          {!collapsed && <div className="group-title">ADMINISTRATION</div>}
+        {/* ADMINISTRATION SECTION (ADMIN Only) */}
+        {user?.role === 'ADMIN' && (
+          <div className="nav-group">
+            {!collapsed && <div className="group-title">ADMINISTRATION</div>}
 
-          <button 
-            className={`nav-item ${activeTab === 'Admin Dashboard' ? 'active' : ''}`}
-            onClick={() => setActiveTab('Admin Dashboard')}
-          >
-            <ShieldCheck size={18} className="item-icon" />
-            {!collapsed && <span>Admin & Analytics</span>}
-          </button>
-        </div>
+            <button 
+              className={`nav-item ${activeTab === 'Admin Dashboard' ? 'active' : ''}`}
+              onClick={() => setActiveTab('Admin Dashboard')}
+            >
+              <ShieldCheck size={18} className="item-icon" />
+              {!collapsed && <span>Admin & Analytics</span>}
+            </button>
+          </div>
+        )}
 
         {/* ACCOUNT SECTION */}
         <div className="nav-group">
