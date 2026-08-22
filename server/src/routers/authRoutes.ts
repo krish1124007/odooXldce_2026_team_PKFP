@@ -1,15 +1,22 @@
 import { Router } from "express";
-import type { Request, Response } from "express";
+import { 
+    register, 
+    login, 
+    getCurrentUser, 
+    logout, 
+    forgotPassword, 
+    resetPassword 
+} from "../controllers/auth.controller.js";
+import { verifyUser } from "../middlewares/auth.middleware.js";
 
 const router = Router();
 
-// Phase 2 Placeholder Endpoints
-router.post("/register", (req: Request, res: Response) => {
-    res.status(501).json({ success: false, message: "Auth endpoints will be activated in Phase 2." });
-});
-
-router.post("/login", (req: Request, res: Response) => {
-    res.status(501).json({ success: false, message: "Auth endpoints will be activated in Phase 2." });
-});
+router.post("/register", register);
+router.post("/login", login);
+router.get("/me", verifyUser, getCurrentUser);
+router.post("/logout", logout);
+router.post("/forgot-password", forgotPassword);
+router.post("/reset-password", resetPassword);
 
 export default router;
+

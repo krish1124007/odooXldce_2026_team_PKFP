@@ -8,18 +8,19 @@ import {
   Calendar, 
   DollarSign, 
   Globe, 
-  User, 
+  User as UserIcon, 
   ChevronDown, 
   ChevronRight, 
   ChevronLeft,
   LogOut,
   Edit3,
-  Eye,
-  Sliders
+  Eye
 } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 import './Sidebar.css';
 
 export default function Sidebar({ collapsed, setCollapsed, activeTab, setActiveTab }) {
+  const { user, logout } = useAuth();
   const [openSections, setOpenSections] = useState({
     Itinerary: true,
     Explore: true,
@@ -32,6 +33,10 @@ export default function Sidebar({ collapsed, setCollapsed, activeTab, setActiveT
       [section]: !prev[section]
     }));
   };
+
+  const displayName = user ? `${user.firstName} ${user.lastName}` : 'Traveler';
+  const displayEmail = user ? user.email : '';
+  const initial = user?.firstName?.[0] || 'T';
 
   return (
     <aside className={`sidebar ${collapsed ? 'collapsed' : ''}`}>
@@ -211,7 +216,7 @@ export default function Sidebar({ collapsed, setCollapsed, activeTab, setActiveT
             className={`nav-item ${activeTab === 'Profile' ? 'active' : ''}`}
             onClick={() => setActiveTab('Profile')}
           >
-            <User size={18} className="item-icon" />
+            <UserIcon size={18} className="item-icon" />
             {!collapsed && <span>Profile & Preferences</span>}
           </button>
         </div>
@@ -221,23 +226,27 @@ export default function Sidebar({ collapsed, setCollapsed, activeTab, setActiveT
       <div className="sidebar-footer">
         <div className="profile-container">
           <div className="avatar-wrapper">
-            <div className="avatar">A</div>
+            {user?.profilePhoto ? (
+              <img src={user.profilePhoto} alt={displayName} className="avatar-img w-8 h-8 rounded-full object-cover" />
+            ) : (
+              <div className="avatar">{initial}</div>
+            )}
             <span className="online-indicator"></span>
           </div>
 
           {!collapsed && (
             <div className="user-info">
               <div className="name-row">
-                <span className="user-name">Alex Morgan</span>
-                <span className="role-badge">Traveler</span>
+                <span className="user-name truncate max-w-[110px]" title={displayName}>{displayName}</span>
+                <span className="role-badge">{user?.role === 'ADMIN' ? 'Admin' : 'Traveler'}</span>
               </div>
-              <span className="user-email">alex@globetrotter...</span>
+              <span className="user-email truncate max-w-[130px]" title={displayEmail}>{displayEmail}</span>
             </div>
           )}
         </div>
 
         {!collapsed && (
-          <button className="logout-btn" title="Logout">
+          <button className="logout-btn" title="Logout" onClick={logout}>
             <LogOut size={16} />
           </button>
         )}

@@ -5,12 +5,13 @@ const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api'
 
 const api = axios.create({
   baseURL: API_BASE_URL,
+  withCredentials: true,
   headers: {
     'Content-Type': 'application/json',
   },
 });
 
-// Request Interceptor (Auth token placeholder for future Phase 2)
+// Request Interceptor
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('globetrotter_token');
@@ -29,6 +30,7 @@ api.interceptors.response.use(
     const customError = {
       message: error.response?.data?.message || 'Network or Server Error',
       status: error.response?.status,
+      data: error.response?.data
     };
     return Promise.reject(customError);
   }
