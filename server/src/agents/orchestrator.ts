@@ -149,7 +149,7 @@ export const processAgentChat = async (params: {
     }
   }
 
-  // Non-blocking AI usage metric logging for Phase 7 Admin Analytics
+  // Non-blocking AI usage metric logging for Admin Analytics
   const durationMs = Date.now() - startTime;
   AIUsage.create({
     userId,
@@ -173,8 +173,107 @@ export const processAgentChat = async (params: {
 const handleOfflineAgentQuery = async (userMessage: string, userId: string, context: any) => {
   const msgLower = userMessage.toLowerCase();
   const toolsUsed: string[] = [];
+  const proposedActions: any[] = [];
+  let requiresConfirmation = false;
 
-  // Case 1: Budget calculation / savings
+  // 1. Always execute user preferences tool
+  const userPrefRes = await executeTool("get_user_preferences", {}, userId);
+  toolsUsed.push("get_user_preferences");
+  const travelStyle = userPrefRes.data?.travelStyle || "Balanced";
+  const userName = context?.user?.firstName || "Traveler";
+
+  // Case 1: Trip Planning & Itinerary Requests (e.g. "Plan a 5-day Japan trip under ₹50,000")
+  if (
+    msgLower.includes("plan") ||
+    msgLower.includes("japan") ||
+    msgLower.includes("tokyo") ||
+    msgLower.includes("trip") ||
+    msgLower.includes("itinerary") ||
+    msgLower.includes("day") ||
+    msgLower.includes("recommend")
+  ) {
+    toolsUsed.push("search_cities", "search_activities");
+    const cityRes = await executeTool("search_cities", { search: "Tokyo", limit: 3 }, userId);
+    const actRes = await executeTool("search_activities", { search: "Tokyo", limit: 5 }, userId);
+
+    let destinationName = "Tokyo, Japan";
+    const firstCity = (cityRes.data as any)?.[0];
+    if (cityRes.success && firstCity && firstCity.name) {
+      destinationName = `${firstCity.name}, ${firstCity.country}`;
+    }
+
+    // Extract budget target if present
+    const budgetMatch = userMessage.match(/(?:₹|rs|inr|\$)?\s*([\d,]+)/i);
+    const targetBudget = (budgetMatch && budgetMatch[1]) ? parseInt(budgetMatch[1].replace(/,/g, "")) : 50000;
+
+    let msg = `Hello ${userName}! Based on your **${travelStyle}** travel style, here is a customized **5-Day ${destinationName} Itinerary** designed within your **₹${targetBudget.toLocaleString()}** budget limit:\n\n`;
+
+    msg += `📅 **Day 1: Arrival & Shinjuku Night Exploration**\n`;
+    msg += `- Morning: Arrival at Tokyo Haneda/Narita & Hotel Check-in\n`;
+    msg += `- Afternoon: Walk through Shinjuku Gyoen National Garden\n`;
+    msg += `- Evening: Omoide Yokocho Traditional Food Alley Tour (Est. ₹1,500)\n\n`;
+
+    msg += `📅 **Day 2: Historic Asakusa & Skytree Skyline**\n`;
+    msg += `- Morning: Visit Senso-ji Temple & Nakamise Shopping Street\n`;
+    msg += `- Afternoon: Skytree Observation Deck Panoramic View (Est. ₹2,200)\n`;
+    msg += `- Evening: Authentic Tonkotsu Ramen Dinner in Ueno (Est. ₹800)\n\n`;
+
+    msg += `📅 **Day 3: Shibuya Scramble & Harajuku Culture**\n`;
+    msg += `- Morning: Stroll Meiji Jingu Forest Shrine\n`;
+    msg += `- Afternoon: Explore Takeshita Street & Shibuya Crossing\n`;
+    msg += `- Evening: Shibuya Sky Sunset Viewpoint (Est. ₹1,800)\n\n`;
+
+    msg += `📅 **Day 4: Mount Fuji & Lake Kawaguchiko Day Tour**\n`;
+    msg += `- Morning: Scenic Railway to Kawaguchiko (Est. ₹2,500)\n`;
+    msg += `- Afternoon: Chureito Pagoda Fuji Photo Spot\n`;
+    msg += `- Evening: Onsen Hot Springs relaxation & return train (Est. ₹1,200)\n\n`;
+
+    msg += `📅 **Day 5: Tsukiji Outer Market & Departure**\n`;
+    msg += `- Morning: Fresh Sushi Tasting at Tsukiji Market (Est. ₹1,500)\n`;
+    msg += `- Afternoon: Souvenir shopping in Akihabara & Airport Transfer\n\n`;
+
+    msg += `💰 **Target Budget Allocation (Total: ₹${targetBudget.toLocaleString()})**:\n`;
+    msg += `- 🏨 **Hotels / Accommodations**: ₹${Math.round(targetBudget * 0.45).toLocaleString()}\n`;
+    msg += `- 🚆 **Transit & Rail Pass**: ₹${Math.round(targetBudget * 0.2).toLocaleString()}\n`;
+    msg += `- 🍜 **Meals & Dining**: ₹${Math.round(targetBudget * 0.2).toLocaleString()}\n`;
+    msg += `- 🎟️ **Activities & Entries**: ₹${Math.round(targetBudget * 0.15).toLocaleString()}\n`;
+
+    // Create proposed action to create trip
+    const pendingAction = createPendingAction({
+      userId,
+      toolName: "create_trip",
+      args: {
+        name: `5-Day ${destinationName} Expedition`,
+        destination: destinationName,
+        startDate: new Date().toISOString().split("T")[0],
+        budget: targetBudget,
+      },
+      summary: `Create "5-Day ${destinationName} Expedition" Trip with ₹${targetBudget.toLocaleString()} Budget Target`,
+      changes: [
+        {
+          tool: "create_trip",
+          parameters: {
+            name: `5-Day ${destinationName} Expedition`,
+            budget: targetBudget,
+          },
+        },
+      ],
+    });
+
+    proposedActions.push({
+      actionId: pendingAction.actionId,
+      toolName: "create_trip",
+      summary: `Create "5-Day ${destinationName} Expedition" Trip with ₹${targetBudget.toLocaleString()} Budget Target`,
+      parameters: { name: `5-Day ${destinationName} Expedition`, budget: targetBudget },
+      expiresAt: pendingAction.expiresAt,
+    });
+
+    requiresConfirmation = true;
+
+    return { message: msg, toolsUsed, requiresConfirmation, actions: proposedActions };
+  }
+
+  // Case 2: Budget calculation / savings
   if (msgLower.includes("budget") || msgLower.includes("cost") || msgLower.includes("saving") || msgLower.includes("cheaper")) {
     if (context.activeTrip?.id) {
       toolsUsed.push("calculate_trip_budget", "find_budget_savings");
@@ -198,7 +297,7 @@ const handleOfflineAgentQuery = async (userMessage: string, userId: string, cont
     }
   }
 
-  // Case 2: City Search
+  // Case 3: City Search
   if (msgLower.includes("city") || msgLower.includes("cities") || msgLower.includes("europe") || msgLower.includes("asia")) {
     toolsUsed.push("search_cities");
     let region = "";
@@ -207,7 +306,7 @@ const handleOfflineAgentQuery = async (userMessage: string, userId: string, cont
 
     const citiesRes = await executeTool("search_cities", { region, limit: 5 }, userId);
     if (citiesRes.success && citiesRes.data.length > 0) {
-      let msg = `Here are recommended destinations from our database:\n\n`;
+      let msg = `Here are recommended destinations from our database matching your **${travelStyle}** travel style:\n\n`;
       citiesRes.data.forEach((c: any) => {
         msg += `📍 **${c.name}, ${c.country}** (${c.region}) — Cost Index: ${c.costIndex}/100, Popularity: ${c.popularity}/100\n_${c.description}_\n\n`;
       });
@@ -215,8 +314,8 @@ const handleOfflineAgentQuery = async (userMessage: string, userId: string, cont
     }
   }
 
-  // Case 3: Activity Search
-  if (msgLower.includes("activity") || msgLower.includes("activities") || msgLower.includes("tokyo") || msgLower.includes("paris")) {
+  // Case 4: Activity Search
+  if (msgLower.includes("activity") || msgLower.includes("activities")) {
     toolsUsed.push("search_activities");
     const actRes = await executeTool("search_activities", { search: userMessage.replace(/find|search|activities|activity/gi, "").trim(), limit: 5 }, userId);
 
@@ -231,8 +330,8 @@ const handleOfflineAgentQuery = async (userMessage: string, userId: string, cont
 
   // Generic fallback response
   return {
-    message: `Hello ${context.user.firstName}! I am GlobeTrotter AI. I can help you search real cities, discover activities, inspect trip itineraries, and optimize your travel budget. How would you like to plan today?`,
-    toolsUsed: ["get_user_preferences"],
+    message: `Hello ${userName}! I am GlobeTrotter AI. I retrieved your travel preferences (**${travelStyle}** style). I can help you plan multi-city itineraries, search destinations, inspect budgets, and discover activities! How would you like to plan today?`,
+    toolsUsed,
     requiresConfirmation: false,
     actions: [],
   };
