@@ -514,22 +514,22 @@ export default function BudgetPage() {
 
       {/* Daily Budget Breakdown & Over-Budget Alert Section */}
       <div className="section-block">
-        <div className="flex justify-between items-center">
-          <div className="section-header-title font-bold text-slate-900 text-lg flex items-center gap-2">
-            <Calendar className="w-5 h-5 text-blue-600" />
+        <div className="daily-header-row">
+          <div className="section-header-title">
+            <Calendar className="w-5 h-5 text-blue-600 dark:text-cyan-400" />
             <span>Daily Spending Breakdown</span>
           </div>
 
           {/* Budget Alert Status Pill */}
           {summary.overBudgetDaysCount > 0 ? (
-            <div className="p-2.5 px-3 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-800 font-semibold flex items-center gap-2">
+            <div className="p-2.5 px-3.5 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 rounded-xl text-xs text-amber-800 dark:text-amber-300 font-bold flex items-center gap-2">
               <AlertTriangle size={15} className="text-amber-600 shrink-0" />
               <span>
                 <strong>⚠️ Budget Attention:</strong> {summary.overBudgetDaysCount} day(s) exceeded target daily budget ({summary.currency} {dailyBreakdown[0]?.dailyBudget.toLocaleString()}/day).
               </span>
             </div>
           ) : (
-            <div className="p-2.5 px-3 bg-emerald-50 border border-emerald-200 rounded-xl text-xs text-emerald-800 font-semibold flex items-center gap-2">
+            <div className="p-2.5 px-3.5 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 rounded-xl text-xs text-emerald-800 dark:text-emerald-300 font-bold flex items-center gap-2">
               <ShieldCheck size={15} className="text-emerald-600 shrink-0" />
               <span>✓ You're within budget! All planned days are within budget limits.</span>
             </div>
@@ -537,43 +537,46 @@ export default function BudgetPage() {
         </div>
 
         {/* Daily Cards Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-3">
-          {dailyBreakdown.map((dayItem) => (
-            <div 
-              key={dayItem.dayNumber}
-              className={`p-4 rounded-xl border flex flex-col justify-between transition-all ${
-                dayItem.overBudget 
-                  ? 'bg-amber-50/50 border-amber-300 shadow-sm' 
-                  : 'bg-white border-slate-200 hover:border-slate-300'
-              }`}
-            >
-              <div className="space-y-1">
-                <div className="flex justify-between items-center">
-                  <span className="font-bold text-slate-900 text-sm">Day {dayItem.dayNumber}</span>
-                  <span className="text-xs text-slate-500 font-medium">{dayItem.date}</span>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-2">
+          {dailyBreakdown.map((dayItem) => {
+            const displayCost = (dayItem.actualCost || dayItem.estimatedCost || 0);
+            return (
+              <div 
+                key={dayItem.dayNumber}
+                className={`daily-card ${
+                  dayItem.overBudget 
+                    ? 'bg-amber-50/50 dark:bg-amber-950/20 border-amber-300 dark:border-amber-800 shadow-sm' 
+                    : ''
+                }`}
+              >
+                <div className="space-y-1">
+                  <div className="flex justify-between items-center">
+                    <span className="font-extrabold text-slate-900 dark:text-white text-sm">Day {dayItem.dayNumber}</span>
+                    <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">{dayItem.date}</span>
+                  </div>
+
+                  <div className="daily-card-amount">
+                    {summary.currency} {displayCost.toLocaleString()}
+                  </div>
+                  <div className="text-[11px] text-slate-500 dark:text-slate-400">
+                    Target Daily Budget: {summary.currency} {dayItem.dailyBudget.toLocaleString()}
+                  </div>
                 </div>
 
-                <div className="text-base font-black text-slate-900 mt-2">
-                  {summary.currency} {(dayItem.actualCost || dayItem.estimatedCost).toLocaleString()}
-                </div>
-                <div className="text-[11px] text-slate-500">
-                  Target Daily Budget: {summary.currency} {dayItem.dailyBudget.toLocaleString()}
+                <div className="mt-3 pt-2 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs">
+                  {dayItem.overBudget ? (
+                    <span className="text-amber-700 dark:text-amber-400 font-bold flex items-center gap-1">
+                      <AlertTriangle size={13} /> {summary.currency} {dayItem.difference.toLocaleString()} over
+                    </span>
+                  ) : (
+                    <span className="text-emerald-700 dark:text-emerald-400 font-bold flex items-center gap-1">
+                      <Check size={13} /> Within Budget
+                    </span>
+                  )}
                 </div>
               </div>
-
-              <div className="mt-3 pt-2 border-t border-slate-100 flex items-center justify-between text-xs">
-                {dayItem.overBudget ? (
-                  <span className="text-amber-700 font-bold flex items-center gap-1">
-                    <AlertTriangle size={13} /> {summary.currency} {dayItem.difference.toLocaleString()} over
-                  </span>
-                ) : (
-                  <span className="text-emerald-700 font-semibold flex items-center gap-1">
-                    <Check size={13} /> Within Budget
-                  </span>
-                )}
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
 
