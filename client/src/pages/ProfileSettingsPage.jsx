@@ -165,21 +165,21 @@ export default function ProfileSettingsPage() {
               </h1>
               <p className="profile-email-text">{user?.email} • Member since 2026</p>
             </div>
-            <span className="px-3 py-1 rounded-xl bg-blue-50 dark:bg-slate-800 text-blue-700 dark:text-cyan-400 text-xs font-bold border border-blue-100 dark:border-slate-700">
+            <span className="profile-header-badge">
               ⚙️ Account Preferences
             </span>
           </div>
 
           {message && (
-            <div className="p-3.5 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 text-emerald-800 dark:text-emerald-400 text-xs font-bold flex items-center space-x-2">
-              <Check className="w-4 h-4 shrink-0 text-emerald-600" />
+            <div className="p-3.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 text-xs font-extrabold flex items-center space-x-2">
+              <Check className="w-4 h-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
               <span>{message}</span>
             </div>
           )}
 
           {error && (
-            <div className="p-3.5 rounded-xl bg-rose-50 dark:bg-rose-500/10 border border-rose-200 dark:border-rose-500/20 text-rose-800 dark:text-rose-400 text-xs font-bold flex items-center space-x-2">
-              <AlertCircle className="w-4 h-4 shrink-0 text-rose-600" />
+            <div className="p-3.5 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 text-rose-800 dark:text-rose-300 text-xs font-extrabold flex items-center space-x-2">
+              <AlertCircle className="w-4 h-4 shrink-0 text-rose-600 dark:text-rose-400" />
               <span>{error}</span>
             </div>
           )}
@@ -260,13 +260,10 @@ export default function ProfileSettingsPage() {
                       key={interest}
                       type="button"
                       onClick={() => toggleInterest(interest)}
-                      className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all ${
-                        selected
-                          ? 'bg-blue-600 text-white shadow-sm'
-                          : 'bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:border-blue-500'
-                      }`}
+                      className={`profile-interest-pill ${selected ? 'active' : ''}`}
                     >
-                      {interest}
+                      {selected ? <Check size={13} strokeWidth={3} /> : null}
+                      <span>{interest}</span>
                     </button>
                   );
                 })}
@@ -277,7 +274,7 @@ export default function ProfileSettingsPage() {
               <button
                 type="submit"
                 disabled={saving}
-                className="px-6 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs shadow-md shadow-blue-500/20 transition-all flex items-center gap-2"
+                className="profile-save-btn"
               >
                 <Save size={16} />
                 <span>{saving ? 'Saving Profile...' : 'Save Preferences'}</span>

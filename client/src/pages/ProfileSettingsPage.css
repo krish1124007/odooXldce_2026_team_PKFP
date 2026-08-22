@@ -34,7 +34,7 @@
   flex-direction: column;
   align-items: center;
   gap: 0.75rem;
-  shrink: 0;
+  flex-shrink: 0;
 }
 
 .profile-avatar-circle {
@@ -63,17 +63,13 @@
 .profile-badge-role {
   font-size: 11px;
   font-weight: 800;
-  padding: 3px 10px;
+  padding: 4px 12px;
   border-radius: 9999px;
-  background-color: #EDF2F7;
-  color: var(--primary-navy, #122244);
+  background-color: var(--bg-app, #F1F5F9);
+  border: 1px solid var(--border-darker, #CBD5E1);
+  color: var(--text-primary, #0F172A);
   text-transform: uppercase;
   letter-spacing: 0.5px;
-}
-
-[data-theme="dark"] .profile-badge-role, body.dark .profile-badge-role {
-  background-color: #1F2937;
-  color: #94A3B8;
 }
 
 .profile-details-wrapper {
@@ -89,6 +85,8 @@
   justify-content: space-between;
   border-bottom: 1px solid var(--border-color, #E2E8F0);
   padding-bottom: 1rem;
+  flex-wrap: wrap;
+  gap: 0.75rem;
 }
 
 .profile-name-text {
@@ -96,12 +94,85 @@
   font-size: 1.6rem;
   font-weight: 800;
   color: var(--text-primary, #0F172A);
+  line-height: 1.2;
 }
 
 .profile-email-text {
   font-size: 13px;
   color: var(--text-secondary, #64748B);
-  margin-top: 2px;
+  margin-top: 3px;
+}
+
+.profile-header-badge {
+  padding: 0.45rem 0.95rem;
+  border-radius: 9999px;
+  font-size: 12px;
+  font-weight: 800;
+  background-color: var(--bg-app, #F1F5F9);
+  border: 1px solid var(--border-darker, #CBD5E1);
+  color: var(--text-primary, #0F172A);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+/* Interest Pills */
+.profile-interest-pill {
+  padding: 0.45rem 1rem;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 700;
+  background-color: var(--bg-app, #F1F5F9);
+  border: 1px solid var(--border-darker, #CBD5E1);
+  color: var(--text-primary, #0F172A);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  user-select: none;
+}
+
+.profile-interest-pill:hover {
+  border-color: #0284C7;
+  color: #0284C7;
+}
+
+.profile-interest-pill.active {
+  background: linear-gradient(135deg, #122244 0%, #1C3366 100%);
+  color: #FFFFFF !important;
+  border-color: #122244;
+  box-shadow: 0 4px 12px rgba(18, 34, 68, 0.25);
+}
+
+/* Save Preferences Button */
+.profile-save-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.65rem 1.5rem;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #122244 0%, #1C3366 100%);
+  color: #FFFFFF !important;
+  font-size: 13px;
+  font-weight: 800;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(18, 34, 68, 0.25);
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+.profile-save-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(18, 34, 68, 0.35);
+  background: linear-gradient(135deg, #1C3366 0%, #2563EB 100%);
+}
+
+.profile-save-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 /* Sections */
@@ -137,7 +208,7 @@
 
 .profile-trip-card {
   background-color: var(--bg-app, #F8FAFC);
-  border: 1px solid var(--border-darker, #E2E8F0);
+  border: 1px solid var(--border-darker, #CBD5E1);
   border-radius: 18px;
   padding: 1.25rem;
   display: flex;
@@ -170,10 +241,10 @@
   align-items: center;
   justify-content: center;
   gap: 0.4rem;
-  padding: 0.5rem 1rem;
+  padding: 0.55rem 1.1rem;
   border-radius: 10px;
-  background-color: var(--primary-navy, #122244);
-  color: #FFFFFF;
+  background: linear-gradient(135deg, #122244 0%, #1C3366 100%);
+  color: #FFFFFF !important;
   font-size: 12.5px;
   font-weight: 700;
   text-decoration: none;
@@ -182,7 +253,7 @@
 }
 
 .profile-trip-view-btn:hover {
-  background-color: #1C3366;
+  background: linear-gradient(135deg, #1C3366 0%, #2563EB 100%);
   transform: translateY(-1px);
 }
 
