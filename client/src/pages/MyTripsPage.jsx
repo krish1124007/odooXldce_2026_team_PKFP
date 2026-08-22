@@ -137,16 +137,16 @@ export default function MyTripsPage() {
           <p className="page-sub-title">Manage your adventures, past and upcoming.</p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3 shrink-0">
           <button
             onClick={openAIChat}
-            className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-blue-900 to-indigo-900 hover:from-blue-800 hover:to-indigo-800 text-white font-bold text-xs shadow-md transition-all flex items-center gap-2"
+            className="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs border border-slate-700 shadow-sm transition-all flex items-center gap-1.5 shrink-0"
           >
-            <Sparkles size={16} className="text-amber-400 animate-pulse" />
+            <Sparkles size={15} className="text-amber-400" />
             <span>Plan with AI</span>
           </button>
-          <Link to="/trips/create" className="btn-primary-action">
-            <Plus size={18} />
+          <Link to="/trips/create" className="btn-primary-action shrink-0">
+            <Plus size={16} />
             <span>Plan a Trip</span>
           </Link>
         </div>
