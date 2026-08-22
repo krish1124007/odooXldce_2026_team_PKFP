@@ -21,7 +21,11 @@ import {
   ArrowLeft,
   Calendar,
   Tag,
-  FileText
+  FileText,
+  Sparkles,
+  Check,
+  ShieldCheck,
+  ChevronRight
 } from 'lucide-react';
 import { 
   PieChart, 
@@ -36,6 +40,7 @@ import {
   CartesianGrid, 
   Legend 
 } from 'recharts';
+import './BudgetPage.css';
 
 const CATEGORY_COLORS = {
   TRANSPORT: '#3b82f6', // Blue
@@ -199,6 +204,11 @@ export default function BudgetPage() {
     }
   };
 
+  const formatDate = (dateStr) => {
+    if (!dateStr) return '';
+    return new Date(dateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  };
+
   if (loading) {
     return (
       <div className="min-h-[60vh] flex items-center justify-center">
@@ -243,27 +253,54 @@ export default function BudgetPage() {
     DailyBudget: d.dailyBudget,
   }));
 
+  // Calculate Average Daily Cost
+  const totalDaysCount = dailyBreakdown.length || 1;
+  const avgCostPerDay = Math.round((summary.totalActualCost || summary.totalEstimatedCost) / totalDaysCount);
+
+  // Budget Status Pill
+  const getBudgetStatusBadge = () => {
+    if (summary.isOverallOverBudget) {
+      return <span className="budget-status-pill over">⚠️ Over Budget</span>;
+    }
+    if (summary.utilizationPercentage > 85) {
+      return <span className="budget-status-pill near">⚡ Near Budget Limit</span>;
+    }
+    return <span className="budget-status-pill safe">✓ Within Budget</span>;
+  };
+
   return (
-    <div className="flex flex-col gap-6 py-2 px-2 max-w-7xl mx-auto">
+    <div className="budget-screen-wrapper">
       {/* Header Bar */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+      <div className="budget-header-card">
         <div>
-          <div className="flex items-center gap-2 mb-1">
-            <Link to={`/trips/${tripId}/itinerary`} className="text-xs text-blue-600 hover:underline flex items-center gap-1 font-medium">
-              <ArrowLeft size={14} /> Back to Itinerary
-            </Link>
+          <Link to={`/trips/${tripId}/itinerary`} className="back-link-btn mb-1">
+            <ArrowLeft size={14} />
+            <span>Back to Itinerary</span>
+          </Link>
+          <div className="flex items-center gap-3 mt-1">
+            <h1 className="screen-title text-slate-900">Trip Budget</h1>
+            {getBudgetStatusBadge()}
           </div>
-          <h1 className="text-2xl font-bold text-slate-900">
-            Trip Budget & Expenses — {tripInfo?.name || 'Trip'}
-          </h1>
-          <p className="text-xs text-slate-500">
-            Deterministic cost breakdown, expense logging, and daily budget tracking
+          <p className="screen-subtitle">
+            Track your estimated expenses and stay within your travel budget.
           </p>
+          {tripInfo?.name && (
+            <p className="trip-context-tag">
+              {tripInfo.name} • {formatDate(tripInfo.startDate)} — {formatDate(tripInfo.endDate)}
+            </p>
+          )}
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="header-actions-row">
+          <button
+            onClick={() => alert('✨ AI Budget Optimizer will analyze cost reduction strategies in Phase 6.')}
+            className="nav-action-btn ai-btn"
+          >
+            <Sparkles size={14} />
+            <span>✨ Optimize Budget with AI</span>
+          </button>
           <Button variant="secondary" icon={Edit3} onClick={() => setIsEditBudgetOpen(true)}>
-            Edit Planned Budget
+            Edit Budget
           </Button>
           <Button variant="primary" icon={Plus} onClick={handleOpenAddExpense}>
             Add Expense
@@ -271,70 +308,146 @@ export default function BudgetPage() {
         </div>
       </div>
 
-      {/* KPI Overview Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-        <Card title="Planned Budget" subtitle="Target expenditure">
-          <div className="text-2xl font-black text-slate-900 mt-1">
-            {summary.currency} {summary.plannedBudget.toLocaleString()}
+      {/* Prominent Budget Summary Card */}
+      <div className="budget-summary-hero-card">
+        <div className="hero-kpi-grid">
+          <div className="kpi-box">
+            <span className="kpi-label">Total Budget</span>
+            <div className="kpi-value text-slate-900">
+              {summary.currency} {summary.plannedBudget.toLocaleString()}
+            </div>
+            <span className="kpi-sub font-medium text-slate-500">Planned Target</span>
           </div>
-        </Card>
 
-        <Card title="Total Estimated Cost" subtitle="Itinerary & planned costs">
-          <div className="text-2xl font-black text-blue-600 mt-1">
-            {summary.currency} {summary.totalEstimatedCost.toLocaleString()}
+          <div className="kpi-box">
+            <span className="kpi-label">Estimated Cost</span>
+            <div className="kpi-value text-blue-600">
+              {summary.currency} {summary.totalEstimatedCost.toLocaleString()}
+            </div>
+            <span className="kpi-sub font-medium text-slate-500">Itinerary & Manual</span>
           </div>
-        </Card>
 
-        <Card title="Total Actual Cost" subtitle="Logged actual spending">
-          <div className={`text-2xl font-black mt-1 ${summary.isOverallOverBudget ? 'text-red-600' : 'text-slate-900'}`}>
-            {summary.currency} {summary.totalActualCost.toLocaleString()}
+          <div className="kpi-box">
+            <span className="kpi-label">Actual Spent</span>
+            <div className={`kpi-value ${summary.isOverallOverBudget ? 'text-red-600' : 'text-slate-900'}`}>
+              {summary.currency} {summary.totalActualCost.toLocaleString()}
+            </div>
+            <span className="kpi-sub font-medium text-slate-500">Logged Expenses</span>
           </div>
-        </Card>
 
-        <Card title="Remaining Budget" subtitle="Funds unspent">
-          <div className={`text-2xl font-black mt-1 ${summary.remainingBudget < 0 ? 'text-red-600' : 'text-emerald-600'}`}>
-            {summary.currency} {summary.remainingBudget.toLocaleString()}
+          <div className="kpi-box">
+            <span className="kpi-label">Remaining Budget</span>
+            <div className={`kpi-value ${summary.remainingBudget < 0 ? 'text-red-600' : 'text-emerald-600'}`}>
+              {summary.currency} {Math.abs(summary.remainingBudget).toLocaleString()}
+            </div>
+            <span className={`kpi-sub font-bold ${summary.remainingBudget < 0 ? 'text-red-600' : 'text-emerald-600'}`}>
+              {summary.remainingBudget < 0 ? 'Over planned budget' : 'Remaining unspent'}
+            </span>
           </div>
-        </Card>
+        </div>
+
+        {/* Utilization Progress Bar */}
+        <div className="hero-progress-section">
+          <div className="progress-labels-row">
+            <span className="progress-title font-semibold text-slate-700">
+              Budget Utilization ({summary.utilizationPercentage}% used)
+            </span>
+            <span className="progress-detail font-bold text-slate-900">
+              {summary.currency} {summary.totalActualCost.toLocaleString()} / {summary.currency} {summary.plannedBudget.toLocaleString()}
+            </span>
+          </div>
+          <div className="progress-track-bg">
+            <div 
+              className={`progress-fill-bar ${
+                summary.utilizationPercentage > 100 
+                  ? 'bg-red-500' 
+                  : summary.utilizationPercentage > 85 
+                  ? 'bg-amber-500' 
+                  : 'bg-emerald-500'
+              }`}
+              style={{ width: `${Math.min(100, summary.utilizationPercentage)}%` }}
+            />
+          </div>
+        </div>
       </div>
 
-      {/* Budget Progress Indicator */}
-      <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm space-y-2">
-        <div className="flex justify-between items-center text-xs font-semibold">
-          <span className="text-slate-700">Budget Utilization ({summary.utilizationPercentage}%)</span>
-          <span className={summary.isOverallOverBudget ? 'text-red-600 font-bold' : 'text-slate-500'}>
-            {summary.isOverallOverBudget ? '⚠️ Over Planned Budget' : `${summary.currency} ${summary.remainingBudget.toLocaleString()} remaining`}
-          </span>
+      {/* AI Budget Action Entry Banner */}
+      <div className="ai-budget-banner">
+        <div className="ai-banner-left">
+          <div className="ai-sparkle-badge">
+            <Sparkles size={16} />
+          </div>
+          <div>
+            <h4 className="ai-banner-title">✨ Ask AI to optimize my budget</h4>
+            <p className="ai-banner-desc">Scan your itinerary for expensive days, train ticket savings, and hotel alternatives.</p>
+          </div>
         </div>
-        <div className="w-full h-3 bg-slate-100 rounded-full overflow-hidden">
-          <div 
-            className={`h-full transition-all duration-500 rounded-full ${
-              summary.utilizationPercentage > 100 
-                ? 'bg-red-500' 
-                : summary.utilizationPercentage > 85 
-                ? 'bg-amber-500' 
-                : 'bg-emerald-500'
-            }`}
-            style={{ width: `${Math.min(100, summary.utilizationPercentage)}%` }}
-          />
+        <button
+          type="button"
+          onClick={() => alert('✨ AI Budget Assistant will propose cost reduction options in Phase 6.')}
+          className="btn-ai-banner"
+        >
+          Optimize Budget
+        </button>
+      </div>
+
+      {/* Cost Breakdown Cards (Category Breakdown) */}
+      <div className="section-block">
+        <div className="section-header-title font-bold text-slate-900 text-lg flex items-center gap-2">
+          <Receipt className="w-5 h-5 text-blue-600" />
+          <span>Cost Breakdown by Category</span>
+        </div>
+
+        <div className="category-cards-grid">
+          {Object.values(categoryBreakdown).map((cat) => {
+            const totalForCategory = cat.total;
+            const overallRefTotal = summary.totalActualCost > 0 ? summary.totalActualCost : (summary.totalEstimatedCost || 1);
+            const percent = summary.plannedBudget > 0 
+              ? Math.round((totalForCategory / overallRefTotal) * 100) 
+              : 0;
+
+            return (
+              <div key={cat.category} className="cost-category-card">
+                <div className="cat-card-top">
+                  <span className="cat-emoji-icon">{CATEGORY_ICONS[cat.category]}</span>
+                  <span className="cat-name-text">{cat.category}</span>
+                </div>
+                <div className="cat-amount-text">
+                  {summary.currency} {totalForCategory.toLocaleString()}
+                </div>
+                <div className="cat-percent-bar">
+                  <div className="cat-percent-track">
+                    <div 
+                      className="cat-percent-fill"
+                      style={{ 
+                        width: `${Math.min(100, percent)}%`,
+                        backgroundColor: CATEGORY_COLORS[cat.category] || '#2563EB'
+                      }}
+                    />
+                  </div>
+                  <span className="cat-percent-val">{percent}% of total</span>
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
 
-      {/* Analytics Grid: Category Breakdown & Daily Spending */}
+      {/* Charts Section: Donut Distribution & Daily Spending */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Category Breakdown Card */}
-        <Card title="Expense Category Breakdown" subtitle="Distribution across transport, stay, activities, meals, etc.">
+        {/* Cost Distribution (Donut Chart) */}
+        <Card title="Cost Distribution (Category Share)">
           {pieChartData.length > 0 ? (
             <div className="flex flex-col sm:flex-row items-center gap-4 mt-2">
-              <div className="w-full sm:w-1/2 h-56">
+              <div className="w-full sm:w-1/2 h-60 relative flex items-center justify-center">
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
                     <Pie
                       data={pieChartData}
                       cx="50%"
                       cy="50%"
-                      innerRadius={50}
-                      outerRadius={80}
+                      innerRadius={55}
+                      outerRadius={85}
                       paddingAngle={4}
                       dataKey="value"
                     >
@@ -345,74 +458,132 @@ export default function BudgetPage() {
                     <Tooltip formatter={(val) => `${summary.currency} ${val.toLocaleString()}`} />
                   </PieChart>
                 </ResponsiveContainer>
+                {/* Donut Center Label */}
+                <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none text-center">
+                  <span className="text-[10px] font-bold uppercase text-slate-400">Total</span>
+                  <span className="text-xs font-black text-slate-900">
+                    {summary.currency} {(summary.totalActualCost || summary.totalEstimatedCost).toLocaleString()}
+                  </span>
+                </div>
               </div>
 
               <div className="w-full sm:w-1/2 space-y-2.5 text-xs">
-                {Object.values(categoryBreakdown).map((cat) => {
-                  const percent = summary.totalActualCost > 0 
-                    ? Math.round((cat.total / (summary.totalActualCost || summary.totalEstimatedCost || 1)) * 100) 
-                    : 0;
-                  return (
-                    <div key={cat.category} className="p-2 bg-slate-50 rounded-lg border border-slate-100 flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <span className="text-base">{CATEGORY_ICONS[cat.category]}</span>
-                        <span className="font-semibold text-slate-700 capitalize">{cat.category.toLowerCase()}</span>
-                      </div>
-                      <div className="text-right">
-                        <span className="font-bold text-slate-900 block">{summary.currency} {cat.total.toLocaleString()}</span>
-                        <span className="text-[10px] text-slate-400">{percent}%</span>
-                      </div>
+                {pieChartData.map((item) => (
+                  <div key={item.name} className="p-2.5 bg-slate-50 rounded-xl border border-slate-100 flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <span className="text-base">{item.icon}</span>
+                      <span className="font-semibold text-slate-800 capitalize">{item.name.toLowerCase()}</span>
                     </div>
-                  );
-                })}
+                    <span className="font-bold text-slate-900">{summary.currency} {item.value.toLocaleString()}</span>
+                  </div>
+                ))}
               </div>
             </div>
           ) : (
-            <div className="text-center py-8 text-xs text-slate-500">
-              No expenses or activity costs recorded yet for category breakdown.
+            <div className="text-center py-10 text-xs text-slate-500">
+              No expense entries or itinerary activity costs logged yet.
             </div>
           )}
         </Card>
 
-        {/* Daily Spending & Over-budget Detection */}
-        <Card title="Daily Expenditure & Budget Tracking" subtitle="Daily target budget comparison">
-          {dailyBreakdown.length > 0 ? (
-            <div className="space-y-4 mt-2">
-              <div className="w-full h-56">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={barChartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                    <XAxis dataKey="day" tick={{ fontSize: 11 }} />
-                    <YAxis tick={{ fontSize: 11 }} />
-                    <Tooltip formatter={(val) => `${summary.currency} ${val.toLocaleString()}`} />
-                    <Legend wrapperStyle={{ fontSize: 11 }} />
-                    <Bar dataKey="Actual" fill="#3b82f6" radius={[4, 4, 0, 0]} />
-                    <Bar dataKey="Estimated" fill="#cbd5e1" radius={[4, 4, 0, 0]} />
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
+        {/* Daily Spending & Average Cost / Day */}
+        <Card title="Daily Spending & Daily Budget Comparison">
+          <div className="space-y-4 mt-2">
+            {/* Average Cost Per Day Metric */}
+            <div className="p-3 bg-blue-50 border border-blue-100 rounded-xl flex items-center justify-between text-xs">
+              <span className="font-semibold text-blue-900 flex items-center gap-1.5">
+                <TrendingUp size={15} className="text-blue-600" /> Average Cost / Day
+              </span>
+              <span className="font-black text-blue-900 text-sm">
+                {summary.currency} {avgCostPerDay.toLocaleString()} / day
+              </span>
+            </div>
 
-              {/* Over Budget Days Alert */}
-              {summary.overBudgetDaysCount > 0 && (
-                <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg text-xs text-amber-800 flex items-center gap-2">
-                  <AlertTriangle size={16} className="text-amber-600 shrink-0" />
-                  <span>
-                    <strong>{summary.overBudgetDaysCount} day(s)</strong> exceeded the calculated daily target budget ({summary.currency} {dailyBreakdown[0]?.dailyBudget.toLocaleString()}/day).
-                  </span>
-                </div>
-              )}
+            <div className="w-full h-52">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={barChartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                  <XAxis dataKey="day" tick={{ fontSize: 11 }} />
+                  <YAxis tick={{ fontSize: 11 }} />
+                  <Tooltip formatter={(val) => `${summary.currency} ${val.toLocaleString()}`} />
+                  <Legend wrapperStyle={{ fontSize: 11 }} />
+                  <Bar dataKey="Actual" fill="#3b82f6" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="Estimated" fill="#cbd5e1" radius={[4, 4, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
             </div>
-          ) : (
-            <div className="text-center py-8 text-xs text-slate-500">
-              No daily itinerary dates defined yet.
-            </div>
-          )}
+          </div>
         </Card>
       </div>
 
-      {/* Expenses Management Section */}
+      {/* Daily Budget Breakdown & Over-Budget Alert Section */}
+      <div className="section-block">
+        <div className="flex justify-between items-center">
+          <div className="section-header-title font-bold text-slate-900 text-lg flex items-center gap-2">
+            <Calendar className="w-5 h-5 text-blue-600" />
+            <span>Daily Spending Breakdown</span>
+          </div>
+
+          {/* Budget Alert Status Pill */}
+          {summary.overBudgetDaysCount > 0 ? (
+            <div className="p-2.5 px-3 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-800 font-semibold flex items-center gap-2">
+              <AlertTriangle size={15} className="text-amber-600 shrink-0" />
+              <span>
+                <strong>⚠️ Budget Attention:</strong> {summary.overBudgetDaysCount} day(s) exceeded target daily budget ({summary.currency} {dailyBreakdown[0]?.dailyBudget.toLocaleString()}/day).
+              </span>
+            </div>
+          ) : (
+            <div className="p-2.5 px-3 bg-emerald-50 border border-emerald-200 rounded-xl text-xs text-emerald-800 font-semibold flex items-center gap-2">
+              <ShieldCheck size={15} className="text-emerald-600 shrink-0" />
+              <span>✓ You're within budget! All planned days are within budget limits.</span>
+            </div>
+          )}
+        </div>
+
+        {/* Daily Cards Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-3">
+          {dailyBreakdown.map((dayItem) => (
+            <div 
+              key={dayItem.dayNumber}
+              className={`p-4 rounded-xl border flex flex-col justify-between transition-all ${
+                dayItem.overBudget 
+                  ? 'bg-amber-50/50 border-amber-300 shadow-sm' 
+                  : 'bg-white border-slate-200 hover:border-slate-300'
+              }`}
+            >
+              <div className="space-y-1">
+                <div className="flex justify-between items-center">
+                  <span className="font-bold text-slate-900 text-sm">Day {dayItem.dayNumber}</span>
+                  <span className="text-xs text-slate-500 font-medium">{dayItem.date}</span>
+                </div>
+
+                <div className="text-base font-black text-slate-900 mt-2">
+                  {summary.currency} {(dayItem.actualCost || dayItem.estimatedCost).toLocaleString()}
+                </div>
+                <div className="text-[11px] text-slate-500">
+                  Target Daily Budget: {summary.currency} {dayItem.dailyBudget.toLocaleString()}
+                </div>
+              </div>
+
+              <div className="mt-3 pt-2 border-t border-slate-100 flex items-center justify-between text-xs">
+                {dayItem.overBudget ? (
+                  <span className="text-amber-700 font-bold flex items-center gap-1">
+                    <AlertTriangle size={13} /> {summary.currency} {dayItem.difference.toLocaleString()} over
+                  </span>
+                ) : (
+                  <span className="text-emerald-700 font-semibold flex items-center gap-1">
+                    <Check size={13} /> Within Budget
+                  </span>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Logged Expenses Section */}
       <Card 
-        title={`Logged Expenses (${expenses.length})`} 
+        title={`Logged Expense Records (${expenses.length})`} 
         subtitle="Detailed log of actual spending and estimated manual expenses"
       >
         {expenses.length > 0 ? (
