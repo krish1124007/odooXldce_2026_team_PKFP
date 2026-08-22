@@ -19,6 +19,7 @@ import ActivitySearchPage from './pages/ActivitySearchPage';
 import BudgetPage from './pages/BudgetPage';
 import CalendarTimelinePage from './pages/CalendarTimelinePage';
 import PublicItineraryPage from './pages/PublicItineraryPage';
+import CommunityPage from './pages/CommunityPage';
 import ProfileSettingsPage from './pages/ProfileSettingsPage';
 import AdminDashboardPage from './pages/AdminDashboardPage';
 import NotFoundPage from './pages/NotFoundPage';
@@ -41,12 +42,13 @@ export default function App() {
 
           {/* Main Application Layout Routes */}
           <Route element={<MainLayout kpiData={kpiData} setKpiData={setKpiData} />}>
-            {/* Public Page */}
+            {/* Public Pages */}
             <Route path="/" element={<LandingPage />} />
             <Route path="/landing" element={<LandingPage />} />
             <Route path="/public/trips/:publicId" element={<PublicItineraryPage />} />
             <Route path="/cities" element={<CitySearchPage />} />
             <Route path="/activities" element={<ActivitySearchPage />} />
+            <Route path="/community" element={<CommunityPage />} />
 
             {/* Protected Routes (Require Login) */}
             <Route element={<ProtectedRoute />}>

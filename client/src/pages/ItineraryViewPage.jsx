@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { getCompleteItinerary } from '../services/itineraryService';
+import api from '../services/api';
 import Card from '../components/ui/Card';
 import Button from '../components/ui/Button';
 import { 
@@ -136,6 +137,61 @@ export default function ItineraryViewPage() {
         </div>
 
         <div className="header-actions-row">
+          {/* Publish / Visibility Toggle */}
+          {trip?.visibility === 'PUBLIC' ? (
+            <div className="flex items-center gap-2">
+              <span className="px-2.5 py-1 rounded-md bg-emerald-100 text-emerald-800 dark:bg-emerald-500/20 dark:text-emerald-400 text-xs font-bold border border-emerald-200 flex items-center gap-1">
+                🌐 Public
+              </span>
+              <button
+                onClick={async () => {
+                  try {
+                    const res = await api.put(`/trips/${tripId}/unpublish`);
+                    if (res.data?.success) {
+                      fetchData();
+                    }
+                  } catch (err) {
+                    alert('Failed to unpublish trip');
+                  }
+                }}
+                className="nav-action-btn secondary text-xs"
+              >
+                Unpublish
+              </button>
+              <button
+                onClick={() => {
+                  const url = `${window.location.origin}/public/trips/${trip?.publicId || trip?._id}`;
+                  navigator.clipboard.writeText(url);
+                  alert(`Public link copied: ${url}`);
+                }}
+                className="nav-action-btn primary text-xs"
+              >
+                <Share2 size={14} /> Copy Link
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={async () => {
+                if (!window.confirm('Anyone with the public link will be able to view this itinerary. Confirm publishing?')) return;
+                try {
+                  const res = await api.put(`/trips/${tripId}/publish`);
+                  if (res.data?.success) {
+                    fetchData();
+                    const url = `${window.location.origin}${res.data.data.publicUrl}`;
+                    navigator.clipboard.writeText(url);
+                    alert(`Trip is now PUBLIC!\n\nShare link copied to clipboard:\n${url}`);
+                  }
+                } catch (err) {
+                  alert('Failed to publish trip');
+                }
+              }}
+              className="nav-action-btn primary text-xs"
+            >
+              🌐 Publish Trip
+            </button>
+          )}
+
+          {/* View Mode Toggle */}
           <div className="select-control-box p-1">
             <button
               onClick={() => setViewMode('list')}

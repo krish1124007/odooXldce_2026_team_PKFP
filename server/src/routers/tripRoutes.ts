@@ -18,6 +18,10 @@ import {
   createTripStop,
   reorderTripStops,
 } from "../controllers/itinerary.controller.js";
+import {
+  publishTrip,
+  unpublishTrip,
+} from "../controllers/publicTrip.controller.js";
 import { verifyUser } from "../middlewares/auth.middleware.js";
 
 const router = Router();
@@ -29,6 +33,10 @@ router.get("/", getMyTrips);
 router.get("/:id", getTripById);
 router.put("/:id", updateTrip);
 router.delete("/:id", deleteTrip);
+
+// Publish / Unpublish endpoints
+router.put("/:tripId/publish", publishTrip);
+router.put("/:tripId/unpublish", unpublishTrip);
 
 // Trip Destination Sub-resource endpoints
 router.get("/:tripId/destinations", getTripDestinations);
