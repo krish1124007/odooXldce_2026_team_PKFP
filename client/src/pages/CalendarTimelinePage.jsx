@@ -5,6 +5,7 @@ import {
   updateItineraryActivity, 
   deleteItineraryActivity 
 } from '../services/itineraryService';
+import api from '../services/api';
 import Card from '../components/ui/Card';
 import Button from '../components/ui/Button';
 import { 
@@ -36,6 +37,7 @@ export default function CalendarTimelinePage() {
 
   const [loading, setLoading] = useState(true);
   const [itineraryData, setItineraryData] = useState(null);
+  const [allTrips, setAllTrips] = useState([]);
   const [errorMsg, setErrorMsg] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
 
@@ -62,10 +64,24 @@ export default function CalendarTimelinePage() {
   });
 
   useEffect(() => {
+    fetchAllTrips();
     if (tripId) {
       fetchData();
+    } else {
+      setLoading(false);
     }
   }, [tripId]);
+
+  const fetchAllTrips = async () => {
+    try {
+      const res = await api.get('/trips?limit=100');
+      if (res.data?.success) {
+        setAllTrips(res.data.data || []);
+      }
+    } catch (err) {
+      console.error('Failed to fetch all trips:', err);
+    }
+  };
 
   const fetchData = async () => {
     setLoading(true);
@@ -419,18 +435,29 @@ export default function CalendarTimelinePage() {
                 return <div key={`empty-${idx}`} className="date-cell disabled" />;
               }
 
+              const todayStr = new Date().toISOString().split('T')[0];
+              const isToday = cell.dateStr === todayStr;
               const isSelected = selectedDateStr === cell.dateStr;
               const hasItems = cell.activities.length > 0;
               const cityLabel = cell.activities[0]?.cityName;
+
+              const tripsOnDate = allTrips.filter((t) => {
+                if (!t.startDate || !t.endDate) return false;
+                const cellTime = new Date(cell.dateStr).getTime();
+                const startTime = new Date(t.startDate).setHours(0,0,0,0);
+                const endTime = new Date(t.endDate).setHours(23,59,59,999);
+                return cellTime >= startTime && cellTime <= endTime;
+              });
 
               return (
                 <div
                   key={cell.dateStr}
                   onClick={() => setSelectedDateStr(cell.dateStr)}
-                  className={`date-cell ${isSelected ? 'selected' : ''} ${hasItems ? 'has-activities' : ''}`}
+                  className={`date-cell ${isToday ? 'today' : ''} ${isSelected ? 'selected' : ''} ${hasItems || tripsOnDate.length > 0 ? 'has-activities' : ''}`}
                 >
                   <div className="cell-top-row">
                     <span className="date-number">{cell.dateNumber}</span>
+                    {isToday && <span className="today-badge">TODAY</span>}
                     {cityLabel && (
                       <span className="city-cell-badge">
                         <MapPin size={9} />
@@ -438,6 +465,28 @@ export default function CalendarTimelinePage() {
                       </span>
                     )}
                   </div>
+
+                  {/* Trip Overlays */}
+                  {tripsOnDate.map((t, tIdx) => {
+                    const isCurrentTrip = t._id === tripId;
+                    const bgStyle = isCurrentTrip
+                      ? 'linear-gradient(135deg, #122244 0%, #1C3366 100%)'
+                      : tIdx % 2 === 0
+                      ? 'linear-gradient(135deg, #0284C7 0%, #2563EB 100%)'
+                      : 'linear-gradient(135deg, #059669 0%, #10B981 100%)';
+
+                    return (
+                      <div
+                        key={t._id}
+                        className="cell-trip-pill"
+                        style={{ background: bgStyle }}
+                        title={`${t.name} (${new Date(t.startDate).toLocaleDateString()} - ${new Date(t.endDate).toLocaleDateString()})`}
+                      >
+                        <span>✈️</span>
+                        <span className="truncate">{t.name}</span>
+                      </div>
+                    );
+                  })}
 
                   {/* Compact Activity Indicators */}
                   <div className="cell-activities-stack">

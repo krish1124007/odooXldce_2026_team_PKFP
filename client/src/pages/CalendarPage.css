@@ -327,10 +327,10 @@
 }
 
 .date-cell {
-  min-height: 90px;
-  background-color: #F8FAFC;
-  border: 1px solid #E2E8F0;
-  border-radius: 12px;
+  min-height: 110px;
+  background-color: var(--bg-card, #FFFFFF);
+  border: 1px solid var(--border-color, #E2E8F0);
+  border-radius: 14px;
   padding: 0.5rem;
   display: flex;
   flex-direction: column;
@@ -340,18 +340,28 @@
 }
 
 .date-cell:hover {
-  border-color: #BFDBFE;
-  background-color: #FFFFFF;
+  border-color: #38BDF8;
+  background-color: var(--bg-surface, #FFFFFF);
+  box-shadow: 0 4px 14px rgba(56, 189, 248, 0.12);
+}
+
+.date-cell.today {
+  border: 2px solid #2563EB;
+  background-color: #EFF6FF;
+}
+
+[data-theme="dark"] .date-cell.today, body.dark .date-cell.today {
+  background-color: rgba(37, 99, 235, 0.18);
+  border-color: #38BDF8;
 }
 
 .date-cell.selected {
-  border-color: #2563EB;
-  background-color: #EFF6FF;
-  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+  border-color: #0284C7;
+  box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.2);
 }
 
 .date-cell.has-activities {
-  background-color: #FFFFFF;
+  background-color: var(--bg-card, #FFFFFF);
 }
 
 .date-cell.disabled {
@@ -369,7 +379,17 @@
 .date-number {
   font-size: 13px;
   font-weight: 800;
-  color: #0F172A;
+  color: var(--text-primary, #0F172A);
+}
+
+.today-badge {
+  font-size: 9px;
+  font-weight: 800;
+  color: #2563EB;
+  background-color: #DBEAFE;
+  padding: 1px 5px;
+  border-radius: 4px;
+  letter-spacing: 0.4px;
 }
 
 .city-cell-badge {
@@ -378,10 +398,27 @@
   gap: 2px;
   font-size: 9.5px;
   font-weight: 700;
-  color: #2563EB;
-  background-color: #EFF6FF;
+  color: #0284C7;
+  background-color: #E0F2FE;
   padding: 1px 4px;
   border-radius: 4px;
+}
+
+.cell-trip-pill {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 6px;
+  border-radius: 6px;
+  font-size: 10.5px;
+  font-weight: 800;
+  color: #FFFFFF !important;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+  margin-bottom: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  user-select: none;
 }
 
 .cell-activities-stack {

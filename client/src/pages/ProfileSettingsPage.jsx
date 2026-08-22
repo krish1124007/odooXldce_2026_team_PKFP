@@ -14,7 +14,7 @@ export default function ProfileSettingsPage() {
   const [language, setLanguage] = useState(user?.language || 'English');
   const [travelStyle, setTravelStyle] = useState(user?.travelStyle || 'Balanced');
   const [travelPace, setTravelPace] = useState(user?.travelPace || 'Moderate');
-  const [interests, setInterests] = useState(user?.interests || []);
+  const [interests, setInterests] = useState(user?.interests || user?.preferences?.interests || ['Food', 'Culture', 'Nature']);
   const [profilePhoto, setProfilePhoto] = useState(user?.profilePhoto || '');
 
   const [savedDestinationsList, setSavedDestinationsList] = useState([]);
@@ -24,6 +24,19 @@ export default function ProfileSettingsPage() {
   const [error, setError] = useState('');
 
   const allInterests = ['Food', 'Culture', 'Nature', 'Adventure', 'History', 'Nightlife', 'Shopping', 'Photography'];
+
+  useEffect(() => {
+    if (user) {
+      if (user.firstName) setFirstName(user.firstName);
+      if (user.lastName) setLastName(user.lastName);
+      if (user.language) setLanguage(user.language);
+      if (user.travelStyle) setTravelStyle(user.travelStyle);
+      if (user.travelPace) setTravelPace(user.travelPace);
+      if (user.interests?.length) setInterests(user.interests);
+      else if (user.preferences?.interests?.length) setInterests(user.preferences.interests);
+      if (user.profilePhoto) setProfilePhoto(user.profilePhoto);
+    }
+  }, [user]);
 
   useEffect(() => {
     fetchSavedDestinations();
@@ -270,7 +283,7 @@ export default function ProfileSettingsPage() {
               </div>
             </div>
 
-            <div className="pt-2 flex justify-end">
+            <div className="profile-form-footer">
               <button
                 type="submit"
                 disabled={saving}
