@@ -59,7 +59,7 @@ export default function App() {
 
               {/* Protected Routes (Require Login) */}
               <Route element={<ProtectedRoute />}>
-                <Route path="/dashboard" element={<DashboardPage />} />
+                <Route path="/dashboard" element={<LandingPage />} />
                 <Route path="/trips" element={<MyTripsPage />} />
                 <Route path="/trips/create" element={<CreateTripPage />} />
                 <Route path="/trips/:tripId/edit" element={<EditTripPage />} />

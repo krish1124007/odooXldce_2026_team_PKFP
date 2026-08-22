@@ -82,14 +82,6 @@ export default function Sidebar({ collapsed, setCollapsed, activeTab, setActiveT
           </button>
 
           <button 
-            className={`nav-item ${activeTab === 'Dashboard' ? 'active' : ''}`}
-            onClick={() => setActiveTab('Dashboard')}
-          >
-            <LayoutGrid size={18} className="item-icon" />
-            {!collapsed && <span>Dashboard</span>}
-          </button>
-
-          <button 
             className={`nav-item ${activeTab === 'My Trips' ? 'active' : ''}`}
             onClick={() => setActiveTab('My Trips')}
           >

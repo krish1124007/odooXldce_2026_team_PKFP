@@ -65,7 +65,7 @@ export default function MainLayout({ kpiData, setKpiData }) {
     if (path.includes('/public')) return 'Public Trips';
     if (path.includes('/profile')) return 'Profile';
     if (path.includes('/trips')) return 'My Trips';
-    if (path.includes('/dashboard')) return 'Dashboard';
+    if (path.includes('/dashboard')) return 'Home';
     if (path === '/' || path.includes('/home') || path.includes('/explore') || path.includes('/landing')) return 'Home';
     return 'Home';
   }
@@ -82,10 +82,8 @@ export default function MainLayout({ kpiData, setKpiData }) {
   const handleSelectTab = (tab) => {
     switch (tab) {
       case 'Home':
-        navigate('/');
-        break;
       case 'Dashboard':
-        navigate('/dashboard');
+        navigate('/');
         break;
       case 'Admin Dashboard':
         navigate('/admin');
@@ -116,7 +114,7 @@ export default function MainLayout({ kpiData, setKpiData }) {
         navigate('/profile');
         break;
       default:
-        navigate('/dashboard');
+        navigate('/');
     }
   };
 
