@@ -53,6 +53,7 @@ export default function MainLayout({ kpiData, setKpiData }) {
   const activeTab = getActiveTabFromPath(location.pathname);
 
   function getActiveTabFromPath(path) {
+    if (path.includes('/admin')) return 'Admin Dashboard';
     if (path.includes('/trips/create')) return 'Plan New Trip';
     if (path.includes('/cities')) return 'City Discovery';
     if (path.includes('/activities')) return 'Activity Discovery';
@@ -83,6 +84,9 @@ export default function MainLayout({ kpiData, setKpiData }) {
         break;
       case 'Dashboard':
         navigate('/dashboard');
+        break;
+      case 'Admin Dashboard':
+        navigate('/admin');
         break;
       case 'My Trips':
         navigate('/trips');
