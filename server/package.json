@@ -10,6 +10,7 @@
     "dev": "nodemon --exec tsx src/index.ts",
     "build": "tsc -p tsconfig.build.json",
     "start": "node dist/index.js",
+    "seed": "tsx src/seed/seedData.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "devDependencies": {

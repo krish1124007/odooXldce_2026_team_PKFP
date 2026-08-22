@@ -3,7 +3,10 @@ import {
     getUserProfile, 
     updateUserProfile, 
     updateUserPreferences, 
-    deleteUserAccount 
+    deleteUserAccount,
+    getSavedDestinations,
+    saveDestination,
+    removeSavedDestination,
 } from "../controllers/user.profile.controller.js";
 import { verifyUser } from "../middlewares/auth.middleware.js";
 
@@ -16,5 +19,8 @@ router.put("/profile", updateUserProfile);
 router.put("/preferences", updateUserPreferences);
 router.delete("/account", deleteUserAccount);
 
-export default router;
+router.get("/saved-destinations", getSavedDestinations);
+router.post("/saved-destinations/:cityId", saveDestination);
+router.delete("/saved-destinations/:cityId", removeSavedDestination);
 
+export default router;
