@@ -15,13 +15,21 @@ import {
   Trash2, 
   ChevronDown, 
   ChevronRight, 
+  ChevronLeft,
   X, 
   Check, 
   Sparkles, 
   ArrowLeft,
-  Filter
+  Filter,
+  Search,
+  Layers,
+  ArrowUpDown,
+  MapPin,
+  Plus,
+  List,
+  Grid
 } from 'lucide-react';
-import './ItineraryPages.css';
+import './CalendarPage.css';
 
 export default function CalendarTimelinePage() {
   const { tripId } = useParams();
@@ -31,9 +39,17 @@ export default function CalendarTimelinePage() {
   const [errorMsg, setErrorMsg] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
 
-  // Expandable days state
-  const [expandedDays, setExpandedDays] = useState({});
-  const [selectedDayFilter, setSelectedDayFilter] = useState('ALL');
+  // View Mode: 'calendar' (7-col monthly grid) or 'timeline' (vertical list)
+  const [viewMode, setViewMode] = useState('calendar');
+
+  // Search & Filter state
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filterCity, setFilterCity] = useState('');
+  const [sortBy, setSortBy] = useState('time');
+
+  // Current Calendar Month & Year State
+  const [currentDate, setCurrentDate] = useState(new Date());
+  const [selectedDateStr, setSelectedDateStr] = useState('');
 
   // Quick edit modal state
   const [isQuickEditOpen, setIsQuickEditOpen] = useState(false);
@@ -58,20 +74,17 @@ export default function CalendarTimelinePage() {
       const res = await getCompleteItinerary(tripId);
       if (res.success) {
         setItineraryData(res.data);
-        // Expand all days by default
-        const stops = res.data.stops || [];
-        const initialExpanded = {};
-        stops.forEach((s) => {
-          s.activities.forEach((act) => {
-            const dateKey = new Date(act.itineraryActivity.date).toISOString().split('T')[0];
-            initialExpanded[dateKey] = true;
-          });
-        });
-        setExpandedDays(initialExpanded);
+        // Set initial selected date to trip's start date or first activity date
+        const trip = res.data?.trip;
+        if (trip?.startDate) {
+          const startDateObj = new Date(trip.startDate);
+          setCurrentDate(startDateObj);
+          setSelectedDateStr(startDateObj.toISOString().split('T')[0]);
+        }
       }
     } catch (err) {
-      console.error('Failed to load timeline:', err);
-      setErrorMsg(err.message || 'Failed to load timeline data');
+      console.error('Failed to load calendar itinerary:', err);
+      setErrorMsg(err.message || 'Failed to load itinerary calendar data');
     }
     setLoading(false);
   };
@@ -82,6 +95,7 @@ export default function CalendarTimelinePage() {
       weekday: 'short',
       month: 'short',
       day: 'numeric',
+      year: 'numeric'
     });
   };
 
@@ -90,14 +104,22 @@ export default function CalendarTimelinePage() {
     return new Date(dateInput).toISOString().split('T')[0];
   };
 
-  const toggleDayExpand = (dateKey) => {
-    setExpandedDays((prev) => ({
-      ...prev,
-      [dateKey]: !prev[dateKey],
-    }));
+  // Month Navigation
+  const prevMonth = () => {
+    setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1));
   };
 
-  // Open Quick Edit Modal
+  const nextMonth = () => {
+    setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1));
+  };
+
+  const goToToday = () => {
+    const today = new Date();
+    setCurrentDate(today);
+    setSelectedDateStr(today.toISOString().split('T')[0]);
+  };
+
+  // Quick Edit Modal Handlers
   const openQuickEdit = (item) => {
     setEditingActivity(item);
     setEditFormData({
@@ -142,7 +164,7 @@ export default function CalendarTimelinePage() {
     return (
       <div className="py-20 text-center text-slate-500 font-semibold">
         <div className="gt-spinner-lg mx-auto mb-4"></div>
-        <p className="text-sm">Loading Timeline & Conflict Engine...</p>
+        <p className="text-sm">Loading Trip Calendar & Daily Plans...</p>
       </div>
     );
   }
@@ -152,11 +174,17 @@ export default function CalendarTimelinePage() {
   const hasConflicts = itineraryData?.hasConflicts;
   const conflicts = itineraryData?.conflicts || [];
 
-  // Group activities by date
+  // Group activities by ISO Date String (YYYY-MM-DD)
   const dateMap = {};
+  let totalActivitiesCount = 0;
+  let totalEstimatedCostSum = 0;
+
   stops.forEach((stopItem) => {
     const { city, activities } = stopItem;
     activities.forEach((actItem) => {
+      totalActivitiesCount++;
+      totalEstimatedCostSum += Number(actItem.itineraryActivity.estimatedCost || 0);
+
       const dateKey = new Date(actItem.itineraryActivity.date).toISOString().split('T')[0];
       if (!dateMap[dateKey]) {
         dateMap[dateKey] = [];
@@ -164,18 +192,50 @@ export default function CalendarTimelinePage() {
       dateMap[dateKey].push({
         ...actItem,
         cityName: city?.name || 'Destination',
+        cityId: city?._id
       });
     });
   });
 
-  const sortedDates = Object.keys(dateMap).sort();
+  // Calculate Calendar Grid Days for Current Month
+  const year = currentDate.getFullYear();
+  const month = currentDate.getMonth();
 
-  const filteredDates = selectedDayFilter === 'ALL'
-    ? sortedDates
-    : sortedDates.filter((d, idx) => `DAY_${idx + 1}` === selectedDayFilter);
+  const firstDayOfMonth = new Date(year, month, 1);
+  const lastDayOfMonth = new Date(year, month + 1, 0);
+
+  const startingDayOfWeek = firstDayOfMonth.getDay(); // 0 = Sun, 1 = Mon ...
+  const daysInMonth = lastDayOfMonth.getDate();
+
+  // Create Grid Cells Array
+  const calendarCells = [];
+
+  // Padding cells before first day
+  for (let i = 0; i < startingDayOfWeek; i++) {
+    calendarCells.push({ isCurrentMonth: false, dateNumber: null, dateStr: null });
+  }
+
+  // Active Month Days
+  for (let day = 1; day <= daysInMonth; day++) {
+    const dateObj = new Date(year, month, day);
+    const dateStr = dateObj.toISOString().split('T')[0];
+    calendarCells.push({
+      isCurrentMonth: true,
+      dateNumber: day,
+      dateStr,
+      dateObj,
+      activities: dateMap[dateStr] || []
+    });
+  }
+
+  const monthYearTitle = currentDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+
+  // Selected Day Items
+  const selectedDayItems = selectedDateStr ? (dateMap[selectedDateStr] || []) : [];
+  const selectedDayStopCity = selectedDayItems[0]?.cityName;
 
   return (
-    <div className="itinerary-page-container">
+    <div className="calendar-screen-wrapper">
       {/* Notifications */}
       {errorMsg && (
         <div className="alert-banner-box error">
@@ -191,204 +251,334 @@ export default function CalendarTimelinePage() {
       )}
 
       {/* Header Bar */}
-      <div className="itinerary-header-card">
+      <div className="calendar-header-card">
         <div>
-          <Link
-            to={`/trips/${tripId}/builder`}
-            className="back-link-btn text-xs mb-2"
-          >
+          <Link to={`/trips/${tripId}/builder`} className="back-link-btn mb-1">
             <ArrowLeft size={14} />
             <span>Back to Builder</span>
           </Link>
-          <div className="flex items-center gap-2">
-            <span className="engine-badge">
-              Calendar & Timeline
-            </span>
+          <div className="flex items-center gap-3 mt-1">
+            <h1 className="screen-title text-slate-900">Calendar View</h1>
+            <div className="view-toggle-bar">
+              <button
+                type="button"
+                onClick={() => setViewMode('calendar')}
+                className={`view-toggle-btn ${viewMode === 'calendar' ? 'active' : ''}`}
+              >
+                <CalendarIcon size={14} />
+                <span>Calendar</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setViewMode('timeline')}
+                className={`view-toggle-btn ${viewMode === 'timeline' ? 'active' : ''}`}
+              >
+                <List size={14} />
+                <span>Timeline</span>
+              </button>
+            </div>
           </div>
-          <h1 className="header-title-text">{trip?.name || 'Trip Schedule'}</h1>
-          <p className="header-sub-text mt-1">
-            Day-by-day visual timeline with conflict detection & expandable schedule cards
+          <p className="screen-subtitle">
+            Visualize your trip and daily plans across dates.
           </p>
+          {trip?.name && (
+            <p className="trip-context-tag">
+              {trip.name} • {formatDate(trip.startDate)} — {formatDate(trip.endDate)}
+            </p>
+          )}
         </div>
 
         <div className="header-actions-row">
-          <Link to={`/trips/${tripId}/itinerary`} className="nav-action-btn primary">
-            <CalendarIcon size={14} />
-            <span>View Full Itinerary</span>
+          <button
+            onClick={() => alert('✨ AI Schedule Assistant will reorder activities and resolve overlaps in Phase 6.')}
+            className="nav-action-btn ai-btn"
+          >
+            <Sparkles size={14} />
+            <span>✨ Optimize Schedule</span>
+          </button>
+          <Link to={`/trips/${tripId}/itinerary`} className="nav-action-btn outline">
+            <span>View Full Itinerary →</span>
           </Link>
-          <Link to={`/trips/${tripId}/builder`}>
-            <Button variant="primary" size="sm" icon={Edit3}>
-              Edit Builder
-            </Button>
+          <Link to={`/trips/${tripId}/budget`} className="nav-action-btn outline">
+            <span>View Budget →</span>
           </Link>
         </div>
       </div>
 
-      {/* Conflict Alert Banner */}
-      {hasConflicts && (
-        <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/40 text-amber-900 dark:text-amber-300 flex items-start gap-3">
-          <AlertTriangle className="w-5 h-5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
-          <div className="flex-1 text-xs">
-            <h4 className="font-bold text-amber-800 dark:text-amber-300 text-sm">Schedule Overlaps Detected</h4>
-            <p className="text-amber-700 dark:text-amber-400 mt-0.5">
-              The deterministic engine identified {conflicts.length} overlapping time slot(s). Use quick edit to adjust start/end times.
-            </p>
-            <ul className="mt-2 space-y-1 text-amber-800 dark:text-amber-300 font-medium">
-              {conflicts.map((c, idx) => (
-                <li key={idx} className="flex items-center gap-2">
-                  <span>• {c.message}</span>
-                </li>
+      {/* Trip Itinerary Summary Pills */}
+      <div className="calendar-summary-bar">
+        <div className="summary-pill">
+          <span className="pill-label">Stops</span>
+          <span className="pill-val">{stops.length} Cities</span>
+        </div>
+        <div className="summary-pill">
+          <span className="pill-label">Activities</span>
+          <span className="pill-val">{totalActivitiesCount} Planned</span>
+        </div>
+        <div className="summary-pill">
+          <span className="pill-label">Est. Cost</span>
+          <span className="pill-val">₹{totalEstimatedCostSum.toLocaleString()}</span>
+        </div>
+        {hasConflicts && (
+          <div className="summary-pill alert">
+            <AlertTriangle size={14} />
+            <span>{conflicts.length} Overlapping Slot(s)</span>
+          </div>
+        )}
+      </div>
+
+      {/* Search & Filter Toolbar (Screen 11 Wireframe Layout) */}
+      <div className="calendar-controls-toolbar">
+        <div className="search-input-wrapper">
+          <Search size={16} className="search-icon" />
+          <input
+            type="text"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder="Search itinerary activities or cities..."
+            className="search-field"
+          />
+        </div>
+
+        <div className="controls-right">
+          <div className="control-box">
+            <Layers size={14} className="icon" />
+            <select className="select-input">
+              <option value="day">Group By: Day</option>
+              <option value="city">Group By: City</option>
+            </select>
+          </div>
+
+          <div className="control-box">
+            <Filter size={14} className="icon" />
+            <select
+              value={filterCity}
+              onChange={(e) => setFilterCity(e.target.value)}
+              className="select-input"
+            >
+              <option value="">Filter City: All</option>
+              {stops.map((s) => (
+                <option key={s.stop._id} value={s.city?.name}>
+                  {s.city?.name}
+                </option>
               ))}
-            </ul>
+            </select>
+          </div>
+
+          <div className="control-box">
+            <ArrowUpDown size={14} className="icon" />
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value)}
+              className="select-input"
+            >
+              <option value="time">Sort By: Start Time</option>
+              <option value="cost">Sort By: Cost</option>
+            </select>
           </div>
         </div>
-      )}
+      </div>
 
-      {/* Day Selector Pills */}
-      {sortedDates.length > 0 && (
-        <div className="flex items-center gap-2 overflow-x-auto pb-2 custom-scrollbar">
-          <button
-            onClick={() => setSelectedDayFilter('ALL')}
-            className={`px-3 py-1.5 rounded-xl text-xs font-semibold shrink-0 transition-all ${
-              selectedDayFilter === 'ALL'
-                ? 'bg-cyan-600 text-white shadow-md shadow-cyan-500/20'
-                : 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
-            }`}
-          >
-            All Days ({sortedDates.length})
-          </button>
-          {sortedDates.map((dateStr, idx) => (
-            <button
-              key={dateStr}
-              onClick={() => setSelectedDayFilter(`DAY_${idx + 1}`)}
-              className={`px-3 py-1.5 rounded-xl text-xs font-semibold shrink-0 transition-all ${
-                selectedDayFilter === `DAY_${idx + 1}`
-                  ? 'bg-cyan-600 text-white shadow-md shadow-cyan-500/20'
-                  : 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
-              }`}
-            >
-              Day {idx + 1} ({formatDate(dateStr)})
-            </button>
-          ))}
-        </div>
-      )}
+      {/* VIEW MODE 1: MONTHLY CALENDAR GRID (Screen 11 Primary Requirement) */}
+      {viewMode === 'calendar' ? (
+        <div className="calendar-main-grid-container">
+          {/* Calendar Month Header Controls */}
+          <div className="calendar-month-header">
+            <div className="flex items-center gap-2">
+              <h2 className="month-title-text">{monthYearTitle}</h2>
+              <button type="button" onClick={goToToday} className="btn-today">
+                Today
+              </button>
+            </div>
 
-      {/* Vertical Timeline View */}
-      {filteredDates.length === 0 ? (
-        <div className="bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 rounded-3xl p-12 text-center space-y-3 shadow-sm">
-          <CalendarIcon className="w-12 h-12 text-slate-400 dark:text-slate-500 mx-auto" />
-          <h3 className="text-base font-bold text-slate-900 dark:text-slate-200">No scheduled timeline items</h3>
-          <p className="text-xs text-slate-500 dark:text-slate-400 max-w-sm mx-auto">
-            Schedule activities on the Itinerary Builder page to view them on the timeline.
-          </p>
-        </div>
-      ) : (
-        <div className="space-y-4">
-          {filteredDates.map((dateKey) => {
-            const dayIdx = sortedDates.indexOf(dateKey);
-            const isExpanded = expandedDays[dateKey] ?? true;
-            const dayActivities = dateMap[dateKey];
+            <div className="month-nav-btns">
+              <button type="button" onClick={prevMonth} className="btn-month-nav" title="Previous Month">
+                <ChevronLeft size={18} />
+              </button>
+              <button type="button" onClick={nextMonth} className="btn-month-nav" title="Next Month">
+                <ChevronRight size={18} />
+              </button>
+            </div>
+          </div>
 
-            return (
-              <div key={dateKey} className="bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden shadow-lg">
-                {/* Expandable Day Header */}
+          {/* Weekday Row Header */}
+          <div className="weekday-grid-header">
+            <div>Sun</div>
+            <div>Mon</div>
+            <div>Tue</div>
+            <div>Wed</div>
+            <div>Thu</div>
+            <div>Fri</div>
+            <div>Sat</div>
+          </div>
+
+          {/* 7-Column Date Cells Grid */}
+          <div className="date-cells-grid">
+            {calendarCells.map((cell, idx) => {
+              if (!cell.isCurrentMonth) {
+                return <div key={`empty-${idx}`} className="date-cell disabled" />;
+              }
+
+              const isSelected = selectedDateStr === cell.dateStr;
+              const hasItems = cell.activities.length > 0;
+              const cityLabel = cell.activities[0]?.cityName;
+
+              return (
                 <div
-                  onClick={() => toggleDayExpand(dateKey)}
-                  className="p-4 bg-slate-50 dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-950/80 transition-all"
+                  key={cell.dateStr}
+                  onClick={() => setSelectedDateStr(cell.dateStr)}
+                  className={`date-cell ${isSelected ? 'selected' : ''} ${hasItems ? 'has-activities' : ''}`}
                 >
-                  <div className="flex items-center space-x-3">
-                    <div className="w-8 h-8 rounded-lg bg-cyan-500/10 border border-cyan-500/30 text-cyan-600 dark:text-cyan-400 font-bold text-xs flex items-center justify-center">
-                      D{dayIdx + 1}
-                    </div>
-                    <div>
-                      <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                        <span>{formatDate(dateKey)}</span>
-                        <span className="text-xs text-slate-500 dark:text-slate-400 font-normal">({dayActivities.length} activities)</span>
-                      </h3>
-                    </div>
+                  <div className="cell-top-row">
+                    <span className="date-number">{cell.dateNumber}</span>
+                    {cityLabel && (
+                      <span className="city-cell-badge">
+                        <MapPin size={9} />
+                        <span>{cityLabel}</span>
+                      </span>
+                    )}
                   </div>
 
-                  <div className="text-slate-500 dark:text-slate-400">
-                    {isExpanded ? <ChevronDown size={18} /> : <ChevronRight size={18} />}
+                  {/* Compact Activity Indicators */}
+                  <div className="cell-activities-stack">
+                    {cell.activities.slice(0, 2).map((item) => (
+                      <div key={item.itineraryActivity._id} className="compact-act-pill">
+                        <span className="act-time">{item.itineraryActivity.startTime}</span>
+                        <span className="act-title truncate">{item.activity?.name}</span>
+                      </div>
+                    ))}
+                    {cell.activities.length > 2 && (
+                      <div className="more-acts-tag">
+                        +{cell.activities.length - 2} more
+                      </div>
+                    )}
                   </div>
                 </div>
+              );
+            })}
+          </div>
 
-                {/* Timeline Items */}
-                {isExpanded && (
-                  <div className="p-5 relative pl-8 border-l-2 border-slate-200 dark:border-slate-800 ml-6 my-2 space-y-4">
-                    {dayActivities.map((item) => {
-                      const { itineraryActivity, activity, cityName } = item;
-                      
-                      // Check if this item is part of a conflict
-                      const itemConflict = conflicts.find(
-                        (c) => c.activityAId === itineraryActivity._id || c.activityBId === itineraryActivity._id
-                      );
+          {/* Expandable Selected Day Detail Panel */}
+          {selectedDateStr && (
+            <div className="selected-day-detail-panel">
+              <div className="day-panel-header">
+                <div>
+                  <span className="text-xs font-bold text-blue-600 uppercase tracking-wider">Selected Day Plan</span>
+                  <h3 className="day-panel-date">
+                    {formatDate(selectedDateStr)} {selectedDayStopCity && `• 📍 ${selectedDayStopCity}`}
+                  </h3>
+                </div>
+                <Link to={`/trips/${tripId}/builder`} className="btn-add-activity-panel">
+                  <Plus size={14} />
+                  <span>Add Activity</span>
+                </Link>
+              </div>
 
-                      return (
-                        <div
-                          key={itineraryActivity._id}
-                          className={`relative p-4 rounded-xl border transition-all ${
-                            itemConflict
-                              ? 'bg-amber-500/10 border-amber-500/40'
-                              : 'bg-slate-50 dark:bg-slate-950/70 border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700'
-                          }`}
-                        >
-                          {/* Timeline Dot */}
-                          <div
-                            className={`absolute -left-[37px] top-5 w-4 h-4 rounded-full border-2 ${
-                              itemConflict
-                                ? 'bg-amber-500 border-amber-400 animate-pulse'
-                                : 'bg-cyan-500 border-white dark:border-slate-900'
-                            }`}
-                          />
+              {selectedDayItems.length === 0 ? (
+                <div className="empty-day-state">
+                  <p className="text-xs text-slate-500 font-semibold">No activities planned for this day.</p>
+                  <Link to={`/trips/${tripId}/builder`} className="btn-add-activity-panel mt-2 inline-flex">
+                    <Plus size={14} />
+                    <span>Schedule Activity</span>
+                  </Link>
+                </div>
+              ) : (
+                <div className="day-activities-list">
+                  {selectedDayItems.map((item) => {
+                    const { itineraryActivity, activity, cityName } = item;
+                    const itemConflict = conflicts.find(
+                      (c) => c.activityAId === itineraryActivity._id || c.activityBId === itineraryActivity._id
+                    );
 
-                          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                            <div className="flex items-start space-x-3">
-                              <div className="px-2.5 py-1 rounded-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs font-extrabold text-cyan-600 dark:text-cyan-400 shrink-0">
-                                {itineraryActivity.startTime} – {itineraryActivity.endTime}
-                              </div>
-                              <div>
-                                <div className="flex items-center gap-2">
-                                  <h4 className="text-xs font-bold text-slate-900 dark:text-white">{activity?.name}</h4>
-                                  <span className="px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-700 dark:text-cyan-400 text-[10px] font-semibold">
-                                    📍 {cityName}
-                                  </span>
-                                </div>
-                                <div className="flex items-center gap-3 text-[11px] text-slate-500 dark:text-slate-400 mt-1">
-                                  <span>⏱️ {activity?.durationMinutes || 60} mins</span>
-                                  <span className="text-emerald-600 dark:text-emerald-400 font-semibold">₹{itineraryActivity.estimatedCost}</span>
-                                </div>
-
-                                {itemConflict && (
-                                  <p className="text-[11px] font-semibold text-amber-600 dark:text-amber-400 mt-1 flex items-center gap-1">
-                                    <AlertTriangle size={12} /> Overlap: {itemConflict.message}
-                                  </p>
-                                )}
-                              </div>
+                    return (
+                      <div
+                        key={itineraryActivity._id}
+                        className={`day-activity-item-card ${itemConflict ? 'conflict' : ''}`}
+                      >
+                        <div className="act-item-left">
+                          <div className="time-badge">
+                            <Clock size={12} />
+                            <span>{itineraryActivity.startTime} – {itineraryActivity.endTime}</span>
+                          </div>
+                          <div>
+                            <h4 className="act-name">{activity?.name}</h4>
+                            <div className="act-meta">
+                              <span>📍 {cityName}</span>
+                              <span>⏱️ {activity?.durationMinutes || 60} mins</span>
+                              <span className="cost-tag">₹{itineraryActivity.estimatedCost}</span>
                             </div>
-
-                            <div className="flex items-center gap-2 shrink-0">
-                              <button
-                                onClick={() => openQuickEdit(item)}
-                                className="px-3 py-1.5 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs text-slate-700 dark:text-slate-300 hover:text-cyan-600 dark:hover:text-cyan-400 flex items-center gap-1 transition-all"
-                              >
-                                <Edit3 size={13} />
-                                <span>Quick Edit</span>
-                              </button>
-                              <button
-                                onClick={() => handleDeleteActivity(itineraryActivity._id, activity?.name)}
-                                className="p-1.5 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 hover:text-red-500 transition-all"
-                                title="Delete"
-                              >
-                                <Trash2 size={14} />
-                              </button>
-                            </div>
+                            {itemConflict && (
+                              <p className="conflict-msg">
+                                <AlertTriangle size={12} /> Overlap: {itemConflict.message}
+                              </p>
+                            )}
                           </div>
                         </div>
-                      );
-                    })}
-                  </div>
-                )}
+
+                        <div className="act-item-actions">
+                          <button
+                            type="button"
+                            onClick={() => openQuickEdit(item)}
+                            className="btn-act-action outline"
+                          >
+                            <Edit3 size={13} />
+                            <span>Quick Edit</span>
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteActivity(itineraryActivity._id, activity?.name)}
+                            className="btn-act-action delete"
+                          >
+                            <Trash2 size={13} />
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      ) : (
+        /* VIEW MODE 2: VERTICAL SEQUENTIAL TIMELINE */
+        <div className="vertical-timeline-container">
+          {Object.keys(dateMap).sort().map((dateKey, dayIdx) => {
+            const dayItems = dateMap[dateKey];
+            return (
+              <div key={dateKey} className="timeline-day-block">
+                <div className="timeline-day-header">
+                  <span className="day-badge">Day {dayIdx + 1}</span>
+                  <h3 className="timeline-day-title">{formatDate(dateKey)}</h3>
+                  <span className="count-pill">{dayItems.length} activities</span>
+                </div>
+
+                <div className="timeline-items-stack">
+                  {dayItems.map((item) => {
+                    const { itineraryActivity, activity, cityName } = item;
+                    return (
+                      <div key={itineraryActivity._id} className="timeline-activity-card">
+                        <div className="time-col">
+                          {itineraryActivity.startTime} – {itineraryActivity.endTime}
+                        </div>
+                        <div className="info-col">
+                          <h4 className="act-title">{activity?.name}</h4>
+                          <span className="city-pill">📍 {cityName}</span>
+                        </div>
+                        <div className="cost-col font-bold text-slate-900">
+                          ₹{itineraryActivity.estimatedCost}
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => openQuickEdit(item)}
+                          className="btn-act-action outline text-xs"
+                        >
+                          Quick Edit
+                        </button>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
             );
           })}
@@ -398,52 +588,52 @@ export default function CalendarTimelinePage() {
       {/* QUICK EDIT MODAL */}
       {isQuickEditOpen && (
         <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 max-w-md w-full shadow-2xl space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
-              <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                <Edit3 className="w-5 h-5 text-cyan-600 dark:text-cyan-400" />
+          <div className="bg-white border border-slate-200 rounded-3xl p-6 max-w-md w-full shadow-2xl space-y-4">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
+                <Edit3 className="w-5 h-5 text-blue-600" />
                 <span>Quick Edit Schedule</span>
               </h3>
-              <button onClick={() => setIsQuickEditOpen(false)} className="text-slate-400 hover:text-slate-900 dark:hover:text-white">
+              <button onClick={() => setIsQuickEditOpen(false)} className="text-slate-400 hover:text-slate-900">
                 <X size={18} />
               </button>
             </div>
 
             <form onSubmit={handleQuickEditSubmit} className="space-y-4">
-              <div className="p-3 bg-slate-50 dark:bg-slate-950 rounded-xl border border-slate-200 dark:border-slate-800 text-xs">
-                <span className="text-slate-500 dark:text-slate-400">Activity:</span>{' '}
-                <strong className="text-slate-900 dark:text-white">{editingActivity?.activity?.name}</strong>
+              <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs">
+                <span className="text-slate-500">Activity:</span>{' '}
+                <strong className="text-slate-900">{editingActivity?.activity?.name}</strong>
               </div>
 
               <div className="grid grid-cols-3 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Date</label>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">Date</label>
                   <input
                     type="date"
                     value={editFormData.date}
                     onChange={(e) => setEditFormData({ ...editFormData, date: e.target.value })}
                     required
-                    className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-cyan-500"
+                    className="w-full bg-slate-50 border border-slate-200 text-slate-900 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-blue-500"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Start Time</label>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">Start Time</label>
                   <input
                     type="time"
                     value={editFormData.startTime}
                     onChange={(e) => setEditFormData({ ...editFormData, startTime: e.target.value })}
                     required
-                    className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-cyan-500"
+                    className="w-full bg-slate-50 border border-slate-200 text-slate-900 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-blue-500"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">End Time</label>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">End Time</label>
                   <input
                     type="time"
                     value={editFormData.endTime}
                     onChange={(e) => setEditFormData({ ...editFormData, endTime: e.target.value })}
                     required
-                    className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-cyan-500"
+                    className="w-full bg-slate-50 border border-slate-200 text-slate-900 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-blue-500"
                   />
                 </div>
               </div>
