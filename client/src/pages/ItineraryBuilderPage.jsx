@@ -594,10 +594,16 @@ export default function ItineraryBuilderPage() {
                 <div className="p-5 space-y-3">
                   {activities.length === 0 ? (
                     <div className="stop-empty-act-box">
-                      <p className="text-xs text-slate-500 font-semibold">No activities planned for {city?.name || 'this stop'} yet.</p>
+                      <div className="w-10 h-10 rounded-full bg-blue-50 dark:bg-slate-800 border border-blue-100 dark:border-slate-700 text-blue-500 flex items-center justify-center">
+                        <Compass size={20} />
+                      </div>
+                      <div>
+                        <p className="text-sm font-bold text-slate-800 dark:text-slate-200">No activities yet</p>
+                        <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Add things to do in {city?.name || 'this stop'}</p>
+                      </div>
                       <button
                         onClick={() => openAddActivityModal(stopItem)}
-                        className="btn-secondary text-xs"
+                        className="btn-secondary"
                       >
                         <Plus size={14} />
                         <span>Add Activity to {city?.name || 'Stop'}</span>
@@ -610,24 +616,28 @@ export default function ItineraryBuilderPage() {
                         return (
                           <div
                             key={itineraryActivity._id}
-                            className="p-3.5 bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:border-slate-300 dark:hover:border-slate-700 transition-all"
+                            className="p-3.5 bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:border-cyan-300 dark:hover:border-cyan-700 hover:shadow-sm transition-all"
                           >
-                            <div className="flex items-center space-x-3">
-                              <div className="px-3 py-1.5 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-xs font-extrabold text-blue-600 dark:text-cyan-400 shrink-0 text-center shadow-xs">
+                            <div className="flex items-center space-x-3 min-w-0">
+                              <div className="px-2.5 py-1.5 rounded-lg bg-blue-600 text-white text-xs font-extrabold shrink-0 shadow-sm">
                                 {itineraryActivity.startTime} – {itineraryActivity.endTime}
                               </div>
-                              <div>
-                                <div className="flex items-center gap-2">
-                                  <h4 className="text-xs font-bold text-slate-900 dark:text-slate-100">{activity?.name || 'Activity'}</h4>
+                              <div className="min-w-0">
+                                <div className="flex items-center gap-2 flex-wrap">
+                                  <h4 className="text-sm font-bold text-slate-900 dark:text-slate-100 truncate">{activity?.name || 'Activity'}</h4>
                                   {activity?.type && (
-                                    <span className="px-2 py-0.5 rounded bg-blue-500/10 text-blue-600 dark:text-blue-400 text-[10px] font-bold">
+                                    <span className="px-2 py-0.5 rounded-full bg-indigo-50 dark:bg-indigo-500/10 text-indigo-700 dark:text-indigo-400 text-[10px] font-bold shrink-0">
                                       {activity.type}
                                     </span>
                                   )}
                                 </div>
-                                <div className="flex items-center gap-3 text-[11px] text-slate-500 dark:text-slate-400 mt-1 font-medium">
-                                  <span>📅 {formatDate(itineraryActivity.date)}</span>
-                                  <span>⏱️ {activity?.durationMinutes || 60} mins</span>
+                                <div className="flex items-center gap-3 text-[11px] text-slate-500 dark:text-slate-400 mt-1 font-medium flex-wrap">
+                                  <span className="flex items-center gap-1">
+                                    <Calendar size={10} /> {formatDate(itineraryActivity.date)}
+                                  </span>
+                                  <span className="flex items-center gap-1">
+                                    <Clock size={10} /> {activity?.durationMinutes || 60} mins
+                                  </span>
                                   <span className="text-emerald-600 dark:text-emerald-400 font-bold">
                                     ₹{(itineraryActivity.estimatedCost || activity?.cost || 0).toLocaleString()}
                                   </span>
@@ -640,7 +650,7 @@ export default function ItineraryBuilderPage() {
                                 onClick={() => handleReorderActivities(stop._id, activities, actIdx, 'up')}
                                 disabled={actIdx === 0}
                                 className="icon-btn-tool"
-                                title="Move Activity Up"
+                                title="Move Up"
                               >
                                 <ChevronUp size={14} />
                               </button>
@@ -648,7 +658,7 @@ export default function ItineraryBuilderPage() {
                                 onClick={() => handleReorderActivities(stop._id, activities, actIdx, 'down')}
                                 disabled={actIdx === activities.length - 1}
                                 className="icon-btn-tool"
-                                title="Move Activity Down"
+                                title="Move Down"
                               >
                                 <ChevronDown size={14} />
                               </button>
@@ -670,6 +680,17 @@ export default function ItineraryBuilderPage() {
                           </div>
                         );
                       })}
+
+                      {/* Add More Activities Row */}
+                      <div className="flex justify-center pt-1">
+                        <button
+                          onClick={() => openAddActivityModal(stopItem)}
+                          className="btn-secondary text-xs py-2 px-5"
+                        >
+                          <Plus size={13} />
+                          <span>Add Activity to {city?.name || 'Stop'}</span>
+                        </button>
+                      </div>
                     </div>
                   )}
                 </div>

@@ -259,7 +259,7 @@ export default function ItineraryViewPage() {
       </div>
 
       {/* 8. SEARCH AND CONTROLS BAR */}
-      <div className="my-trips-controls-bar">
+      <div className="itinerary-controls-bar">
         {/* Search */}
         <div className="search-box-wrapper">
           <Search size={18} className="search-icon-muted" />
@@ -403,8 +403,8 @@ export default function ItineraryViewPage() {
                   <div className="p-4 space-y-3 bg-white dark:bg-slate-900">
                     {/* Header labels for Desktop */}
                     <div className="hidden sm:flex items-center justify-between text-[11px] font-bold text-slate-400 uppercase tracking-wider px-3 pb-1 border-b border-slate-100 dark:border-slate-800">
-                      <span>PHYSICAL ACTIVITY</span>
-                      <span>EXPENSE</span>
+                      <span>Activity</span>
+                      <span>Expense</span>
                     </div>
 
                     {dayItems.map((item, idx) => {
