@@ -199,15 +199,17 @@ export default function ItineraryViewPage() {
             <span>My Trips</span>
           </Link>
           <div className="flex items-center gap-2">
-            <span className="engine-badge">Final Itinerary View</span>
+            <span className="engine-badge">✨ Final Itinerary View</span>
             {trip?.visibility === 'PUBLIC' && (
-              <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-500/20 dark:text-emerald-400">
+              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-100 text-emerald-800 dark:bg-emerald-500/20 dark:text-emerald-400">
                 🌐 Public Share
               </span>
             )}
           </div>
-          <h1 className="header-title-text">{trip?.name || 'Trip Itinerary'}</h1>
-          <p className="header-sub-text flex flex-wrap items-center gap-3 mt-1 font-medium">
+          <h1 className="header-title-text font-extrabold text-2xl">
+            {trip?.name ? trip.name.charAt(0).toUpperCase() + trip.name.slice(1) : 'Trip Itinerary'}
+          </h1>
+          <p className="header-sub-text flex flex-wrap items-center gap-3 mt-1 font-semibold">
             <span>📅 {formatDate(trip?.startDate)} — {formatDate(trip?.endDate)}</span>
             <span>📍 {stops.length} Cities</span>
             <span>🎯 {allScheduledItems.length} Activities</span>
@@ -219,16 +221,16 @@ export default function ItineraryViewPage() {
         <div className="header-actions-row">
           <button
             onClick={openAIChat}
-            className="nav-action-btn secondary text-xs"
+            className="btn-secondary"
             title="Optimize schedule with AI"
           >
             <Sparkles size={14} className="text-amber-500" />
             <span>Optimize AI</span>
           </button>
 
-          <Link to={`/trips/${tripId}/budget`} className="nav-action-btn secondary text-xs">
+          <Link to={`/trips/${tripId}/budget`} className="btn-secondary">
             <DollarSign size={14} className="text-emerald-500" />
-            <span>View Budget →</span>
+            <span>View Budget</span>
           </Link>
 
           {/* 7. VIEW MODE TOGGLE */}
@@ -249,7 +251,7 @@ export default function ItineraryViewPage() {
             </button>
           </div>
 
-          <Link to={`/trips/${tripId}/builder`} className="nav-action-btn primary text-xs">
+          <Link to={`/trips/${tripId}/builder`} className="btn-primary">
             <Edit3 size={14} />
             <span>Open Builder</span>
           </Link>
@@ -491,19 +493,21 @@ export default function ItineraryViewPage() {
           )}
 
           {/* 23. TRIP TOTAL & BUDGET LINK FOOTER */}
-          <div className="p-6 rounded-2xl bg-gradient-to-r from-slate-900 to-indigo-950 text-white flex flex-col sm:flex-row items-center justify-between gap-4 shadow-xl">
-            <div>
-              <p className="text-xs text-slate-300 font-bold uppercase tracking-wider">Estimated Trip Cost Summary</p>
-              <h3 className="text-2xl font-extrabold text-emerald-400 mt-0.5">₹{totalTripCost.toLocaleString()}</h3>
-              <p className="text-xs text-slate-400 mt-1">
-                {allScheduledItems.length} activities scheduled across {stops.length} cities
-              </p>
+          {allScheduledItems.length > 0 && (
+            <div className="p-6 sm:p-8 rounded-2xl bg-gradient-to-r from-slate-900 to-indigo-950 text-white flex flex-col sm:flex-row items-center justify-between gap-4 shadow-xl">
+              <div>
+                <p className="text-xs text-slate-300 font-bold uppercase tracking-wider">Estimated Trip Cost Summary</p>
+                <h3 className="text-2xl font-extrabold text-emerald-400 mt-0.5">₹{totalTripCost.toLocaleString()}</h3>
+                <p className="text-xs text-slate-400 mt-1">
+                  {allScheduledItems.length} activities scheduled across {stops.length} cities
+                </p>
+              </div>
+              <Link to={`/trips/${tripId}/budget`} className="btn-primary shrink-0">
+                <DollarSign size={15} />
+                <span>View Full Budget & Expenses →</span>
+              </Link>
             </div>
-            <Link to={`/trips/${tripId}/budget`} className="nav-action-btn primary text-xs shrink-0">
-              <DollarSign size={15} />
-              <span>View Full Budget & Expenses →</span>
-            </Link>
-          </div>
+          )}
         </div>
       )}
 
