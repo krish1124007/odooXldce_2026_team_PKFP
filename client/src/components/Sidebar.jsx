@@ -65,6 +65,14 @@ export default function Sidebar({ collapsed, setCollapsed, activeTab, setActiveT
           {!collapsed && <div className="group-title">MAIN</div>}
           
           <button 
+            className={`nav-item ${activeTab === 'Home' ? 'active' : ''}`}
+            onClick={() => setActiveTab('Home')}
+          >
+            <Compass size={18} className="item-icon" />
+            {!collapsed && <span>Home / Explore</span>}
+          </button>
+
+          <button 
             className={`nav-item ${activeTab === 'Dashboard' ? 'active' : ''}`}
             onClick={() => setActiveTab('Dashboard')}
           >

@@ -1,0 +1,524 @@
+/* LandingPage CSS Styling */
+.landing-container {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding-bottom: 5rem; /* Space for floating button */
+}
+
+/* 1. Large Hero Banner Card */
+.hero-banner-card {
+  position: relative;
+  width: 100%;
+  height: 280px;
+  border-radius: var(--radius-lg, 16px);
+  overflow: hidden;
+  box-shadow: 0 10px 30px -5px rgba(18, 34, 68, 0.15);
+}
+
+.hero-banner-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: brightness(0.75);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.hero-banner-card:hover .hero-banner-img {
+  transform: scale(1.02);
+}
+
+.hero-banner-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(18, 34, 68, 0.3) 0%, rgba(11, 15, 25, 0.85) 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 2.25rem;
+  color: #FFFFFF;
+}
+
+.hero-badge-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 11.5px;
+  font-weight: 700;
+  width: fit-content;
+  margin-bottom: 0.5rem;
+  color: #93C5FD;
+}
+
+.hero-banner-title {
+  font-family: var(--font-heading);
+  font-size: 1.85rem;
+  font-weight: 800;
+  color: #FFFFFF;
+  line-height: 1.2;
+  letter-spacing: -0.5px;
+}
+
+.hero-banner-sub {
+  font-size: 13.5px;
+  color: #E2E8F0;
+  max-width: 600px;
+  margin-top: 0.35rem;
+  margin-bottom: 1.25rem;
+}
+
+.hero-banner-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.banner-btn-primary {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: #38BDF8;
+  color: #0F172A;
+  padding: 0.55rem 1.25rem;
+  border-radius: 10px;
+  font-size: 13.5px;
+  font-weight: 700;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 14px rgba(56, 189, 248, 0.3);
+}
+
+.banner-btn-primary:hover {
+  background-color: #0284C7;
+  color: #FFFFFF;
+  transform: translateY(-1px);
+}
+
+.banner-btn-secondary {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(6px);
+  color: #FFFFFF;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  padding: 0.55rem 1.15rem;
+  border-radius: 10px;
+  font-size: 13.5px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.banner-btn-secondary:hover {
+  background-color: rgba(255, 255, 255, 0.25);
+}
+
+/* 2. Controls & Search Bar */
+.controls-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  padding: 0.85rem 1.25rem;
+  border-radius: var(--radius-lg, 14px);
+  box-shadow: var(--shadow-card);
+  flex-wrap: wrap;
+}
+
+.search-bar-input-box {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  background-color: var(--bg-app);
+  border: 1px solid var(--border-darker);
+  border-radius: 10px;
+  padding: 0.5rem 0.85rem;
+  flex: 1;
+  min-width: 260px;
+  transition: all 0.15s ease;
+}
+
+.search-bar-input-box:focus-within {
+  border-color: #38BDF8;
+  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.15);
+  background-color: var(--bg-card);
+}
+
+.search-bar-icon {
+  color: var(--text-muted);
+}
+
+.search-bar-field {
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 13.5px;
+  color: var(--text-primary);
+  width: 100%;
+}
+
+.filter-controls-group {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.control-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.5rem 0.85rem;
+  border-radius: 8px;
+  border: 1px solid var(--border-darker);
+  background-color: var(--bg-card);
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 600;
+  transition: all 0.15s ease;
+}
+
+.control-btn:hover {
+  background-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+.control-btn.active {
+  background-color: var(--nav-active-bg);
+  color: var(--primary-navy);
+  border-color: var(--primary-navy);
+}
+
+/* 3. Section Titles */
+.landing-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.section-header-row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+}
+
+.section-main-title {
+  font-family: var(--font-heading);
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  letter-spacing: -0.4px;
+}
+
+.section-sub-title {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.view-all-link {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--primary-navy);
+  text-decoration: none;
+  transition: all 0.15s ease;
+}
+
+.view-all-link:hover {
+  color: #2563EB;
+}
+
+/* 4. Top Regional Selections Grid (5 Cards Row) */
+.regional-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1rem;
+}
+
+.region-card {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+}
+
+.region-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08);
+  border-color: var(--border-darker);
+}
+
+.region-img-wrapper {
+  position: relative;
+  width: 100%;
+  height: 110px;
+  overflow: hidden;
+}
+
+.region-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.region-card:hover .region-img {
+  transform: scale(1.05);
+}
+
+.region-badge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  background-color: rgba(18, 34, 68, 0.85);
+  backdrop-filter: blur(4px);
+  color: #FFFFFF;
+  font-size: 10.5px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 4px;
+}
+
+.region-card-body {
+  padding: 0.85rem;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.region-title {
+  font-family: var(--font-heading);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.region-tag {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.region-count {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.region-arrow {
+  font-size: 14px;
+  color: var(--primary-navy);
+  font-weight: 700;
+}
+
+/* 5. Previous Trips Section (Taller Vertical Cards) */
+.previous-trips-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.25rem;
+}
+
+.trip-vertical-card {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+  display: flex;
+  flex-direction: column;
+  transition: all 0.2s ease;
+}
+
+.trip-vertical-card:hover {
+  box-shadow: 0 12px 30px -5px rgba(0, 0, 0, 0.08);
+  border-color: var(--border-darker);
+}
+
+.trip-card-banner {
+  position: relative;
+  width: 100%;
+  height: 150px;
+}
+
+.trip-card-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.trip-status-tag {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 10.5px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.trip-status-tag.upcoming {
+  background-color: #DBEAFE;
+  color: #1E40AF;
+}
+
+.trip-status-tag.draft {
+  background-color: #FEF3C7;
+  color: #92400E;
+}
+
+.trip-status-tag.completed {
+  background-color: #DCFCE7;
+  color: #166534;
+}
+
+.trip-card-content {
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  justify-content: space-between;
+}
+
+.trip-card-title {
+  font-family: var(--font-heading);
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  line-height: 1.3;
+}
+
+.trip-card-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-top: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.meta-item {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 12.5px;
+  color: var(--text-secondary);
+}
+
+.meta-icon {
+  color: var(--text-muted);
+}
+
+.trip-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid var(--border-color);
+  padding-top: 0.85rem;
+}
+
+.trip-budget-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.budget-label {
+  font-size: 11px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.budget-value {
+  font-family: var(--font-number);
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.trip-action-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.45rem 0.95rem;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  transition: all 0.15s ease;
+}
+
+.trip-action-btn.primary {
+  background-color: var(--primary-navy);
+  color: #FFFFFF;
+}
+
+.trip-action-btn.primary:hover {
+  background-color: var(--primary-navy-hover);
+}
+
+/* 6. Floating Action Button (Matching Wireframe Bottom Right "+ Plan a trip") */
+.floating-plan-trip-btn {
+  position: fixed;
+  bottom: 2rem;
+  right: 2.5rem;
+  z-index: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  background-color: var(--primary-navy, #122244);
+  color: #FFFFFF;
+  padding: 0.85rem 1.6rem;
+  border-radius: 9999px;
+  font-size: 15px;
+  font-weight: 700;
+  box-shadow: 0 10px 25px -3px rgba(18, 34, 68, 0.4), 0 4px 10px -2px rgba(0, 0, 0, 0.2);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.floating-plan-trip-btn:hover {
+  transform: translateY(-3px) scale(1.03);
+  background-color: #1C3366;
+  box-shadow: 0 16px 32px -4px rgba(18, 34, 68, 0.5);
+}
+
+.floating-plan-trip-btn:active {
+  transform: translateY(0) scale(0.98);
+}
+
+/* Responsive Scaling */
+@media (max-width: 1200px) {
+  .regional-cards-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .previous-trips-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .regional-cards-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .previous-trips-grid {
+    grid-template-columns: 1fr;
+  }
+  .floating-plan-trip-btn {
+    bottom: 1.5rem;
+    right: 1.5rem;
+    padding: 0.75rem 1.25rem;
+    font-size: 14px;
+  }
+}

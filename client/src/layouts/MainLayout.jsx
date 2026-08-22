@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
 import Header from '../components/Header';
-import AddEmployeeModal from '../components/AddEmployeeModal';
+import CreateTripModal from '../components/CreateTripModal';
 import ReportsModal from '../components/ReportsModal';
 import SearchModal from '../components/SearchModal';
 
@@ -11,7 +11,7 @@ export default function MainLayout({ kpiData, setKpiData }) {
   const [theme, setTheme] = useState('light');
 
   // Modals state
-  const [isAddEmployeeOpen, setIsAddEmployeeOpen] = useState(false);
+  const [isCreateTripOpen, setIsCreateTripOpen] = useState(false);
   const [isReportsOpen, setIsReportsOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
 
@@ -46,6 +46,9 @@ export default function MainLayout({ kpiData, setKpiData }) {
 
   const handleSelectTab = (tab) => {
     switch (tab) {
+      case 'Home':
+        navigate('/');
+        break;
       case 'Dashboard':
         navigate('/dashboard');
         break;
@@ -106,7 +109,8 @@ export default function MainLayout({ kpiData, setKpiData }) {
         {/* Dashboard Main Content */}
         <main className="main-content">
           <Outlet context={{ 
-            setIsAddEmployeeOpen, 
+            setIsCreateTripOpen, 
+            setIsAddEmployeeOpen: setIsCreateTripOpen,
             setIsReportsOpen, 
             setIsSearchOpen,
             kpiData
@@ -114,10 +118,10 @@ export default function MainLayout({ kpiData, setKpiData }) {
         </main>
       </div>
 
-      {/* Exact Old Modals */}
-      <AddEmployeeModal 
-        isOpen={isAddEmployeeOpen} 
-        onClose={() => setIsAddEmployeeOpen(false)}
+      {/* Modals */}
+      <CreateTripModal 
+        isOpen={isCreateTripOpen} 
+        onClose={() => setIsCreateTripOpen(false)}
         onAdd={handleAddTrip}
       />
 
