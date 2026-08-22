@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Bot, Sparkles, Send, X, Check, AlertCircle, RefreshCw, ChevronRight, ShieldCheck, Compass } from 'lucide-react';
 import api from '../../services/api';
+import './GlobeTrotterAI.css';
 
 export default function GlobeTrotterAI({ isOpen, onClose, context = {} }) {
   const [messages, setMessages] = useState([
@@ -127,24 +128,22 @@ export default function GlobeTrotterAI({ isOpen, onClose, context = {} }) {
   };
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 w-full max-w-lg bg-slate-900 border border-slate-800 rounded-3xl shadow-2xl overflow-hidden flex flex-col h-[620px] max-h-[85vh] animate-in slide-in-from-bottom-5 duration-200">
+    <div className="gt-ai-drawer-container">
       {/* AI Header */}
-      <div className="bg-gradient-to-r from-slate-900 via-slate-900 to-slate-950 p-4 border-b border-slate-800 flex items-center justify-between">
+      <div className="gt-ai-header">
         <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-cyan-500 to-blue-600 p-0.5 flex items-center justify-center shadow-lg shadow-cyan-500/20">
-            <div className="w-full h-full bg-slate-950 rounded-[14px] flex items-center justify-center text-cyan-400">
-              <Bot className="w-5 h-5" />
-            </div>
+          <div className="gt-ai-avatar-icon">
+            <Bot className="w-5 h-5" />
           </div>
           <div>
             <div className="flex items-center space-x-2">
-              <h3 className="text-base font-bold text-white">GlobeTrotter AI</h3>
-              <span className="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-cyan-500/20 text-cyan-400 border border-cyan-500/30">
+              <h3 className="gt-ai-title-text">GlobeTrotter AI</h3>
+              <span className="gt-ai-badge-model">
                 Agentic Groq
               </span>
             </div>
-            <p className="text-[11px] text-slate-400">
-              Context: <span className="text-slate-300 capitalize">{context.page || 'Dashboard'}</span>
+            <p className="gt-ai-subtitle-text">
+              Context: <span className="capitalize">{context.page || 'Dashboard'}</span>
               {context.tripName ? ` • ${context.tripName}` : ''}
             </p>
           </div>
@@ -152,33 +151,28 @@ export default function GlobeTrotterAI({ isOpen, onClose, context = {} }) {
 
         <button
           onClick={onClose}
-          className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+          className="gt-ai-close-btn"
+          title="Close AI Assistant"
         >
           <X className="w-5 h-5" />
         </button>
       </div>
 
       {actionSuccessMsg && (
-        <div className="bg-emerald-500/10 border-b border-emerald-500/20 px-4 py-2 text-xs text-emerald-400 flex items-center space-x-2">
-          <Check className="w-4 h-4 shrink-0" />
+        <div className="bg-emerald-50 dark:bg-emerald-950/40 border-b border-emerald-200 dark:border-emerald-800 px-4 py-2 text-xs text-emerald-800 dark:text-emerald-300 font-bold flex items-center space-x-2">
+          <Check className="w-4 h-4 shrink-0 text-emerald-600" />
           <span>{actionSuccessMsg}</span>
         </div>
       )}
 
       {/* Messages Scroll Body */}
-      <div className="flex-1 p-4 overflow-y-auto space-y-4 bg-slate-950/40">
+      <div className="gt-ai-messages-body">
         {messages.map((msg) => (
           <div
             key={msg.id}
             className={`flex flex-col ${msg.sender === 'user' ? 'items-end' : 'items-start'}`}
           >
-            <div
-              className={`max-w-[85%] p-4 rounded-2xl text-xs leading-relaxed space-y-3 ${
-                msg.sender === 'user'
-                  ? 'bg-gradient-to-r from-cyan-500 to-blue-600 text-white rounded-br-none shadow-md shadow-cyan-500/10'
-                  : 'bg-slate-900 border border-slate-800 text-slate-200 rounded-bl-none shadow-md'
-              }`}
-            >
+            <div className={`gt-ai-msg-bubble ${msg.sender === 'user' ? 'user' : 'agent'}`}>
               <div
                 className="prose prose-invert text-xs space-y-2"
                 dangerouslySetInnerHTML={{
@@ -188,23 +182,23 @@ export default function GlobeTrotterAI({ isOpen, onClose, context = {} }) {
 
               {/* Display Tool Badges */}
               {msg.toolsUsed && msg.toolsUsed.length > 0 && (
-                <div className="pt-2 border-t border-slate-800/80 flex flex-wrap gap-1.5">
+                <div className="pt-2 border-t border-slate-200 dark:border-slate-800 flex flex-wrap gap-1.5">
                   {msg.toolsUsed.map((tool) => (
                     <span
                       key={tool}
-                      className="px-2 py-0.5 rounded-md text-[10px] font-semibold bg-slate-950 text-cyan-400 border border-slate-800 flex items-center gap-1"
+                      className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-blue-50 dark:bg-slate-900 text-blue-700 dark:text-cyan-400 border border-blue-200 dark:border-slate-800 flex items-center gap-1"
                     >
-                      <ShieldCheck className="w-3 h-3 text-cyan-400" />
+                      <ShieldCheck className="w-3 h-3 text-blue-600 dark:text-cyan-400" />
                       <span>{tool}</span>
                     </span>
                   ))}
                 </div>
               )}
 
-              {/* Display Proposal Cards */}
+              {/* Display Action Proposals */}
               {msg.actions && msg.actions.length > 0 && (
                 <div className="pt-2 space-y-2">
-                  <div className="text-[10px] font-bold uppercase tracking-wider text-amber-400 flex items-center gap-1">
+                  <div className="text-[10px] font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400 flex items-center gap-1">
                     <Sparkles className="w-3 h-3" />
                     <span>Action Proposal (Requires Confirmation)</span>
                   </div>
@@ -212,12 +206,12 @@ export default function GlobeTrotterAI({ isOpen, onClose, context = {} }) {
                   {msg.actions.map((act) => (
                     <div
                       key={act.actionId}
-                      className="p-3 rounded-xl bg-slate-950 border border-amber-500/30 space-y-2"
+                      className="p-3 rounded-xl bg-slate-50 dark:bg-slate-950 border border-amber-300 dark:border-amber-500/30 space-y-2"
                     >
-                      <p className="font-bold text-slate-100 text-xs">{act.summary}</p>
+                      <p className="font-bold text-slate-900 dark:text-slate-100 text-xs">{act.summary}</p>
 
                       {act.status === 'APPROVED' ? (
-                        <span className="inline-flex items-center space-x-1 text-emerald-400 text-xs font-semibold">
+                        <span className="inline-flex items-center space-x-1 text-emerald-600 dark:text-emerald-400 text-xs font-bold">
                           <Check className="w-3.5 h-3.5" />
                           <span>Approved & Executed</span>
                         </span>
@@ -227,14 +221,14 @@ export default function GlobeTrotterAI({ isOpen, onClose, context = {} }) {
                         <div className="flex items-center space-x-2 pt-1">
                           <button
                             onClick={() => handleConfirmAction(act.actionId, true)}
-                            className="flex-1 py-1.5 px-3 rounded-lg bg-gradient-to-r from-emerald-500 to-teal-600 hover:opacity-95 text-white font-semibold text-xs shadow-sm flex items-center justify-center space-x-1"
+                            className="flex-1 py-1.5 px-3 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-sm flex items-center justify-center space-x-1"
                           >
                             <Check className="w-3.5 h-3.5" />
                             <span>Apply Changes</span>
                           </button>
                           <button
                             onClick={() => handleConfirmAction(act.actionId, false)}
-                            className="px-3 py-1.5 rounded-lg border border-slate-800 text-slate-400 hover:text-rose-400 text-xs font-semibold"
+                            className="px-3 py-1.5 rounded-lg border border-slate-300 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:text-rose-600 text-xs font-semibold"
                           >
                             Cancel
                           </button>
@@ -246,13 +240,13 @@ export default function GlobeTrotterAI({ isOpen, onClose, context = {} }) {
               )}
             </div>
 
-            <span className="text-[10px] text-slate-500 mt-1 px-1">{msg.timestamp}</span>
+            <span className="gt-ai-msg-timestamp">{msg.timestamp}</span>
           </div>
         ))}
 
         {loading && (
-          <div className="flex items-center space-x-2 p-3 rounded-2xl bg-slate-900 border border-slate-800 text-slate-400 text-xs w-fit animate-pulse">
-            <RefreshCw className="w-4 h-4 text-cyan-400 animate-spin" />
+          <div className="flex items-center space-x-2 p-3 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 text-xs w-fit animate-pulse">
+            <RefreshCw className="w-4 h-4 text-blue-600 dark:text-cyan-400 animate-spin" />
             <span>Analyzing application data & reasoning tools...</span>
           </div>
         )}
@@ -262,14 +256,14 @@ export default function GlobeTrotterAI({ isOpen, onClose, context = {} }) {
 
       {/* Contextual Quick Prompts */}
       {quickPrompts.length > 0 && (
-        <div className="p-2.5 bg-slate-900/90 border-t border-slate-800 flex items-center space-x-2 overflow-x-auto scrollbar-none">
-          <span className="text-[10px] font-bold uppercase text-slate-400 shrink-0">Quick:</span>
+        <div className="gt-ai-prompts-bar">
+          <span className="text-[10px] font-extrabold uppercase text-slate-400 shrink-0">Quick:</span>
           {quickPrompts.map((qp, idx) => (
             <button
               key={idx}
               onClick={() => handleSendMessage(qp)}
               disabled={loading}
-              className="px-3 py-1 rounded-full text-xs font-semibold bg-slate-950 border border-slate-800 hover:border-cyan-500 text-slate-300 hover:text-cyan-400 whitespace-nowrap transition-all"
+              className="gt-ai-prompt-pill"
             >
               {qp}
             </button>
@@ -283,19 +277,19 @@ export default function GlobeTrotterAI({ isOpen, onClose, context = {} }) {
           e.preventDefault();
           handleSendMessage();
         }}
-        className="p-3 bg-slate-900 border-t border-slate-800 flex items-center space-x-2"
+        className="gt-ai-input-bar"
       >
         <input
           type="text"
           value={inputText}
           onChange={(e) => setInputText(e.target.value)}
           placeholder="Ask GlobeTrotter AI to plan, optimize or search..."
-          className="flex-1 px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-cyan-500"
+          className="gt-ai-input-field"
         />
         <button
           type="submit"
           disabled={!inputText.trim() || loading}
-          className="p-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 text-white disabled:opacity-50 transition-all shadow-md shadow-cyan-500/20"
+          className="gt-ai-send-btn"
         >
           <Send className="w-4 h-4" />
         </button>
@@ -327,6 +321,6 @@ function formatMarkdown(txt) {
   return txt
     .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
     .replace(/\*(.*?)\*/g, '<em>$1</em>')
-    .replace(/`(.*?)`/g, '<code class="bg-slate-950 px-1 py-0.5 rounded text-cyan-400">$1</code>')
+    .replace(/`(.*?)`/g, '<code class="bg-slate-100 dark:bg-slate-900 px-1 py-0.5 rounded text-blue-600 dark:text-cyan-400 font-mono">$1</code>')
     .replace(/\n/g, '<br />');
 }

@@ -213,10 +213,11 @@ export default function MainLayout({ kpiData, setKpiData }) {
       {!isAIOpen && (
         <button
           onClick={() => openAIWithContext()}
-          className="fixed bottom-6 right-6 z-40 px-4 py-3 rounded-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:opacity-95 text-white font-bold text-xs shadow-2xl shadow-cyan-500/40 flex items-center space-x-2 border border-cyan-400/30 animate-bounce"
+          className="gt-ai-floating-trigger"
           title="Open GlobeTrotter AI Assistant"
         >
-          <Sparkles className="w-4 h-4" />
+          <span className="gt-ai-trigger-dot"></span>
+          <Sparkles className="w-4 h-4 text-amber-400" />
           <span>GlobeTrotter AI</span>
         </button>
       )}

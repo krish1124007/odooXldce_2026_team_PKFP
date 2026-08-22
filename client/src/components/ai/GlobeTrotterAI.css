@@ -1,0 +1,262 @@
+/* GlobeTrotter AI Assistant CSS Styling */
+.gt-ai-floating-trigger {
+  position: fixed;
+  bottom: 1.75rem;
+  right: 1.75rem;
+  z-index: 900;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.75rem 1.25rem;
+  border-radius: 9999px;
+  background: linear-gradient(135deg, #1E1B4B 0%, #312E81 50%, #0F172A 100%) !important;
+  color: #FFFFFF !important;
+  font-weight: 800 !important;
+  font-size: 13px;
+  border: 1px solid #4338CA;
+  box-shadow: 0 8px 25px rgba(49, 46, 129, 0.45);
+  cursor: pointer;
+  transition: all 0.25 cubic-bezier(0.4, 0, 0.2, 1);
+  user-select: none;
+}
+
+.gt-ai-floating-trigger:hover {
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 12px 30px rgba(49, 46, 129, 0.6);
+  background: linear-gradient(135deg, #312E81 0%, #3730A3 100%) !important;
+}
+
+.gt-ai-trigger-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #10B981;
+  box-shadow: 0 0 8px #10B981;
+  flex-shrink: 0;
+}
+
+/* AI Chat Drawer Container */
+.gt-ai-drawer-container {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  z-index: 9999;
+  width: 440px;
+  max-width: calc(100vw - 2rem);
+  height: 640px;
+  max-height: calc(100vh - 4rem);
+  background-color: var(--bg-card, #FFFFFF);
+  border: 1px solid var(--border-color, #CBD5E1);
+  border-radius: 24px;
+  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.25);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: slideUpFade 0.25s ease-out forwards;
+}
+
+@keyframes slideUpFade {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Drawer Header */
+.gt-ai-header {
+  background: linear-gradient(135deg, #0F172A 0%, #1E293B 50%, #122244 100%);
+  padding: 1rem 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #334155;
+  color: #FFFFFF;
+}
+
+.gt-ai-avatar-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #0284C7 0%, #2563EB 100%);
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+  flex-shrink: 0;
+}
+
+.gt-ai-title-text {
+  font-family: var(--font-heading, 'Outfit', sans-serif);
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #FFFFFF;
+}
+
+.gt-ai-subtitle-text {
+  font-size: 11px;
+  color: #94A3B8;
+}
+
+.gt-ai-badge-model {
+  font-size: 10px;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  background-color: rgba(56, 189, 248, 0.15);
+  color: #38BDF8;
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  text-transform: uppercase;
+}
+
+.gt-ai-close-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #94A3B8;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.gt-ai-close-btn:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #FFFFFF;
+}
+
+/* Chat Messages Scroll Area */
+.gt-ai-messages-body {
+  flex: 1;
+  padding: 1.25rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  background-color: var(--bg-app, #F8FAFC);
+}
+
+.gt-ai-msg-bubble {
+  max-width: 85%;
+  padding: 0.85rem 1.1rem;
+  border-radius: 18px;
+  font-size: 12.5px;
+  line-height: 1.5;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.gt-ai-msg-bubble.user {
+  align-self: flex-end;
+  background: linear-gradient(135deg, #122244 0%, #1C3366 100%);
+  color: #FFFFFF;
+  border-bottom-right-radius: 4px;
+  box-shadow: 0 4px 12px rgba(18, 34, 68, 0.2);
+}
+
+.gt-ai-msg-bubble.agent {
+  align-self: flex-start;
+  background-color: var(--bg-card, #FFFFFF);
+  border: 1px solid var(--border-color, #E2E8F0);
+  color: var(--text-primary, #0F172A);
+  border-bottom-left-radius: 4px;
+  box-shadow: var(--shadow-card, 0 2px 10px rgba(0, 0, 0, 0.03));
+}
+
+.gt-ai-msg-timestamp {
+  font-size: 10px;
+  color: var(--text-secondary, #94A3B8);
+  align-self: flex-end;
+  margin-top: 2px;
+}
+
+/* Quick Prompts */
+.gt-ai-prompts-bar {
+  padding: 0.6rem 1rem;
+  background-color: var(--bg-card, #FFFFFF);
+  border-top: 1px solid var(--border-color, #E2E8F0);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  overflow-x: auto;
+}
+
+.gt-ai-prompt-pill {
+  padding: 0.35rem 0.85rem;
+  border-radius: 9999px;
+  font-size: 11.5px;
+  font-weight: 700;
+  background-color: var(--bg-app, #F8FAFC);
+  border: 1px solid var(--border-darker, #CBD5E1);
+  color: var(--text-primary, #0F172A);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+}
+
+.gt-ai-prompt-pill:hover {
+  border-color: #0284C7;
+  color: #0284C7;
+  background-color: var(--bg-card, #FFFFFF);
+}
+
+/* Chat Input Bar */
+.gt-ai-input-bar {
+  padding: 0.85rem 1rem;
+  background-color: var(--bg-card, #FFFFFF);
+  border-top: 1px solid var(--border-color, #E2E8F0);
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.gt-ai-input-field {
+  flex: 1;
+  padding: 0.65rem 1rem;
+  border-radius: 12px;
+  border: 1px solid var(--border-darker, #CBD5E1);
+  background-color: var(--bg-app, #F8FAFC);
+  font-size: 13px;
+  color: var(--text-primary, #0F172A);
+  outline: none;
+  transition: all 0.15s ease;
+}
+
+.gt-ai-input-field:focus {
+  border-color: #0284C7;
+  background-color: var(--bg-card, #FFFFFF);
+  box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
+}
+
+.gt-ai-send-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #0284C7 0%, #2563EB 100%);
+  color: #FFFFFF;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+}
+
+.gt-ai-send-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35);
+}
+
+.gt-ai-send-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
