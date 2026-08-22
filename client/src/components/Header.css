@@ -25,16 +25,18 @@
   border: 1px solid var(--border-darker, #CBD5E1);
   border-radius: 12px;
   padding: 0 0.85rem;
-  height: 42px;
-  width: 340px;
+  height: 38px;
+  width: 320px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  user-select: none;
 }
 
 .search-bar-container:hover {
-  border-color: #94A3B8;
+  border-color: #38BDF8;
   background-color: var(--bg-card, #FFFFFF);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 12px rgba(56, 189, 248, 0.12);
+  transform: translateY(-1px);
 }
 
 .search-icon {
@@ -42,35 +44,40 @@
   flex-shrink: 0;
 }
 
-.search-input {
-  border: none;
-  background: transparent;
-  outline: none;
-  font-size: 13.5px;
+.search-placeholder-text {
+  font-size: 12.5px;
   font-weight: 500;
-  color: var(--text-primary, #0F172A);
-  width: 100%;
-  height: 100%;
-  line-height: 42px;
-  padding: 0;
-  cursor: pointer;
-}
-
-.search-input::placeholder {
   color: var(--text-muted, #94A3B8);
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1;
 }
 
 .cmd-k-badge {
-  font-size: 11px;
+  font-size: 10.5px;
   font-weight: 700;
   font-family: inherit;
-  color: var(--text-muted, #64748B);
+  color: #64748B;
   background-color: var(--bg-card, #FFFFFF);
   border: 1px solid var(--border-darker, #CBD5E1);
   border-radius: 6px;
   padding: 2px 6px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
   flex-shrink: 0;
+  letter-spacing: 0.5px;
+}
+
+[data-theme="dark"] .search-bar-container, body.dark .search-bar-container {
+  background-color: #0F172A;
+  border-color: #1E293B;
+}
+
+[data-theme="dark"] .cmd-k-badge, body.dark .cmd-k-badge {
+  background-color: #1E293B;
+  border-color: #334155;
+  color: #94A3B8;
 }
 
 .header-actions {

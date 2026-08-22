@@ -25,14 +25,13 @@ export default function Header({ theme, setTheme, onSearchClick }) {
   return (
     <header className="top-header">
       <div className="header-left-space">
-        <div className="search-bar-container" onClick={onSearchClick}>
-          <Search size={18} className="search-icon" />
-          <input 
-            type="text" 
-            placeholder="Search..." 
-            className="search-input"
-            readOnly
-          />
+        <div 
+          className="search-bar-container" 
+          onClick={onSearchClick}
+          title="Search trips, cities & activities (Ctrl+K)"
+        >
+          <Search size={16} className="search-icon" />
+          <span className="search-placeholder-text">Search trips, cities, activities...</span>
           <kbd className="cmd-k-badge">⌘K</kbd>
         </div>
       </div>
