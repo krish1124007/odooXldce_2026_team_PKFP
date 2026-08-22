@@ -475,15 +475,17 @@ export default function CalendarTimelinePage() {
                       ? 'linear-gradient(135deg, #0284C7 0%, #2563EB 100%)'
                       : 'linear-gradient(135deg, #059669 0%, #10B981 100%)';
 
+                    const tripTitle = t.name ? t.name.charAt(0).toUpperCase() + t.name.slice(1) : 'Trip';
+
                     return (
                       <div
                         key={t._id}
                         className="cell-trip-pill"
                         style={{ background: bgStyle }}
-                        title={`${t.name} (${new Date(t.startDate).toLocaleDateString()} - ${new Date(t.endDate).toLocaleDateString()})`}
+                        title={`${tripTitle} (${new Date(t.startDate).toLocaleDateString()} - ${new Date(t.endDate).toLocaleDateString()})`}
                       >
-                        <span>✈️</span>
-                        <span className="truncate">{t.name}</span>
+                        <Compass size={12} className="shrink-0 text-white" />
+                        <span className="truncate">{tripTitle}</span>
                       </div>
                     );
                   })}
