@@ -1,0 +1,355 @@
+/* Budget Page UI Step 5 Styling */
+.budget-screen-wrapper {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1.25rem 0.5rem 4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Header Card */
+.budget-header-card {
+  background-color: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: 18px;
+  padding: 1.5rem 1.75rem;
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.04);
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+@media (min-width: 768px) {
+  .budget-header-card {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.back-link-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #64748B;
+  text-decoration: none;
+  transition: color 0.15s ease;
+  width: fit-content;
+}
+
+.back-link-btn:hover {
+  color: #0F172A;
+}
+
+.screen-title {
+  font-family: var(--font-heading, 'Outfit', sans-serif);
+  font-size: 1.85rem;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+
+.screen-subtitle {
+  font-size: 13.5px;
+  color: #64748B;
+}
+
+.trip-context-tag {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #2563EB;
+  margin-top: 0.2rem;
+}
+
+/* Budget Status Badges */
+.budget-status-pill {
+  padding: 0.25rem 0.65rem;
+  border-radius: 9999px;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.budget-status-pill.safe {
+  background-color: #DCFCE7;
+  color: #15803D;
+  border: 1px solid #86EFAC;
+}
+
+.budget-status-pill.near {
+  background-color: #FEF3C7;
+  color: #B45309;
+  border: 1px solid #FCD34D;
+}
+
+.budget-status-pill.over {
+  background-color: #FEE2E2;
+  color: #B91C1C;
+  border: 1px solid #FCA5A5;
+}
+
+.header-actions-row {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+}
+
+.nav-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.55rem 1rem;
+  border-radius: 10px;
+  font-size: 12.5px;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.nav-action-btn.ai-btn {
+  background: linear-gradient(135deg, #2563EB 0%, #4F46E5 100%);
+  color: #FFFFFF;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+}
+
+.nav-action-btn.ai-btn:hover {
+  opacity: 0.95;
+  transform: translateY(-1px);
+}
+
+/* Hero Budget Summary Card */
+.budget-summary-hero-card {
+  background-color: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: 18px;
+  padding: 1.75rem;
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.04);
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.hero-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.25rem;
+}
+
+.kpi-box {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding: 1rem 1.15rem;
+  background-color: #F8FAFC;
+  border: 1px solid #F1F5F9;
+  border-radius: 14px;
+}
+
+.kpi-label {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #64748B;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.kpi-value {
+  font-family: var(--font-heading, 'Outfit', sans-serif);
+  font-size: 1.6rem;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+
+.kpi-sub {
+  font-size: 11.5px;
+}
+
+/* Hero Progress Section */
+.hero-progress-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid #F1F5F9;
+}
+
+.progress-labels-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12.5px;
+}
+
+.progress-track-bg {
+  width: 100%;
+  height: 12px;
+  background-color: #F1F5F9;
+  border-radius: 9999px;
+  overflow: hidden;
+}
+
+.progress-fill-bar {
+  height: 100%;
+  border-radius: 9999px;
+  transition: width 0.5s ease;
+}
+
+/* AI Budget Banner */
+.ai-budget-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  background: linear-gradient(135deg, #EFF6FF 0%, #F0F9FF 100%);
+  border: 1.5px dashed #93C5FD;
+  border-radius: 14px;
+  flex-wrap: wrap;
+}
+
+.ai-banner-left {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.ai-sparkle-badge {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background-color: #2563EB;
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  shrink: 0;
+}
+
+.ai-banner-title {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #1E3A8A;
+}
+
+.ai-banner-desc {
+  font-size: 11.5px;
+  color: #3B82F6;
+}
+
+.btn-ai-banner {
+  padding: 0.55rem 0.95rem;
+  border-radius: 8px;
+  background-color: #2563EB;
+  color: #FFFFFF;
+  font-size: 12px;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+}
+
+.btn-ai-banner:hover {
+  background-color: #1D4ED8;
+}
+
+/* Section Blocks */
+.section-block {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.section-header-title {
+  font-family: var(--font-heading, 'Outfit', sans-serif);
+}
+
+/* Category Cards Grid */
+.category-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.cost-category-card {
+  background-color: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: 14px;
+  padding: 1.15rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  transition: transform 0.15s ease, shadow 0.15s ease;
+}
+
+.cost-category-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+}
+
+.cat-card-top {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.cat-emoji-icon {
+  font-size: 1.25rem;
+}
+
+.cat-name-text {
+  font-size: 13px;
+  font-weight: 700;
+  color: #0F172A;
+  text-transform: capitalize;
+}
+
+.cat-amount-text {
+  font-family: var(--font-heading, 'Outfit', sans-serif);
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: #0F172A;
+}
+
+.cat-percent-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.cat-percent-track {
+  width: 100%;
+  height: 6px;
+  background-color: #F1F5F9;
+  border-radius: 9999px;
+  overflow: hidden;
+}
+
+.cat-percent-fill {
+  height: 100%;
+  border-radius: 9999px;
+}
+
+.cat-percent-val {
+  font-size: 11px;
+  color: #64748B;
+  font-weight: 600;
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .hero-kpi-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .category-cards-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
