@@ -1,85 +1,65 @@
-@import "tailwindcss";
+/* ==========================================================================
+   GlobeTrotter — Ultra-Premium Odoo UI Design System & Global Styles
+   ========================================================================== */
 
-@variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
-
-/* GlobeTrotter Design System & Base CSS */
 @import './components/ui/ui.css';
 @import './layouts/layout.css';
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
 :root {
-  --font-family: 'DM Sans', 'Plus Jakarta Sans', -apple-system, sans-serif;
-  --font-heading: 'Outfit', 'DM Sans', sans-serif;
-  --font-number: 'Space Grotesk', 'Outfit', sans-serif;
-  
-  /* Light Mode Colors matching screenshot */
-  --bg-app: #F8FAFC;
-  --bg-sidebar: #FFFFFF;
-  --bg-header: #FFFFFF;
-  --bg-card: #FFFFFF;
-  
-  --text-primary: #0F172A;
-  --text-secondary: #64748B;
-  --text-muted: #94A3B8;
-  
-  --border-color: #F1F5F9;
-  --border-darker: #E2E8F0;
-  
-  --primary-navy: #122244;
-  --primary-navy-hover: #1C3366;
-  --nav-active-bg: #EDF2F7;
-  --nav-active-text: #0F172A;
-  
-  --kpi-icon-bg: #F1F5F9;
-  --kpi-icon-color: #475569;
-  
-  --chart-navy: #122244;
-  --chart-orange: #EFA00B;
-  --chart-blue: #2A9DF4;
-  
-  --badge-admin-bg: #E2E8F0;
-  --badge-admin-text: #334155;
-  --online-green: #22C55E;
-  
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.03);
-  --shadow-card: 0 4px 20px -2px rgba(0, 0, 0, 0.03), 0 2px 6px -1px rgba(0, 0, 0, 0.02);
-  --shadow-dropdown: 0 10px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
-  
-  --radius-sm: 6px;
-  --radius-md: 10px;
-  --radius-lg: 14px;
-  --radius-xl: 20px;
-  
+  /* Fonts */
+  --font-sans: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-heading: 'Outfit', 'Plus Jakarta Sans', sans-serif;
+
+  /* Odoo & GlobeTrotter Harmonious Color Palette */
+  --odoo-purple: #714B67;
+  --odoo-purple-hover: #5B3A53;
+  --odoo-teal: #017E84;
+  --odoo-teal-light: #00A09D;
+  --odoo-teal-glow: rgba(1, 126, 132, 0.25);
+
+  /* Deep Sleek Slate Dark Mode Core */
+  --bg-app: #0B0F19;
+  --bg-surface: #111827;
+  --bg-card: #1E293B;
+  --bg-card-hover: #26334D;
+  --bg-glass: rgba(30, 41, 59, 0.75);
+
+  /* Vibrant Accent Gradients */
+  --grad-primary: linear-gradient(135deg, #06B6D4 0%, #3B82F6 100%);
+  --grad-purple: linear-gradient(135deg, #714B67 0%, #A855F7 100%);
+  --grad-emerald: linear-gradient(135deg, #10B981 0%, #059669 100%);
+  --grad-amber: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+  --grad-rose: linear-gradient(135deg, #F43F5E 0%, #E11D48 100%);
+
+  /* Typography Colors */
+  --text-primary: #F8FAFC;
+  --text-secondary: #CBD5E1;
+  --text-muted: #64748B;
+  --text-accent: #38BDF8;
+
+  /* Borders & Dividers */
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-card: #1E293B;
+  --border-focus: #38BDF8;
+
+  /* Shadows & Glows */
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 6px 20px rgba(0, 0, 0, 0.35);
+  --shadow-lg: 0 12px 36px -4px rgba(0, 0, 0, 0.5);
+  --shadow-glow: 0 0 25px rgba(56, 189, 248, 0.15);
+
+  /* Border Radii */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+  --radius-xl: 26px;
+  --radius-full: 9999px;
+
+  /* Dimensions */
   --sidebar-width: 260px;
   --sidebar-width-collapsed: 72px;
   --header-height: 70px;
-}
-
-/* Dark Mode Theme */
-[data-theme="dark"] {
-  --bg-app: #0B0F19;
-  --bg-sidebar: #111827;
-  --bg-header: #111827;
-  --bg-card: #1E293B;
-  
-  --text-primary: #F8FAFC;
-  --text-secondary: #94A3B8;
-  --text-muted: #64748B;
-  
-  --border-color: #1E293B;
-  --border-darker: #334155;
-  
-  --primary-navy: #38BDF8;
-  --primary-navy-hover: #0284C7;
-  --nav-active-bg: #334155;
-  --nav-active-text: #F8FAFC;
-  
-  --kpi-icon-bg: #334155;
-  --kpi-icon-color: #CBD5E1;
-  
-  --badge-admin-bg: #334155;
-  --badge-admin-text: #93C5FD;
-  
-  --shadow-card: 0 4px 20px -2px rgba(0, 0, 0, 0.3);
 }
 
 * {
@@ -88,33 +68,28 @@
   padding: 0;
 }
 
-body {
-  font-family: var(--font-family);
+html, body {
+  width: 100%;
+  height: 100%;
   background-color: var(--bg-app);
   color: var(--text-primary);
-  line-height: 1.5;
+  font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
 }
 
-button {
-  font-family: inherit;
-  cursor: pointer;
-  border: none;
-  background: none;
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  letter-spacing: -0.02em;
 }
 
-input, select, textarea {
-  font-family: inherit;
-}
-
-/* App Layout Structure */
+/* App Container Layout */
 .app-container {
   display: flex;
   min-height: 100vh;
   width: 100vw;
-  background-color: var(--bg-app);
+  background: var(--bg-app);
 }
 
 .main-wrapper {
@@ -134,75 +109,127 @@ input, select, textarea {
   margin: 0 auto;
 }
 
-/* Custom Scrollbar matching screenshot */
-.custom-scrollbar::-webkit-scrollbar {
+/* Custom Smooth Scrollbar */
+::-webkit-scrollbar {
   width: 6px;
+  height: 6px;
 }
 
-.custom-scrollbar::-webkit-scrollbar-track {
+::-webkit-scrollbar-track {
   background: transparent;
 }
 
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #CBD5E1;
-  border-radius: 9999px;
+::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: var(--radius-full);
 }
 
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #94A3B8;
+::-webkit-scrollbar-thumb:hover {
+  background: #475569;
 }
 
-/* Common Card Style */
-.dashboard-card {
-  background-color: var(--bg-card);
-  border: 1px solid var(--border-color);
+/* Card Surfaces */
+.gt-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
   border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-card);
-  padding: 1.5rem;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: var(--shadow-md);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
 }
 
-.dashboard-card:hover {
-  box-shadow: 0 6px 24px -4px rgba(0, 0, 0, 0.05);
+.gt-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg), var(--shadow-glow);
+  border-color: #334155;
 }
 
-/* Modal Overlay Styling */
-.modal-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(15, 23, 42, 0.4);
-  backdrop-filter: blur(4px);
+.gt-glass-card {
+  background: var(--bg-glass);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
+}
+
+/* Button Styles */
+.gt-btn-primary {
+  background: var(--grad-primary);
+  color: #FFFFFF;
+  font-weight: 600;
+  font-size: 0.85rem;
+  padding: 0.75rem 1.25rem;
+  border-radius: var(--radius-md);
+  box-shadow: 0 4px 14px rgba(6, 182, 212, 0.3);
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+}
+
+.gt-btn-primary:hover {
+  opacity: 0.95;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(6, 182, 212, 0.45);
+}
+
+.gt-btn-secondary {
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  color: var(--text-secondary);
+  font-weight: 600;
+  font-size: 0.85rem;
+  padding: 0.75rem 1.25rem;
+  border-radius: var(--radius-md);
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+}
+
+.gt-btn-secondary:hover {
+  background: #26334D;
+  color: var(--text-primary);
+  border-color: #475569;
+}
+
+/* Odoo Status Pills & Stage Bar */
+.odoo-status-bar {
   display: flex;
   align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  animation: fadeIn 0.2s ease-out;
+  gap: 0.25rem;
+  background: #090D16;
+  border: 1px solid var(--border-card);
+  padding: 0.35rem;
+  border-radius: var(--radius-md);
 }
 
-.modal-container {
-  background: var(--bg-card);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-xl);
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
-  width: 90%;
-  max-width: 540px;
-  padding: 1.75rem;
-  animation: slideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+.odoo-status-pill {
+  padding: 0.4rem 0.9rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  transition: all 0.2s ease;
 }
 
+.odoo-status-pill.active {
+  background: var(--odoo-purple);
+  color: #FFFFFF;
+  box-shadow: 0 2px 8px rgba(113, 75, 103, 0.4);
+}
+
+/* Animations */
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-@keyframes slideUp {
-  from { opacity: 0; transform: translateY(12px) scale(0.98); }
-  to { opacity: 1; transform: translateY(0) scale(1); }
-}
-
-/* Responsive adjustments */
-@media (max-width: 1024px) {
-  .main-content {
-    padding: 1.5rem 1rem;
-  }
+.animate-fade-in {
+  animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
