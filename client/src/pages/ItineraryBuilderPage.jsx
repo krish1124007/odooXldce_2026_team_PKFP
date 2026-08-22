@@ -520,56 +520,51 @@ export default function ItineraryBuilderPage() {
             );
 
             return (
-              <div key={stop._id} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden shadow-lg">
-                {/* Section Header Matching Wireframe Screen 5 */}
-                <div className="p-5 bg-slate-50 dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800 flex flex-col gap-3">
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <span className="px-2.5 py-1 rounded-lg bg-blue-600 text-white text-xs font-extrabold uppercase tracking-wider">
-                          Section {index + 1}
+              <div key={stop._id} className="itinerary-stop-card">
+                {/* Stop Header */}
+                <div className="stop-card-header">
+                  <div className="stop-title-row">
+                    <div className="flex items-center gap-2.5 flex-wrap">
+                      <span className="stop-number-badge">
+                        Stop {index + 1}
+                      </span>
+                      <h3 className="stop-city-title">
+                        {city?.name || 'City Stop'}
+                      </h3>
+                      {city?.country && (
+                        <span className="stop-country-tag">
+                          {city.country}
                         </span>
-                        <h3 className="text-lg font-extrabold text-slate-900 dark:text-white">
-                          {city?.name || 'City Stop'}
-                        </h3>
-                        {city?.country && (
-                          <span className="px-2 py-0.5 rounded-full bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-[11px] font-semibold">
-                            {city.country}
-                          </span>
-                        )}
-                      </div>
-                      <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                        All the necessary information about this section (travel, stay, and activities for {city?.name || 'this stop'}).
-                      </p>
+                      )}
                     </div>
 
                     <div className="flex items-center gap-1.5 shrink-0">
                       <button
                         onClick={() => handleReorderStops(index, 'up')}
                         disabled={index === 0}
-                        className="p-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white disabled:opacity-30"
-                        title="Move Up"
+                        className="icon-btn-tool"
+                        title="Move Stop Up"
                       >
                         <ChevronUp size={16} />
                       </button>
                       <button
                         onClick={() => handleReorderStops(index, 'down')}
                         disabled={index === stops.length - 1}
-                        className="p-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white disabled:opacity-30"
-                        title="Move Down"
+                        className="icon-btn-tool"
+                        title="Move Stop Down"
                       >
                         <ChevronDown size={16} />
                       </button>
                       <button
                         onClick={() => openEditStopModal(stop)}
-                        className="p-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-cyan-600 dark:hover:text-cyan-400"
+                        className="icon-btn-tool"
                         title="Edit Stop Dates"
                       >
                         <Edit3 size={16} />
                       </button>
                       <button
                         onClick={() => handleDeleteStop(stop._id, city?.name || 'City')}
-                        className="p-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-red-500"
+                        className="icon-btn-tool delete"
                         title="Remove Stop"
                       >
                         <Trash2 size={16} />
@@ -577,57 +572,60 @@ export default function ItineraryBuilderPage() {
                     </div>
                   </div>
 
-                  {/* Wireframe Screen 5 Pill Boxes */}
-                  <div className="flex flex-wrap items-center gap-3 pt-1">
-                    <div className="px-3.5 py-1.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs font-bold text-slate-800 dark:text-slate-200 flex items-center gap-2 shadow-sm">
+                  {/* Dates & Budget Meta Row */}
+                  <div className="stop-meta-pills-row">
+                    <div className="stop-meta-pill">
                       <Calendar className="w-3.5 h-3.5 text-blue-600 dark:text-cyan-400" />
-                      <span>Date Range: {formatDate(stop.startDate)} to {formatDate(stop.endDate)}</span>
+                      <span>{formatDate(stop.startDate)} — {formatDate(stop.endDate)}</span>
                     </div>
 
-                    <div className="px-3.5 py-1.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-2 shadow-sm">
+                    <div className="stop-meta-pill budget">
                       <DollarSign className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-                      <span>Budget of this section: ₹{sectionBudget.toLocaleString()}</span>
+                      <span>Est. Budget: ₹{sectionBudget.toLocaleString()}</span>
                     </div>
                   </div>
                 </div>
 
                 {/* Stop Activities List */}
-                <div className="p-4 space-y-3">
+                <div className="p-5 space-y-3">
                   {activities.length === 0 ? (
-                    <div className="py-6 text-center border border-dashed border-slate-200 dark:border-slate-800 rounded-xl">
-                      <p className="text-xs text-slate-500 dark:text-slate-400">No activities planned for this section yet.</p>
+                    <div className="stop-empty-act-box">
+                      <p className="text-xs text-slate-500 font-semibold">No activities planned for {city?.name || 'this stop'} yet.</p>
                       <button
                         onClick={() => openAddActivityModal(stopItem)}
-                        className="mt-2 text-xs font-semibold text-cyan-600 dark:text-cyan-400 hover:underline inline-flex items-center gap-1"
+                        className="btn-secondary text-xs"
                       >
-                        <Plus size={14} /> Add Activity to Section
+                        <Plus size={14} />
+                        <span>Add Activity to {city?.name || 'Stop'}</span>
                       </button>
                     </div>
                   ) : (
-                    <div className="space-y-2">
+                    <div className="space-y-2.5">
                       {activities.map((actItem, actIdx) => {
                         const { itineraryActivity, activity } = actItem;
                         return (
                           <div
                             key={itineraryActivity._id}
-                            className="p-3 bg-slate-50 dark:bg-slate-950/70 border border-slate-200 dark:border-slate-800/80 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:border-slate-300 dark:hover:border-slate-700 transition-all"
+                            className="p-3.5 bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:border-slate-300 dark:hover:border-slate-700 transition-all"
                           >
                             <div className="flex items-center space-x-3">
-                              <div className="px-3 py-1.5 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs font-bold text-cyan-600 dark:text-cyan-400 shrink-0 text-center">
+                              <div className="px-3 py-1.5 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-xs font-extrabold text-blue-600 dark:text-cyan-400 shrink-0 text-center shadow-xs">
                                 {itineraryActivity.startTime} – {itineraryActivity.endTime}
                               </div>
                               <div>
                                 <div className="flex items-center gap-2">
                                   <h4 className="text-xs font-bold text-slate-900 dark:text-slate-100">{activity?.name || 'Activity'}</h4>
-                                  <span className="px-2 py-0.5 rounded bg-blue-500/10 text-blue-600 dark:text-blue-400 text-[10px] font-semibold">
-                                    {activity?.type}
-                                  </span>
+                                  {activity?.type && (
+                                    <span className="px-2 py-0.5 rounded bg-blue-500/10 text-blue-600 dark:text-blue-400 text-[10px] font-bold">
+                                      {activity.type}
+                                    </span>
+                                  )}
                                 </div>
-                                <div className="flex items-center gap-3 text-[11px] text-slate-500 dark:text-slate-400 mt-1">
+                                <div className="flex items-center gap-3 text-[11px] text-slate-500 dark:text-slate-400 mt-1 font-medium">
                                   <span>📅 {formatDate(itineraryActivity.date)}</span>
                                   <span>⏱️ {activity?.durationMinutes || 60} mins</span>
-                                  <span className="text-emerald-600 dark:text-emerald-400 font-semibold">
-                                    ₹{itineraryActivity.estimatedCost || activity?.cost || 0}
+                                  <span className="text-emerald-600 dark:text-emerald-400 font-bold">
+                                    ₹{(itineraryActivity.estimatedCost || activity?.cost || 0).toLocaleString()}
                                   </span>
                                 </div>
                               </div>
@@ -637,27 +635,29 @@ export default function ItineraryBuilderPage() {
                               <button
                                 onClick={() => handleReorderActivities(stop._id, activities, actIdx, 'up')}
                                 disabled={actIdx === 0}
-                                className="p-1 rounded text-slate-400 hover:text-slate-900 dark:hover:text-white disabled:opacity-20"
+                                className="icon-btn-tool"
+                                title="Move Activity Up"
                               >
                                 <ChevronUp size={14} />
                               </button>
                               <button
                                 onClick={() => handleReorderActivities(stop._id, activities, actIdx, 'down')}
                                 disabled={actIdx === activities.length - 1}
-                                className="p-1 rounded text-slate-400 hover:text-slate-900 dark:hover:text-white disabled:opacity-20"
+                                className="icon-btn-tool"
+                                title="Move Activity Down"
                               >
                                 <ChevronDown size={14} />
                               </button>
                               <button
                                 onClick={() => openEditActivityModal(itineraryActivity)}
-                                className="p-1.5 rounded bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:text-cyan-600 dark:hover:text-cyan-400"
+                                className="icon-btn-tool"
                                 title="Edit Timing"
                               >
                                 <Edit3 size={14} />
                               </button>
                               <button
                                 onClick={() => handleDeleteItineraryActivity(itineraryActivity._id, activity?.name)}
-                                className="p-1.5 rounded bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:text-red-500"
+                                className="icon-btn-tool delete"
                                 title="Remove Activity"
                               >
                                 <Trash2 size={14} />
@@ -668,30 +668,19 @@ export default function ItineraryBuilderPage() {
                       })}
                     </div>
                   )}
-
-                  <div className="pt-2 flex justify-end">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      icon={Plus}
-                      onClick={() => openAddActivityModal(stopItem)}
-                    >
-                      Add Activity to {city?.name}
-                    </Button>
-                  </div>
                 </div>
               </div>
             );
           })}
 
-          {/* Wireframe Screen 5 Bottom Action Button: + Add another Section */}
+          {/* Bottom Action Button: + Add Stop / Destination */}
           <div className="flex justify-center pt-6 pb-2">
             <button
               onClick={openAddStopModal}
-              className="px-8 py-3.5 rounded-2xl border-2 border-dashed border-blue-500 hover:border-blue-600 bg-blue-50/60 dark:bg-slate-900 text-blue-700 dark:text-cyan-400 font-extrabold text-sm flex items-center gap-2 shadow-sm hover:shadow transition-all"
+              className="btn-secondary py-3 px-8 text-sm"
             >
               <Plus size={18} />
-              <span>+ Add another Section</span>
+              <span>Add Stop / Destination</span>
             </button>
           </div>
         </div>

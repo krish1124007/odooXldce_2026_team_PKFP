@@ -161,6 +161,139 @@
   gap: 0.6rem;
 }
 
+/* Stop Card Styling */
+.itinerary-stop-card {
+  background-color: var(--bg-card, #FFFFFF);
+  border: 1px solid var(--border-color, #E2E8F0);
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: var(--shadow-card, 0 4px 20px -2px rgba(0, 0, 0, 0.04));
+  transition: all 0.2s ease;
+}
+
+.itinerary-stop-card:hover {
+  border-color: #38BDF8;
+  box-shadow: 0 8px 24px rgba(56, 189, 248, 0.1);
+}
+
+.stop-card-header {
+  padding: 1.25rem 1.5rem;
+  background-color: var(--bg-app, #F8FAFC);
+  border-bottom: 1px solid var(--border-color, #E2E8F0);
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.stop-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.stop-number-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  background: linear-gradient(135deg, #122244 0%, #1C3366 100%);
+  color: #FFFFFF;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.stop-city-title {
+  font-family: var(--font-heading, 'Outfit', sans-serif);
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--text-primary, #0F172A);
+}
+
+.stop-country-tag {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--text-secondary, #64748B);
+  background-color: var(--bg-card, #FFFFFF);
+  border: 1px solid var(--border-darker, #CBD5E1);
+  padding: 0.15rem 0.55rem;
+  border-radius: 9999px;
+}
+
+.stop-meta-pills-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.stop-meta-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.35rem 0.85rem;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 700;
+  background-color: var(--bg-card, #FFFFFF);
+  border: 1px solid var(--border-darker, #CBD5E1);
+  color: var(--text-primary, #0F172A);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+}
+
+.stop-meta-pill.budget {
+  color: #15803D;
+  background-color: #DCFCE7;
+  border-color: #86EFAC;
+}
+
+.icon-btn-tool {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 9px;
+  background-color: var(--bg-card, #FFFFFF);
+  border: 1px solid var(--border-darker, #CBD5E1);
+  color: var(--text-secondary, #64748B);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.icon-btn-tool:hover:not(:disabled) {
+  background-color: var(--bg-app, #F8FAFC);
+  color: #0284C7;
+  border-color: #0284C7;
+}
+
+.icon-btn-tool.delete:hover:not(:disabled) {
+  background-color: #FEE2E2;
+  color: #DC2626;
+  border-color: #FCA5A5;
+}
+
+.icon-btn-tool:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.stop-empty-act-box {
+  padding: 2rem 1.5rem;
+  text-align: center;
+  border: 1.5px dashed var(--border-darker, #CBD5E1);
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  background-color: var(--bg-app, #F8FAFC);
+}
+
 /* Empty Itinerary Card */
 .itinerary-empty-card {
   background-color: var(--bg-card, #FFFFFF);
