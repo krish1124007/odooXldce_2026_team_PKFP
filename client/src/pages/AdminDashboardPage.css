@@ -1,0 +1,150 @@
+/* AdminDashboardPage CSS Styling */
+.admin-page-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+  padding: 0.5rem 0 3rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* Admin Top Control Bar */
+.admin-controls-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  background-color: var(--bg-card, #FFFFFF);
+  border: 1px solid var(--border-color, #E2E8F0);
+  padding: 0.85rem 1.25rem;
+  border-radius: 16px;
+  box-shadow: 0 4px 16px -2px rgba(0, 0, 0, 0.04);
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+/* Wireframe Tab Sub-navigation Bar */
+.admin-tab-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  border-bottom: 2px solid var(--border-color, #E2E8F0);
+  padding-bottom: 0.5rem;
+  overflow-x: auto;
+  width: 100%;
+}
+
+.admin-tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.65rem 1.25rem;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-secondary, #64748B);
+  background-color: var(--bg-app, #F8FAFC);
+  border: 1px solid var(--border-darker, #CBD5E1);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.admin-tab-btn:hover {
+  color: var(--text-primary, #0F172A);
+  border-color: #38BDF8;
+}
+
+.admin-tab-btn.active {
+  background-color: var(--primary-navy, #122244);
+  color: #FFFFFF !important;
+  border-color: var(--primary-navy, #122244);
+  box-shadow: 0 4px 12px rgba(18, 34, 68, 0.2);
+}
+
+[data-theme="dark"] .admin-tab-btn.active, body.dark .admin-tab-btn.active {
+  background-color: #0284C7;
+  border-color: #0284C7;
+}
+
+/* Analytics Wireframe Chart Card Container */
+.analytics-chart-card {
+  background-color: var(--bg-card, #FFFFFF);
+  border: 1px solid var(--border-color, #E2E8F0);
+  border-radius: 24px;
+  padding: 2rem;
+  box-shadow: var(--shadow-card, 0 4px 20px -2px rgba(0, 0, 0, 0.04));
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.analytics-chart-title {
+  font-family: var(--font-heading, 'Outfit', sans-serif);
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--text-primary, #0F172A);
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.analytics-grid-two {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.75rem;
+}
+
+@media (min-width: 1024px) {
+  .analytics-grid-two {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.chart-wrapper-box {
+  background-color: var(--bg-app, #F8FAFC);
+  border: 1px solid var(--border-darker, #E2E8F0);
+  border-radius: 20px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 280px;
+}
+
+/* Table Styling */
+.admin-table-container {
+  overflow-x: auto;
+  border-radius: 16px;
+  border: 1px solid var(--border-color, #E2E8F0);
+}
+
+.admin-data-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 13px;
+}
+
+.admin-data-table th {
+  background-color: var(--bg-app, #F8FAFC);
+  color: var(--text-secondary, #64748B);
+  font-weight: 800;
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid var(--border-color, #E2E8F0);
+  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: 0.5px;
+}
+
+.admin-data-table td {
+  padding: 1rem;
+  border-bottom: 1px solid var(--border-color, #E2E8F0);
+  color: var(--text-primary, #0F172A);
+}
+
+.admin-data-table tr:hover {
+  background-color: var(--bg-app, #F8FAFC);
+}
