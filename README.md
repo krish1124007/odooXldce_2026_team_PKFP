@@ -1,4 +1,4 @@
-# 🌍 GlobeTrotter — Agentic Travel Planning Platform
+# 🌍 GlobeTrotter — Agentic Travel Planning Platform And though
 
 GlobeTrotter is an intelligent, collaborative MERN-stack travel platform powered by an **Agentic AI engine (Groq API)**. It enables users to discover cities, plan multi-day itineraries, manage travel budgets, share public itineraries, and collaborate with an AI assistant that can execute real database tool actions upon user confirmation.
 
