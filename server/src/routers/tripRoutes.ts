@@ -12,6 +12,12 @@ import {
   removeTripActivity,
   getTripActivities,
 } from "../controllers/trip.controller.js";
+import {
+  getCompleteItinerary,
+  getTripStops,
+  createTripStop,
+  reorderTripStops,
+} from "../controllers/itinerary.controller.js";
 import { verifyUser } from "../middlewares/auth.middleware.js";
 
 const router = Router();
@@ -33,5 +39,11 @@ router.delete("/:tripId/destinations/:cityId", removeTripDestination);
 router.get("/:tripId/activities", getTripActivities);
 router.post("/:tripId/activities/:activityId", addTripActivity);
 router.delete("/:tripId/activities/:activityId", removeTripActivity);
+
+// Phase 4 Itinerary Sub-resource endpoints
+router.get("/:tripId/itinerary", getCompleteItinerary);
+router.get("/:tripId/stops", getTripStops);
+router.post("/:tripId/stops", createTripStop);
+router.put("/:tripId/stops/reorder", reorderTripStops);
 
 export default router;
