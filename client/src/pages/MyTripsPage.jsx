@@ -145,9 +145,9 @@ export default function MyTripsPage() {
         <div className="flex items-center gap-3 shrink-0">
           <button
             onClick={openAIChat}
-            className="px-4 py-2 rounded-xl bg-gradient-to-r from-purple-600 via-indigo-600 to-blue-600 hover:opacity-95 text-white font-bold text-xs shadow-md transition-all flex items-center gap-1.5 shrink-0 border border-purple-400/30"
+            className="gt-btn-ai-action"
           >
-            <Sparkles size={15} className="text-amber-300" />
+            <Sparkles size={15} className="text-amber-400" />
             <span>Plan with AI</span>
           </button>
           <Link to="/trips/create" className="btn-primary-action shrink-0">
