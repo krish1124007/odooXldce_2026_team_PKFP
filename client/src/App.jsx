@@ -48,6 +48,8 @@ export default function App() {
             <Route element={<MainLayout kpiData={kpiData} setKpiData={setKpiData} />}>
               {/* Public Pages */}
               <Route path="/" element={<LandingPage />} />
+              <Route path="/home" element={<LandingPage />} />
+              <Route path="/explore" element={<LandingPage />} />
               <Route path="/landing" element={<LandingPage />} />
               <Route path="/public/trips/:publicId" element={<PublicItineraryPage />} />
               <Route path="/cities" element={<CitySearchPage />} />

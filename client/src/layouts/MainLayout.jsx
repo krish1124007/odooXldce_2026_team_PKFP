@@ -65,7 +65,9 @@ export default function MainLayout({ kpiData, setKpiData }) {
     if (path.includes('/public')) return 'Public Trips';
     if (path.includes('/profile')) return 'Profile';
     if (path.includes('/trips')) return 'My Trips';
-    return 'Dashboard';
+    if (path.includes('/dashboard')) return 'Dashboard';
+    if (path === '/' || path.includes('/home') || path.includes('/explore') || path.includes('/landing')) return 'Home';
+    return 'Home';
   }
 
   const handleAddTrip = (newTrip) => {
