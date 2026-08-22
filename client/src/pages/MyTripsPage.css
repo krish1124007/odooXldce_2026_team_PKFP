@@ -4,6 +4,7 @@
   flex-direction: column;
   gap: 1.75rem;
   padding: 0.5rem 0;
+  width: 100%;
 }
 
 .my-trips-header-row {
@@ -57,11 +58,12 @@
   justify-content: space-between;
   gap: 1rem;
   background-color: var(--bg-card, #FFFFFF);
-  border: 1px solid var(--border-color, #F1F5F9);
+  border: 1px solid var(--border-color, #E2E8F0);
   padding: 0.85rem 1.25rem;
   border-radius: 14px;
   box-shadow: var(--shadow-card, 0 4px 20px -2px rgba(0, 0, 0, 0.03));
   flex-wrap: wrap;
+  width: 100%;
 }
 
 .search-box-wrapper {
@@ -69,17 +71,17 @@
   align-items: center;
   gap: 0.6rem;
   background-color: var(--bg-app, #F8FAFC);
-  border: 1px solid var(--border-darker, #E2E8F0);
+  border: 1px solid var(--border-darker, #CBD5E1);
   border-radius: 10px;
   padding: 0.55rem 0.9rem;
   flex: 1;
-  min-width: 280px;
+  min-width: 260px;
   transition: all 0.15s ease;
 }
 
 .search-box-wrapper:focus-within {
   border-color: #3B82F6;
-  background-color: #FFFFFF;
+  background-color: var(--bg-card, #FFFFFF);
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
 }
 
@@ -110,13 +112,13 @@
   gap: 0.45rem;
   padding: 0.45rem 0.85rem;
   border-radius: 10px;
-  border: 1px solid var(--border-darker, #E2E8F0);
+  border: 1px solid var(--border-darker, #CBD5E1);
   background-color: var(--bg-card, #FFFFFF);
   transition: all 0.15s ease;
 }
 
 .select-control-box:hover {
-  border-color: #CBD5E1;
+  border-color: #94A3B8;
 }
 
 .control-icon {
@@ -132,6 +134,59 @@
   font-weight: 600;
   color: var(--text-primary, #0F172A);
   cursor: pointer;
+}
+
+/* Trip Section Headers */
+.trip-section-header-box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border-color, #E2E8F0);
+  padding-bottom: 0.6rem;
+  margin-bottom: 1rem;
+}
+
+.trip-section-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.trip-section-title-text {
+  font-family: var(--font-heading, 'Outfit', sans-serif);
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--text-primary, #0F172A);
+  margin: 0;
+}
+
+.trip-section-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 9999px;
+  flex-shrink: 0;
+}
+
+.trip-section-dot.ongoing {
+  background-color: #0284C7;
+}
+
+.trip-section-dot.upcoming {
+  background-color: #2563EB;
+}
+
+.trip-section-dot.completed {
+  background-color: #64748B;
+}
+
+.trip-section-count-badge {
+  font-size: 11.5px;
+  font-weight: 700;
+  padding: 2px 9px;
+  border-radius: 9999px;
+  background-color: var(--bg-app, #F1F5F9);
+  color: var(--text-secondary, #64748B);
+  border: 1px solid var(--border-color, #E2E8F0);
 }
 
 /* Empty State Card */

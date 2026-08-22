@@ -292,17 +292,15 @@ export default function MyTripsPage() {
         </div>
       ) : (
         /* 10. THREE STATUS SECTIONS (ONGOING, UPCOMING, COMPLETED) */
-        <div className="space-y-10">
+        <div className="space-y-8">
           {/* 11. ONGOING SECTION */}
-          <div className="space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-2">
-              <h2 className="text-lg font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
-                <span className="w-2.5 h-2.5 rounded-full bg-sky-500 animate-pulse" />
-                <span>Ongoing</span>
-                <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-full">
-                  {ongoingTrips.length}
-                </span>
-              </h2>
+          <div>
+            <div className="trip-section-header-box">
+              <div className="trip-section-title-wrap">
+                <span className="trip-section-dot ongoing" />
+                <h2 className="trip-section-title-text">Ongoing</h2>
+                <span className="trip-section-count-badge">{ongoingTrips.length}</span>
+              </div>
             </div>
 
             {ongoingTrips.length === 0 ? (
@@ -322,15 +320,13 @@ export default function MyTripsPage() {
           </div>
 
           {/* 12. UPCOMING SECTION */}
-          <div className="space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-2">
-              <h2 className="text-lg font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
-                <span className="w-2.5 h-2.5 rounded-full bg-blue-600" />
-                <span>Upcoming</span>
-                <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-full">
-                  {upcomingTrips.length}
-                </span>
-              </h2>
+          <div>
+            <div className="trip-section-header-box">
+              <div className="trip-section-title-wrap">
+                <span className="trip-section-dot upcoming" />
+                <h2 className="trip-section-title-text">Upcoming</h2>
+                <span className="trip-section-count-badge">{upcomingTrips.length}</span>
+              </div>
             </div>
 
             {upcomingTrips.length === 0 ? (
@@ -356,15 +352,13 @@ export default function MyTripsPage() {
           </div>
 
           {/* 13. COMPLETED SECTION */}
-          <div className="space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-2">
-              <h2 className="text-lg font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
-                <span className="w-2.5 h-2.5 rounded-full bg-slate-400" />
-                <span>Completed</span>
-                <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-full">
-                  {completedTrips.length}
-                </span>
-              </h2>
+          <div>
+            <div className="trip-section-header-box">
+              <div className="trip-section-title-wrap">
+                <span className="trip-section-dot completed" />
+                <h2 className="trip-section-title-text">Completed</h2>
+                <span className="trip-section-count-badge">{completedTrips.length}</span>
+              </div>
             </div>
 
             {completedTrips.length === 0 ? (

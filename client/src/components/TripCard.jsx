@@ -168,7 +168,7 @@ const TripCard = ({ trip, onDelete }) => {
           </div>
 
           <div className="trip-card-title-box">
-            <h3 className="trip-card-name">
+            <h3 className="trip-card-name capitalize">
               {trip.name}
             </h3>
           </div>
