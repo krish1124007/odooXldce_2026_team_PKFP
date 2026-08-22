@@ -44,6 +44,8 @@ app.use("/api/trips", tripRoutes);
 app.use("/api/cities", cityRoutes);
 app.use("/api/activities", activityRoutes);
 app.use("/api/itinerary", itineraryRoutes);
+app.use("/api/stops", itineraryRoutes);
+app.use("/api/itinerary-activities", itineraryRoutes);
 app.use("/api/budget", budgetRoutes);
 app.use("/api/public", publicRoutes);
 app.use("/api/admin", adminRouter);
