@@ -695,7 +695,6 @@ export default function ItineraryBuilderPage() {
           </div>
         </div>
       )}
-      )}
 
       {/* MODAL 1: ADD STOP */}
       {isAddStopOpen && (
