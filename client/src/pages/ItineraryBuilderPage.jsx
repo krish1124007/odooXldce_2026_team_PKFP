@@ -267,7 +267,11 @@ export default function ItineraryBuilderPage() {
       const cityId = stopData.city?._id || stopData.stop.cityId;
       const res = await api.get(`/activities?cityId=${cityId}&limit=50`);
       if (res.data && res.data.success) {
-        setCityActivities(res.data.data);
+        const list = res.data.data || [];
+        setCityActivities(list);
+        if (list.length > 0) {
+          setSelectedActivity(list[0]);
+        }
       }
     } catch (err) {
       console.error('Failed to load city activities:', err);
@@ -886,37 +890,44 @@ export default function ItineraryBuilderPage() {
               {/* Activity Selection List */}
               <div className="gt-form-group">
                 <label className="gt-form-label">Choose Activity</label>
-                <div className="relative mb-2">
-                  <Search className="w-4 h-4 text-slate-400 dark:text-slate-500 absolute left-3 top-3" />
+                <div className="relative mb-3">
+                  <Search className="w-4 h-4 text-slate-400 dark:text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none z-10" />
                   <input
                     type="text"
                     placeholder="Search city activities..."
                     value={activitySearch}
                     onChange={(e) => setActivitySearch(e.target.value)}
-                    className="gt-form-input pl-9"
+                    style={{ paddingLeft: '2.5rem' }}
+                    className="gt-form-input"
                   />
                 </div>
 
-                <div className="grid grid-cols-1 gap-2 max-h-48 overflow-y-auto pr-1">
+                <div className="grid grid-cols-1 gap-2.5 max-h-52 overflow-y-auto pr-1">
                   {filteredCityActivities.map((act) => {
                     const isSelected = selectedActivity?._id === act._id;
                     return (
                       <div
                         key={act._id}
                         onClick={() => setSelectedActivity(act)}
-                        className={`p-3 rounded-xl border cursor-pointer flex items-center justify-between transition-all ${
+                        className={`p-3.5 rounded-xl border cursor-pointer flex items-center justify-between transition-all ${
                           isSelected
-                            ? 'bg-blue-500/10 border-blue-500 text-slate-900 dark:text-white font-bold'
-                            : 'bg-slate-50 dark:bg-slate-950/60 border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-700'
+                            ? 'bg-blue-50 dark:bg-slate-800 border-2 border-blue-600 dark:border-cyan-400 shadow-xs'
+                            : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-300 hover:border-blue-300 dark:hover:border-slate-700'
                         }`}
                       >
                         <div>
-                          <p className="text-xs font-bold">{act.name}</p>
-                          <p className="text-[11px] text-slate-500 dark:text-slate-400">
-                            {act.type} • {act.durationMinutes || 60} mins • ₹{act.cost}
+                          <p className="text-xs font-extrabold text-slate-900 dark:text-white">{act.name}</p>
+                          <p className="text-[11px] font-medium text-slate-500 dark:text-slate-400 mt-0.5">
+                            <span className="font-semibold text-blue-600 dark:text-cyan-400">{act.type}</span> • {act.durationMinutes || 60} mins • <span className="font-bold text-emerald-600 dark:text-emerald-400">₹{(act.cost || 0).toLocaleString()}</span>
                           </p>
                         </div>
-                        {isSelected && <Check size={16} className="text-blue-600 dark:text-cyan-400" />}
+                        {isSelected ? (
+                          <span className="px-2.5 py-1 rounded-lg bg-blue-600 text-white text-[11px] font-extrabold flex items-center gap-1">
+                            <Check size={13} /> Selected
+                          </span>
+                        ) : (
+                          <span className="text-xs text-slate-400 font-semibold hover:text-blue-600">Select</span>
+                        )}
                       </div>
                     );
                   })}
