@@ -27,6 +27,7 @@ export default function MainLayout({ kpiData, setKpiData }) {
     if (path.includes('/trips/demo-trip-123/itinerary')) return 'Itinerary View';
     if (path.includes('/trips/demo-trip-123/calendar')) return 'Timeline';
     if (path.includes('/trips/demo-trip-123/budget')) return 'Trip Budget';
+    if (path.includes('/community')) return 'Community';
     if (path.includes('/public')) return 'Public Trips';
     if (path.includes('/profile')) return 'Profile';
     if (path.includes('/trips')) return 'My Trips';
@@ -77,7 +78,8 @@ export default function MainLayout({ kpiData, setKpiData }) {
         navigate('/trips/demo-trip-123/budget');
         break;
       case 'Public Trips':
-        navigate('/public/trips/demo-public-1');
+      case 'Community':
+        navigate('/community');
         break;
       case 'Profile':
         navigate('/profile');

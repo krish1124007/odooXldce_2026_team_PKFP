@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { getCompleteItinerary } from '../services/itineraryService';
+import api from '../services/api';
 import Card from '../components/ui/Card';
 import Button from '../components/ui/Button';
 import { 
@@ -135,6 +136,60 @@ export default function ItineraryViewPage() {
         </div>
 
         <div className="flex flex-wrap items-center gap-3">
+          {/* Publish / Visibility Toggle */}
+          {trip?.visibility === 'PUBLIC' ? (
+            <div className="flex items-center gap-2">
+              <span className="px-2.5 py-1 rounded-md bg-emerald-500/20 text-emerald-400 text-xs font-bold border border-emerald-500/30 flex items-center gap-1">
+                🌐 Public
+              </span>
+              <button
+                onClick={async () => {
+                  try {
+                    const res = await api.put(`/trips/${tripId}/unpublish`);
+                    if (res.data?.success) {
+                      fetchData();
+                    }
+                  } catch (err) {
+                    alert('Failed to unpublish trip');
+                  }
+                }}
+                className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold border border-slate-700"
+              >
+                Unpublish
+              </button>
+              <button
+                onClick={() => {
+                  const url = `${window.location.origin}/public/trips/${trip?.publicId || trip?._id}`;
+                  navigator.clipboard.writeText(url);
+                  alert(`Public link copied: ${url}`);
+                }}
+                className="px-3 py-1.5 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-slate-950 text-xs font-bold flex items-center gap-1"
+              >
+                <Share2 size={14} /> Copy Link
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={async () => {
+                if (!window.confirm('Anyone with the public link will be able to view this itinerary. Confirm publishing?')) return;
+                try {
+                  const res = await api.put(`/trips/${tripId}/publish`);
+                  if (res.data?.success) {
+                    fetchData();
+                    const url = `${window.location.origin}${res.data.data.publicUrl}`;
+                    navigator.clipboard.writeText(url);
+                    alert(`Trip is now PUBLIC!\n\nShare link copied to clipboard:\n${url}`);
+                  }
+                } catch (err) {
+                  alert('Failed to publish trip');
+                }
+              }}
+              className="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold flex items-center gap-1 shadow-sm"
+            >
+              🌐 Publish Trip
+            </button>
+          )}
+
           {/* View Mode Toggle */}
           <div className="bg-slate-950 p-1 rounded-xl border border-slate-800 flex items-center gap-1">
             <button

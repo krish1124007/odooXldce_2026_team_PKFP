@@ -14,6 +14,7 @@ export interface ITrip extends Document {
   endDate: Date;
   status: "DRAFT" | "UPCOMING" | "ONGOING" | "COMPLETED";
   visibility: "PRIVATE" | "PUBLIC";
+  publicId?: string;
   budget: ITripBudget;
   destinations: Schema.Types.ObjectId[];
   activities: Schema.Types.ObjectId[];

@@ -18,6 +18,7 @@ import ActivitySearchPage from './pages/ActivitySearchPage';
 import BudgetPage from './pages/BudgetPage';
 import CalendarTimelinePage from './pages/CalendarTimelinePage';
 import PublicItineraryPage from './pages/PublicItineraryPage';
+import CommunityPage from './pages/CommunityPage';
 import ProfileSettingsPage from './pages/ProfileSettingsPage';
 import AdminDashboardPage from './pages/AdminDashboardPage';
 import NotFoundPage from './pages/NotFoundPage';
@@ -54,6 +55,7 @@ export default function App() {
             <Route path="/trips/:tripId/activities" element={<ActivitySearchPage />} />
             <Route path="/trips/:tripId/budget" element={<BudgetPage />} />
             <Route path="/trips/:tripId/calendar" element={<CalendarTimelinePage />} />
+            <Route path="/community" element={<CommunityPage />} />
             <Route path="/public/trips/:publicId" element={<PublicItineraryPage />} />
             <Route path="/profile" element={<ProfileSettingsPage />} />
             <Route path="/admin" element={<AdminDashboardPage />} />
