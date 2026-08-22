@@ -31,6 +31,61 @@ const PRESET_COVERS = [
   { id: 4, name: 'European City', url: 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?auto=format&fit=crop&w=1200&q=80' }
 ];
 
+const POPULAR_DESTINATION_SUGGESTIONS = [
+  {
+    id: 'tokyo',
+    cityName: 'Tokyo',
+    country: 'Japan',
+    region: 'Asia',
+    title: 'Tokyo & Kyoto Cultural Tour',
+    image: 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=600&q=80',
+    tag: 'Culture & Food',
+    badge: 'Popular',
+    badgeColor: 'amber',
+    estBudget: '85000',
+    duration: '7 Days',
+  },
+  {
+    id: 'paris',
+    cityName: 'Paris',
+    country: 'France',
+    region: 'Europe',
+    title: 'Parisian Romance & Louvre Museum',
+    image: 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?auto=format&fit=crop&w=600&q=80',
+    tag: 'Art & Heritage',
+    badge: 'Trending',
+    badgeColor: 'blue',
+    estBudget: '115000',
+    duration: '8 Days',
+  },
+  {
+    id: 'bali',
+    cityName: 'Bali',
+    country: 'Indonesia',
+    region: 'Asia',
+    title: 'Bali Wellness & Beach Sanctuary',
+    image: 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=600&q=80',
+    tag: 'Beach & Spa',
+    badge: 'Top Rated',
+    badgeColor: 'emerald',
+    estBudget: '45000',
+    duration: '6 Days',
+  },
+  {
+    id: 'rome',
+    cityName: 'Rome',
+    country: 'Italy',
+    region: 'Europe',
+    title: 'Historic Colosseum & Vatican City',
+    image: 'https://images.unsplash.com/photo-1552832230-c0197dd311b5?auto=format&fit=crop&w=600&q=80',
+    tag: 'History & Cuisine',
+    badge: 'Featured',
+    badgeColor: 'purple',
+    estBudget: '130000',
+    duration: '9 Days',
+  }
+];
+
 export default function CreateTripPage() {
   const navigate = useNavigate();
 
@@ -85,12 +140,12 @@ export default function CreateTripPage() {
     return () => clearTimeout(timer);
   }, [citySearch]);
 
-  // Fetch Activity Suggestions when a city is selected
+  // Fetch Activity Suggestions (If city selected -> city activities; Else -> default popular activities)
   useEffect(() => {
     if (selectedCity && selectedCity._id) {
       fetchSuggestions(selectedCity._id);
     } else {
-      setSuggestions([]);
+      fetchDefaultSuggestions();
     }
   }, [selectedCity]);
 
@@ -119,20 +174,70 @@ export default function CreateTripPage() {
     }
   };
 
+  const fetchDefaultSuggestions = async () => {
+    setSuggestionsLoading(true);
+    try {
+      const res = await api.get('/activities?limit=6');
+      if (res.data && res.data.success) {
+        setSuggestions(res.data.data || []);
+      }
+    } catch (err) {
+      console.error('Failed to load default suggestions:', err);
+    } finally {
+      setSuggestionsLoading(false);
+    }
+  };
+
   const handleSelectCity = (city) => {
     setSelectedCity(city);
     setCitySearch('');
     setShowCityDropdown(false);
 
-    // Auto-fill cover photo if empty and city has an image
     if (!coverPhoto && city.image) {
       setCoverPhoto(city.image);
     }
   };
 
+  const handleSelectPopularSuggestion = async (preset) => {
+    setName(preset.title);
+    setCoverPhoto(preset.image);
+    setBudgetAmount(preset.estBudget);
+
+    // Calculate dates (14 days from today for duration)
+    const start = new Date();
+    start.setDate(start.getDate() + 14);
+    const end = new Date(start);
+    const days = parseInt(preset.duration) || 7;
+    end.setDate(end.getDate() + days);
+
+    setStartDate(start.toISOString().split('T')[0]);
+    setEndDate(end.toISOString().split('T')[0]);
+
+    // Search city in database to set selectedCity
+    try {
+      const res = await api.get(`/cities?search=${encodeURIComponent(preset.cityName)}&limit=1`);
+      if (res.data?.success && res.data.data?.length > 0) {
+        setSelectedCity(res.data.data[0]);
+      } else {
+        setSelectedCity({
+          name: preset.cityName,
+          country: preset.country,
+          region: preset.region,
+          image: preset.image,
+        });
+      }
+    } catch (e) {
+      setSelectedCity({
+        name: preset.cityName,
+        country: preset.country,
+        region: preset.region,
+        image: preset.image,
+      });
+    }
+  };
+
   const handleRemoveCity = () => {
     setSelectedCity(null);
-    setSuggestions([]);
   };
 
   const handleSubmit = async (e) => {
@@ -174,7 +279,7 @@ export default function CreateTripPage() {
           currency,
         },
         visibility,
-        destinations: selectedCity ? [selectedCity._id] : [],
+        destinations: selectedCity?._id ? [selectedCity._id] : [],
       };
 
       const res = await api.post('/trips', payload);
@@ -207,9 +312,9 @@ export default function CreateTripPage() {
           <span>Back to My Trips</span>
         </Link>
         <div className="header-text-block">
-          <h1 className="screen-title text-slate-900">Plan a new trip</h1>
-          <p className="screen-subtitle text-slate-500">
-            Start with the basics and build your perfect itinerary
+          <h1 className="screen-title text-slate-900 dark:text-white">Plan a new trip</h1>
+          <p className="screen-subtitle text-slate-500 dark:text-slate-400">
+            Start with the basics or pick a curated destination below to populate recommendations
           </p>
         </div>
       </div>
@@ -264,7 +369,7 @@ export default function CreateTripPage() {
                   />
                   <div className="chip-city-info">
                     <span className="chip-city-name">{selectedCity.name}</span>
-                    <span className="chip-city-country">{selectedCity.country} • {selectedCity.region}</span>
+                    <span className="chip-city-country">{selectedCity.country} {selectedCity.region ? `• ${selectedCity.region}` : ''}</span>
                   </div>
                   <button
                     type="button"
@@ -486,7 +591,7 @@ export default function CreateTripPage() {
               </div>
               <button
                 type="button"
-                onClick={() => alert('✨ AI Planning Assistant will generate itinerary proposals after trip setup in Phase 6.')}
+                onClick={() => alert('✨ AI Planning Assistant will generate itinerary proposals after trip setup.')}
                 className="btn-ai-banner"
               >
                 Plan with AI
@@ -545,7 +650,7 @@ export default function CreateTripPage() {
                 </h3>
 
                 <div className="preview-meta-row">
-                  <MapPin size={14} className="preview-icon text-blue-600" />
+                  <MapPin size={14} className="preview-icon text-blue-600 dark:text-cyan-400" />
                   <span>{selectedCity ? `${selectedCity.name}, ${selectedCity.country}` : 'Destination not selected'}</span>
                 </div>
 
@@ -572,21 +677,67 @@ export default function CreateTripPage() {
         </div>
       </div>
 
-      {/* SECTION 3: DESTINATION RECOMMENDATIONS & SUGGESTIONS */}
-      <div className="suggestions-section-container">
-        <div className="suggestions-header">
-          <h2 className="suggestions-title">
-            Suggestions for Places & Activities
-          </h2>
-          <p className="suggestions-subtitle">
-            {selectedCity 
-              ? `Recommended experiences in ${selectedCity.name}` 
-              : 'Choose a destination to see recommended activities'}
-          </p>
+      {/* SECTION 3: DESTINATION SUGGESTIONS & RECOMMENDED ACTIVITIES */}
+      <div className="suggestions-section-container space-y-6 mt-8">
+        {/* 3A: Popular Preset Destination Suggestions Cards */}
+        <div className="space-y-3">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-lg font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
+                <Compass className="w-5 h-5 text-blue-600 dark:text-cyan-400" />
+                <span>Popular Suggested Destinations</span>
+              </h2>
+              <p className="text-xs text-slate-500 dark:text-slate-400">Click any destination card below to auto-fill trip details & recommendations</p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+            {POPULAR_DESTINATION_SUGGESTIONS.map((preset) => (
+              <div
+                key={preset.id}
+                onClick={() => handleSelectPopularSuggestion(preset)}
+                className="group p-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-blue-500 dark:hover:border-cyan-400 rounded-2xl shadow-sm hover:shadow-md transition-all cursor-pointer flex flex-col justify-between"
+              >
+                <div>
+                  <div className="relative h-32 rounded-xl overflow-hidden mb-2.5">
+                    <img src={preset.image} alt={preset.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                    <span className="absolute top-2 left-2 px-2 py-0.5 rounded-md text-[10px] font-extrabold bg-slate-900/80 text-white backdrop-blur-sm">
+                      {preset.badge}
+                    </span>
+                  </div>
+
+                  <h4 className="font-extrabold text-slate-900 dark:text-white text-xs leading-snug group-hover:text-blue-600 dark:group-hover:text-cyan-400 transition-colors">
+                    {preset.title}
+                  </h4>
+                  <p className="text-[11px] text-slate-500 dark:text-slate-400 font-medium flex items-center gap-1 mt-1">
+                    <MapPin size={11} className="text-blue-600 dark:text-cyan-400" />
+                    <span>{preset.cityName}, {preset.country}</span>
+                  </p>
+                </div>
+
+                <div className="mt-3 pt-2 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs">
+                  <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400">{preset.duration}</span>
+                  <span className="font-extrabold text-blue-600 dark:text-cyan-400">₹{Number(preset.estBudget).toLocaleString()}</span>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
 
-        {selectedCity ? (
-          suggestionsLoading ? (
+        {/* 3B: Curated Activity Suggestions */}
+        <div className="space-y-3 pt-4 border-t border-slate-200 dark:border-slate-800">
+          <div className="suggestions-header">
+            <h2 className="suggestions-title">
+              Recommended Experiences & Activities
+            </h2>
+            <p className="suggestions-subtitle">
+              {selectedCity 
+                ? `Curated experiences in ${selectedCity.name}` 
+                : 'Explore popular activities curated for your trip'}
+            </p>
+          </div>
+
+          {suggestionsLoading ? (
             <div className="suggestions-loading-skeleton">
               <div className="skeleton-card" />
               <div className="skeleton-card" />
@@ -606,17 +757,11 @@ export default function CreateTripPage() {
           ) : (
             <div className="suggestions-empty-box">
               <Info size={24} className="text-slate-400 mb-1" />
-              <p className="text-xs font-semibold text-slate-700">No specific activity suggestions found for {selectedCity.name}.</p>
-              <p className="text-xs text-slate-500">You will be able to search and add custom activities in the Itinerary Builder.</p>
+              <p className="text-xs font-semibold text-slate-700 dark:text-slate-300">No specific activity suggestions found.</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400">You will be able to search and add custom activities in the Itinerary Builder.</p>
             </div>
-          )
-        ) : (
-          <div className="suggestions-empty-prompt">
-            <Compass size={32} className="prompt-icon" />
-            <h4 className="prompt-title">Choose a destination to see recommendations</h4>
-            <p className="prompt-desc">Search and select a city in the trip form above to explore curated activities and attractions.</p>
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </div>
   );
