@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { X, MapPin, Calendar, Globe } from 'lucide-react';
 import './Modals.css';
 
-export default function AddEmployeeModal({ isOpen, onClose, onAdd }) {
+export default function CreateTripModal({ isOpen, onClose, onAdd }) {
   const [formData, setFormData] = useState({
     name: '',
     startDate: '',

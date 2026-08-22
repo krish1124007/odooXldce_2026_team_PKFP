@@ -2,7 +2,7 @@ import React from 'react';
 import { Sparkles, Plus } from 'lucide-react';
 import './HeroBanner.css';
 
-export default function HeroBanner({ onAddEmployee, onOpenReports }) {
+export default function HeroBanner({ onPlanTrip, onOpenReports }) {
   const formattedDate = "Saturday, August 22, 2026";
 
   return (
@@ -18,7 +18,7 @@ export default function HeroBanner({ onAddEmployee, onOpenReports }) {
           <span>AI Assistant</span>
         </button>
 
-        <button className="btn-add-employee" onClick={onAddEmployee}>
+        <button className="btn-add-employee" onClick={onPlanTrip}>
           <Plus size={18} />
           <span>Plan New Trip</span>
         </button>

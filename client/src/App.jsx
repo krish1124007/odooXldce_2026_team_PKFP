@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import MainLayout from './layouts/MainLayout';
 
 // Pages
+import LandingPage from './pages/LandingPage';
 import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
 import DashboardPage from './pages/DashboardPage';
@@ -21,10 +22,10 @@ import NotFoundPage from './pages/NotFoundPage';
 
 export default function App() {
   const [kpiData, setKpiData] = useState({
-    totalEmployees: 27,
-    presentToday: 0,
-    onLeaveToday: 2,
-    pendingRequests: 5,
+    totalTrips: 12,
+    upcomingJourneys: 2,
+    savedDestinations: 8,
+    pendingProposals: 3,
   });
 
   return (
@@ -36,7 +37,8 @@ export default function App() {
 
         {/* Main Application Layout Routes */}
         <Route element={<MainLayout kpiData={kpiData} setKpiData={setKpiData} />}>
-          <Route path="/" element={<Navigate to="/dashboard" replace />} />
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/landing" element={<LandingPage />} />
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/trips" element={<MyTripsPage />} />
           <Route path="/trips/create" element={<CreateTripPage />} />
