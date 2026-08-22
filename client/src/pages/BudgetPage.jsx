@@ -273,12 +273,8 @@ export default function BudgetPage() {
       {/* Header Bar */}
       <div className="budget-header-card">
         <div>
-          <Link to={`/trips/${tripId}/itinerary`} className="back-link-btn mb-1">
-            <ArrowLeft size={14} />
-            <span>Back to Itinerary</span>
-          </Link>
-          <div className="flex items-center gap-3 mt-1">
-            <h1 className="screen-title text-slate-900">Trip Budget</h1>
+          <div className="flex items-center gap-3">
+            <h1 className="screen-title">Trip Budget</h1>
             {getBudgetStatusBadge()}
           </div>
           <p className="screen-subtitle">
@@ -294,10 +290,10 @@ export default function BudgetPage() {
         <div className="header-actions-row">
           <button
             onClick={() => alert('✨ AI Budget Optimizer will analyze cost reduction strategies in Phase 6.')}
-            className="nav-action-btn ai-btn"
+            className="gt-btn-ai-action"
           >
-            <Sparkles size={14} />
-            <span>✨ Optimize Budget with AI</span>
+            <Sparkles size={15} className="text-amber-400" />
+            <span>Optimize Budget with AI</span>
           </button>
           <Button variant="secondary" icon={Edit3} onClick={() => setIsEditBudgetOpen(true)}>
             Edit Budget
