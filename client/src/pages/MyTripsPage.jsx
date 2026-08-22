@@ -1,30 +1,32 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect, useMemo } from 'react';
+import { Link, useNavigate, useOutletContext } from 'react-router-dom';
 import api from '../services/api';
 import TripCard from '../components/TripCard';
-import { Plus, Search, Filter, Compass } from 'lucide-react';
+import { Plus, Search, Filter, Compass, ArrowUpDown, Sparkles, Layers, RefreshCw, X, Calendar, MapPin } from 'lucide-react';
+import './MyTripsPage.css';
 
 export default function MyTripsPage() {
-  const [trips, setTrips] = useState([]);
+  const navigate = useNavigate();
+  const outletCtx = useOutletContext() || {};
+  const openAIWithContext = outletCtx.openAIWithContext;
+
+  const [rawTrips, setRawTrips] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
-  const [sortBy, setSortBy] = useState('createdAt');
+  const [groupBy, setGroupBy] = useState('STATUS'); // 'STATUS', 'NONE', 'DATE'
+  const [sortBy, setSortBy] = useState('NEWEST'); // 'NEWEST', 'OLDEST', 'START_DATE', 'NAME'
 
   useEffect(() => {
     fetchTrips();
-  }, [statusFilter, sortBy]);
+  }, []);
 
   const fetchTrips = async () => {
     setLoading(true);
     try {
-      let url = `/trips?sort=${sortBy}`;
-      if (statusFilter) url += `&status=${statusFilter}`;
-      if (search) url += `&search=${encodeURIComponent(search)}`;
-
-      const res = await api.get(url);
+      const res = await api.get('/trips?limit=100');
       if (res.data && res.data.success) {
-        setTrips(res.data.data);
+        setRawTrips(res.data.data);
       }
     } catch (err) {
       console.error('Failed to fetch user trips:', err);
@@ -32,115 +34,381 @@ export default function MyTripsPage() {
     setLoading(false);
   };
 
-  const handleSearchSubmit = (e) => {
-    e.preventDefault();
-    fetchTrips();
-  };
-
-  const handleDeleteTrip = async (tripId, tripName) => {
-    if (window.confirm(`Are you sure you want to delete "${tripName}"? This action cannot be undone.`)) {
-      try {
-        const res = await api.delete(`/trips/${tripId}`);
-        if (res.data && res.data.success) {
-          fetchTrips();
-        }
-      } catch (err) {
-        alert(err.response?.data?.message || 'Failed to delete trip.');
+  const handleDeleteTrip = async (tripId) => {
+    try {
+      const res = await api.delete(`/trips/${tripId}`);
+      if (res.data && res.data.success) {
+        setRawTrips((prev) => prev.filter((t) => t._id !== tripId));
       }
+    } catch (err) {
+      console.error('Delete error:', err);
     }
   };
 
+  // Determine trip status (ONGOING, UPCOMING, COMPLETED, DRAFT)
+  const getTripCategory = (trip) => {
+    if (trip.status === 'COMPLETED') return 'COMPLETED';
+    if (trip.status === 'ONGOING') return 'ONGOING';
+    if (trip.status === 'UPCOMING') return 'UPCOMING';
+    if (trip.status === 'DRAFT') return 'DRAFT';
+
+    const now = new Date();
+    const start = trip.startDate ? new Date(trip.startDate) : null;
+    const end = trip.endDate ? new Date(trip.endDate) : null;
+
+    if (start && end) {
+      if (now >= start && now <= end) return 'ONGOING';
+      if (now < start) return 'UPCOMING';
+      if (now > end) return 'COMPLETED';
+    }
+    return 'UPCOMING';
+  };
+
+  // Filter & Sort trips
+  const filteredAndSortedTrips = useMemo(() => {
+    let result = [...rawTrips];
+
+    // 1. Search Filter
+    if (search.trim()) {
+      const q = search.toLowerCase().trim();
+      result = result.filter((t) => {
+        const nameMatch = t.name?.toLowerCase().includes(q);
+        const descMatch = t.description?.toLowerCase().includes(q);
+        const destMatch = t.destinations?.some((d) =>
+          (typeof d === 'object' ? d.name : d)?.toLowerCase().includes(q)
+        );
+        return nameMatch || descMatch || destMatch;
+      });
+    }
+
+    // 2. Status Filter
+    if (statusFilter) {
+      if (statusFilter === 'SAVED_PUBLIC') {
+        result = result.filter((t) => t.isCopiedFromPublic || t.originalPublicId || t.name?.toLowerCase().includes('(my version)') || t.name?.toLowerCase().includes('(copy)'));
+      } else {
+        result = result.filter((t) => getTripCategory(t) === statusFilter);
+      }
+    }
+
+    // 3. Sorting
+    result.sort((a, b) => {
+      if (sortBy === 'NEWEST') {
+        return new Date(b.createdAt || b.startDate || 0) - new Date(a.createdAt || a.startDate || 0);
+      }
+      if (sortBy === 'OLDEST') {
+        return new Date(a.createdAt || a.startDate || 0) - new Date(b.createdAt || b.startDate || 0);
+      }
+      if (sortBy === 'START_DATE') {
+        return new Date(a.startDate || 0) - new Date(b.startDate || 0);
+      }
+      if (sortBy === 'NAME') {
+        return (a.name || '').localeCompare(b.name || '');
+      }
+      return 0;
+    });
+
+    return result;
+  }, [rawTrips, search, statusFilter, sortBy]);
+
+  // Categorized groups
+  const savedPublicTrips = useMemo(
+    () => filteredAndSortedTrips.filter((t) => t.isCopiedFromPublic || t.originalPublicId || t.name?.toLowerCase().includes('(my version)') || t.name?.toLowerCase().includes('(copy)')),
+    [filteredAndSortedTrips]
+  );
+  const ongoingTrips = useMemo(
+    () => filteredAndSortedTrips.filter((t) => getTripCategory(t) === 'ONGOING'),
+    [filteredAndSortedTrips]
+  );
+  const upcomingTrips = useMemo(
+    () => filteredAndSortedTrips.filter((t) => getTripCategory(t) === 'UPCOMING' || getTripCategory(t) === 'DRAFT'),
+    [filteredAndSortedTrips]
+  );
+  const completedTrips = useMemo(
+    () => filteredAndSortedTrips.filter((t) => getTripCategory(t) === 'COMPLETED'),
+    [filteredAndSortedTrips]
+  );
+
+  const openAIChat = () => {
+    if (openAIWithContext) {
+      openAIWithContext({ page: 'my-trips' });
+    } else {
+      const event = new CustomEvent('open-ai-agent', {
+        detail: { message: 'Help me plan a personalized multi-city trip.' },
+      });
+      window.dispatchEvent(event);
+    }
+  };
+
+  const isFiltered = search || statusFilter;
+
   return (
-    <div className="space-y-8 py-4">
-      {/* Top Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div className="my-trips-container">
+      {/* 3. PAGE HEADER */}
+      <div className="my-trips-header-row">
         <div>
-          <h1 className="text-3xl font-extrabold text-white tracking-tight">My Trips</h1>
-          <p className="text-xs text-slate-400">View and manage all your personal travel itineraries</p>
+          <h1 className="page-main-title">My Trips</h1>
+          <p className="page-sub-title">Manage your adventures, past and upcoming.</p>
         </div>
 
-        <Link
-          to="/trips/create"
-          className="inline-flex items-center space-x-2 px-5 py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:opacity-95 text-white font-semibold text-xs shadow-lg shadow-cyan-500/25 transition-all self-start md:self-auto"
-        >
-          <Plus className="w-4 h-4" />
-          <span>Plan New Trip</span>
-        </Link>
+        <div className="flex items-center gap-3 shrink-0">
+          <button
+            onClick={openAIChat}
+            className="gt-btn-ai-action"
+          >
+            <Sparkles size={15} className="text-amber-400" />
+            <span>Plan with AI</span>
+          </button>
+          <Link to="/trips/create" className="btn-primary-action shrink-0">
+            <Plus size={16} />
+            <span>Plan a Trip</span>
+          </Link>
+        </div>
       </div>
 
-      {/* Filter and Search Bar */}
-      <div className="bg-slate-900/90 border border-slate-800 p-4 rounded-2xl flex flex-col md:flex-row gap-4 items-center justify-between shadow-lg">
-        <form onSubmit={handleSearchSubmit} className="relative w-full md:w-80">
-          <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
-            <Search className="w-4 h-4" />
-          </div>
+      {/* 5. SEARCH AND CONTROLS BAR */}
+      <div className="my-trips-controls-bar">
+        {/* Search */}
+        <div className="search-box-wrapper">
+          <Search size={18} className="search-icon-muted" />
           <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search trips by name..."
-            className="w-full pl-10 pr-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-cyan-500"
+            placeholder="Search trips..."
+            className="search-input-field"
           />
-        </form>
+          {search && (
+            <button onClick={() => setSearch('')} className="text-slate-400 hover:text-slate-600">
+              <X size={16} />
+            </button>
+          )}
+        </div>
 
-        <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
-          <div className="flex items-center space-x-2">
-            <Filter className="w-4 h-4 text-slate-400" />
+        <div className="filter-controls-right">
+          {/* Group By */}
+          <div className="select-control-box">
+            <Layers size={15} className="control-icon" />
+            <select
+              value={groupBy}
+              onChange={(e) => setGroupBy(e.target.value)}
+              className="custom-select-element"
+              title="Group By"
+            >
+              <option value="STATUS">Group: By Status</option>
+              <option value="NONE">Group: None (Grid View)</option>
+            </select>
+          </div>
+
+          {/* Filter */}
+          <div className="select-control-box">
+            <Filter size={15} className="control-icon" />
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="bg-slate-950 border border-slate-800 text-xs text-slate-200 rounded-xl px-3 py-2 focus:outline-none focus:border-cyan-500"
+              className="custom-select-element"
+              title="Filter By Status"
             >
               <option value="">All Statuses</option>
-              <option value="UPCOMING">Upcoming</option>
+              <option value="SAVED_PUBLIC">Saved Community Trips 🌐</option>
               <option value="ONGOING">Ongoing</option>
+              <option value="UPCOMING">Upcoming</option>
               <option value="COMPLETED">Completed</option>
               <option value="DRAFT">Draft</option>
             </select>
           </div>
 
-          <div className="flex items-center space-x-2">
-            <span className="text-xs text-slate-400">Sort:</span>
+          {/* Sort By */}
+          <div className="select-control-box">
+            <ArrowUpDown size={15} className="control-icon" />
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="bg-slate-950 border border-slate-800 text-xs text-slate-200 rounded-xl px-3 py-2 focus:outline-none focus:border-cyan-500"
+              className="custom-select-element"
+              title="Sort By"
             >
-              <option value="createdAt">Newest First</option>
-              <option value="startDate">Start Date</option>
-              <option value="name">Trip Name</option>
+              <option value="NEWEST">Newest First</option>
+              <option value="OLDEST">Oldest First</option>
+              <option value="START_DATE">Start Date</option>
+              <option value="NAME">Trip Name</option>
             </select>
           </div>
         </div>
       </div>
 
-      {/* Trips Grid */}
+      {/* 39. LOADING STATE */}
       {loading ? (
-        <div className="py-16 text-center text-sm text-slate-400">Loading trips...</div>
-      ) : trips.length === 0 ? (
-        <div className="bg-slate-900/60 border border-slate-800 rounded-3xl p-12 text-center space-y-4">
-          <div className="w-16 h-16 rounded-2xl bg-slate-800 flex items-center justify-center mx-auto text-cyan-400">
-            <Compass className="w-8 h-8" />
-          </div>
-          <h3 className="text-lg font-bold text-slate-200">No trips found</h3>
-          <p className="text-xs text-slate-400 max-w-sm mx-auto">
-            {search || statusFilter
-              ? 'No trips match your search filters. Try clearing your search.'
-              : 'You have not planned any trips yet.'}
+        <div className="loading-state-box py-16">
+          <div className="gt-spinner-lg" />
+          <p className="text-sm font-semibold text-slate-600 dark:text-slate-400 mt-2">
+            Loading your trips...
           </p>
-          <Link
-            to="/trips/create"
-            className="inline-flex items-center space-x-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-semibold text-xs shadow-md shadow-cyan-500/20"
+        </div>
+      ) : rawTrips.length === 0 ? (
+        /* 29. NO TRIPS AT ALL GLOBAL EMPTY STATE */
+        <div className="empty-trips-card py-16">
+          <div className="empty-icon-circle">
+            <Compass size={36} />
+          </div>
+          <h3 className="empty-title-text">Your adventures start here.</h3>
+          <p className="empty-desc-text">
+            Create your first trip and start building an unforgettable itinerary.
+          </p>
+          <div className="flex items-center gap-3 mt-4">
+            <Link to="/trips/create" className="btn-primary-action">
+              <Plus size={18} />
+              <span>Plan a Trip</span>
+            </Link>
+            <button
+              onClick={openAIChat}
+              className="px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 text-xs font-bold shadow-sm hover:bg-slate-50 dark:hover:bg-slate-700 transition-all flex items-center gap-2"
+            >
+              <Sparkles size={16} className="text-amber-500" />
+              <span>Plan with AI</span>
+            </button>
+          </div>
+        </div>
+      ) : filteredAndSortedTrips.length === 0 && isFiltered ? (
+        /* 47 & 48. SEARCH / FILTER EMPTY RESULT */
+        <div className="empty-trips-card py-16">
+          <div className="empty-icon-circle">
+            <Search size={32} />
+          </div>
+          <h3 className="empty-title-text">
+            {search ? 'No trips found' : 'No trips match your filters'}
+          </h3>
+          <p className="empty-desc-text">
+            {search
+              ? 'Try another search term or adjust your filters.'
+              : 'Try clearing your status filter to see all adventures.'}
+          </p>
+          <button
+            onClick={() => {
+              setSearch('');
+              setStatusFilter('');
+            }}
+            className="btn-primary-action"
           >
-            <Plus className="w-4 h-4" />
-            <span>Create New Trip</span>
-          </Link>
+            <RefreshCw size={16} />
+            <span>Clear Filters</span>
+          </button>
+        </div>
+      ) : groupBy === 'NONE' || statusFilter !== '' ? (
+        /* FLAT GRID VIEW (WHEN STATUS FILTER IS ACTIVE OR GROUP BY IS NONE) */
+        <div className="space-y-4">
+          <div className="flex items-center justify-between text-xs text-slate-500 font-semibold px-1">
+            <span>Showing {filteredAndSortedTrips.length} trip(s)</span>
+          </div>
+          <div className="trips-grid">
+            {filteredAndSortedTrips.map((trip) => (
+              <TripCard key={trip._id} trip={trip} onDelete={handleDeleteTrip} />
+            ))}
+          </div>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {trips.map((trip) => (
-            <TripCard key={trip._id} trip={trip} onDelete={handleDeleteTrip} />
-          ))}
+        /* 10. THREE STATUS SECTIONS (ONGOING, UPCOMING, COMPLETED) */
+        <div className="space-y-8">
+          {/* 11. ONGOING SECTION */}
+          <div>
+            <div className="trip-section-header-box">
+              <div className="trip-section-title-wrap">
+                <span className="trip-section-dot ongoing" />
+                <h2 className="trip-section-title-text">Ongoing</h2>
+                <span className="trip-section-count-badge">{ongoingTrips.length}</span>
+              </div>
+            </div>
+
+            {ongoingTrips.length === 0 ? (
+              <div className="bg-slate-50 dark:bg-slate-900/50 border border-dashed border-slate-200 dark:border-slate-800 rounded-2xl p-6 text-center">
+                <h4 className="text-sm font-bold text-slate-700 dark:text-slate-300">No ongoing trips</h4>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                  Your active adventures will appear here.
+                </p>
+              </div>
+            ) : (
+              <div className="trips-grid">
+                {ongoingTrips.map((trip) => (
+                  <TripCard key={trip._id} trip={trip} onDelete={handleDeleteTrip} />
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* 12. UPCOMING SECTION */}
+          <div>
+            <div className="trip-section-header-box">
+              <div className="trip-section-title-wrap">
+                <span className="trip-section-dot upcoming" />
+                <h2 className="trip-section-title-text">Upcoming</h2>
+                <span className="trip-section-count-badge">{upcomingTrips.length}</span>
+              </div>
+            </div>
+
+            {upcomingTrips.length === 0 ? (
+              <div className="bg-slate-50 dark:bg-slate-900/50 border border-dashed border-slate-200 dark:border-slate-800 rounded-2xl p-6 text-center flex flex-col items-center justify-center gap-2">
+                <div>
+                  <h4 className="text-sm font-bold text-slate-700 dark:text-slate-300">No upcoming trips</h4>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                    Ready for your next adventure?
+                  </p>
+                </div>
+                <Link to="/trips/create" className="btn-primary-action text-xs py-1.5 px-3">
+                  <Plus size={14} />
+                  <span>Plan a Trip</span>
+                </Link>
+              </div>
+            ) : (
+              <div className="trips-grid">
+                {upcomingTrips.map((trip) => (
+                  <TripCard key={trip._id} trip={trip} onDelete={handleDeleteTrip} />
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* 13. COMPLETED SECTION */}
+          <div>
+            <div className="trip-section-header-box">
+              <div className="trip-section-title-wrap">
+                <span className="trip-section-dot completed" />
+                <h2 className="trip-section-title-text">Completed</h2>
+                <span className="trip-section-count-badge">{completedTrips.length}</span>
+              </div>
+            </div>
+
+            {completedTrips.length === 0 ? (
+              <div className="bg-slate-50 dark:bg-slate-900/50 border border-dashed border-slate-200 dark:border-slate-800 rounded-2xl p-6 text-center">
+                <h4 className="text-sm font-bold text-slate-700 dark:text-slate-300">No completed trips yet</h4>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                  Your past adventures will appear here.
+                </p>
+              </div>
+            ) : (
+              <div className="trips-grid opacity-95">
+                {completedTrips.map((trip) => (
+                  <TripCard key={trip._id} trip={trip} onDelete={handleDeleteTrip} />
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* 14. SAVED COMMUNITY TRIPS SECTION */}
+          {savedPublicTrips.length > 0 && (
+            <div>
+              <div className="trip-section-header-box">
+                <div className="trip-section-title-wrap">
+                  <span className="trip-section-dot bg-indigo-500" />
+                  <h2 className="trip-section-title-text">Saved Community Trips 🌐</h2>
+                  <span className="trip-section-count-badge">{savedPublicTrips.length}</span>
+                </div>
+              </div>
+
+              <div className="trips-grid">
+                {savedPublicTrips.map((trip) => (
+                  <TripCard key={trip._id} trip={trip} onDelete={handleDeleteTrip} />
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       )}
     </div>

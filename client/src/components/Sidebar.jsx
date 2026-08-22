@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { 
   LayoutGrid, 
   Map, 
@@ -13,14 +14,22 @@ import {
   ChevronRight, 
   ChevronLeft,
   LogOut,
+  LogIn,
   Edit3,
-  Eye
+  Eye,
+  ShieldCheck
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import './Sidebar.css';
 
 export default function Sidebar({ collapsed, setCollapsed, activeTab, setActiveTab }) {
-  const { user, logout } = useAuth();
+  const { user, isAuthenticated, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    await logout();
+    navigate('/login');
+  };
   const [openSections, setOpenSections] = useState({
     Itinerary: true,
     Explore: true,
@@ -70,14 +79,6 @@ export default function Sidebar({ collapsed, setCollapsed, activeTab, setActiveT
           >
             <Compass size={18} className="item-icon" />
             {!collapsed && <span>Home / Explore</span>}
-          </button>
-
-          <button 
-            className={`nav-item ${activeTab === 'Dashboard' ? 'active' : ''}`}
-            onClick={() => setActiveTab('Dashboard')}
-          >
-            <LayoutGrid size={18} className="item-icon" />
-            {!collapsed && <span>Dashboard</span>}
           </button>
 
           <button 
@@ -208,6 +209,21 @@ export default function Sidebar({ collapsed, setCollapsed, activeTab, setActiveT
           </button>
         </div>
 
+        {/* ADMINISTRATION SECTION (ADMIN Only) */}
+        {user?.role === 'ADMIN' && (
+          <div className="nav-group">
+            {!collapsed && <div className="group-title">ADMINISTRATION</div>}
+
+            <button 
+              className={`nav-item ${activeTab === 'Admin Dashboard' ? 'active' : ''}`}
+              onClick={() => setActiveTab('Admin Dashboard')}
+            >
+              <ShieldCheck size={18} className="item-icon" />
+              {!collapsed && <span>Admin & Analytics</span>}
+            </button>
+          </div>
+        )}
+
         {/* ACCOUNT SECTION */}
         <div className="nav-group">
           {!collapsed && <div className="group-title">ACCOUNT</div>}
@@ -224,30 +240,42 @@ export default function Sidebar({ collapsed, setCollapsed, activeTab, setActiveT
 
       {/* Sidebar Footer User Profile */}
       <div className="sidebar-footer">
-        <div className="profile-container">
-          <div className="avatar-wrapper">
-            {user?.profilePhoto ? (
-              <img src={user.profilePhoto} alt={displayName} className="avatar-img w-8 h-8 rounded-full object-cover" />
-            ) : (
-              <div className="avatar">{initial}</div>
-            )}
-            <span className="online-indicator"></span>
-          </div>
-
-          {!collapsed && (
-            <div className="user-info">
-              <div className="name-row">
-                <span className="user-name truncate max-w-[110px]" title={displayName}>{displayName}</span>
-                <span className="role-badge">{user?.role === 'ADMIN' ? 'Admin' : 'Traveler'}</span>
+        {user ? (
+          <>
+            <div className="profile-container">
+              <div className="avatar-wrapper">
+                {user?.profilePhoto ? (
+                  <img src={user.profilePhoto} alt={displayName} className="avatar-img w-8 h-8 rounded-full object-cover" />
+                ) : (
+                  <div className="avatar">{initial}</div>
+                )}
+                <span className="online-indicator"></span>
               </div>
-              <span className="user-email truncate max-w-[130px]" title={displayEmail}>{displayEmail}</span>
-            </div>
-          )}
-        </div>
 
-        {!collapsed && (
-          <button className="logout-btn" title="Logout" onClick={logout}>
-            <LogOut size={16} />
+              {!collapsed && (
+                <div className="user-info">
+                  <div className="name-row">
+                    <span className="user-name truncate max-w-[110px]" title={displayName}>{displayName}</span>
+                    <span className="role-badge">{user?.role === 'ADMIN' ? 'Admin' : 'Traveler'}</span>
+                  </div>
+                  <span className="user-email truncate max-w-[130px]" title={displayEmail}>{displayEmail}</span>
+                </div>
+              )}
+            </div>
+
+            {!collapsed && (
+              <button className="logout-btn" title="Logout" onClick={handleLogout}>
+                <LogOut size={16} />
+              </button>
+            )}
+          </>
+        ) : (
+          <button 
+            onClick={() => navigate('/login')} 
+            className="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-xl bg-slate-900 text-white font-semibold text-xs shadow-sm hover:bg-slate-800 transition-all"
+          >
+            <LogIn size={15} />
+            {!collapsed && <span>Log In</span>}
           </button>
         )}
       </div>

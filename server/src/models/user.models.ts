@@ -64,6 +64,10 @@ const UserSchema = new mongoose.Schema<UserType>({
         enum: ["USER", "ADMIN"],
         default: "USER"
     },
+    isActive: {
+        type: Boolean,
+        default: true
+    },
     resetPasswordToken: {
         type: String,
         default: undefined

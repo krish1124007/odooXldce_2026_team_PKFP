@@ -2,6 +2,7 @@ import express from "express";
 import type { Request, Response, NextFunction } from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
+import mongoose from "mongoose";
 
 // Routers
 import authRoutes from "./routers/authRoutes.js";
@@ -18,7 +19,10 @@ import userRouter from "./routers/user.routes.js";
 const app = express();
 
 app.use(cors({
-    origin: process.env.CORS_ORIGIN || "http://localhost:5173",
+    origin: (origin, callback) => {
+        if (!origin) return callback(null, true);
+        return callback(null, origin);
+    },
     credentials: true
 }));
 
@@ -27,10 +31,13 @@ app.use(express.urlencoded({ extended: true, limit: "16kb" }));
 app.use(express.static("public"));
 app.use(cookieParser());
 
-// 1. Health Check Endpoint (Phase 1 Requirement)
+// 1. Health Check Endpoint (Phase 1 & Phase 7 Requirement)
 app.get("/api/health", (req: Request, res: Response) => {
-    res.status(200).json({
-        success: true,
+    const isDbConnected = mongoose.connection.readyState === 1;
+    res.status(isDbConnected ? 200 : 503).json({
+        success: isDbConnected,
+        status: isDbConnected ? "healthy" : "degraded",
+        database: isDbConnected ? "connected" : "disconnected",
         message: "GlobeTrotter API is running",
         timestamp: new Date().toISOString(),
         environment: process.env.NODE_ENV || "development"

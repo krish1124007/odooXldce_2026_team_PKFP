@@ -131,7 +131,7 @@ export default function LandingPage() {
             Multi-city itineraries, deterministic budget optimization, and AI agents reasoning on your travel goals.
           </p>
           <div className="hero-banner-actions">
-            <button className="banner-btn-primary" onClick={() => setIsAddEmployeeOpen && setIsAddEmployeeOpen(true)}>
+            <button className="banner-btn-primary" onClick={() => navigate('/trips/create')}>
               <Plus size={16} />
               <span>Start New Journey</span>
             </button>
@@ -282,7 +282,7 @@ export default function LandingPage() {
       {/* 5. Floating Action Button (Matching Wireframe Bottom Right "+ Plan a trip") */}
       <button 
         className="floating-plan-trip-btn"
-        onClick={() => setIsAddEmployeeOpen ? setIsAddEmployeeOpen(true) : navigate('/trips/create')}
+        onClick={() => navigate('/trips/create')}
         title="Plan a new trip"
       >
         <Plus size={20} />

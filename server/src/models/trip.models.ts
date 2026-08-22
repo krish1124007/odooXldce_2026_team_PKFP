@@ -39,6 +39,20 @@ const TripSchema = new Schema<ITrip>(
       enum: ["PRIVATE", "PUBLIC"],
       default: "PRIVATE",
     },
+    publicId: {
+      type: String,
+      unique: true,
+      sparse: true,
+      trim: true,
+    },
+    isCopiedFromPublic: {
+      type: Boolean,
+      default: false,
+    },
+    originalPublicId: {
+      type: String,
+      default: "",
+    },
     budget: {
       amount: {
         type: Number,
@@ -69,5 +83,7 @@ const TripSchema = new Schema<ITrip>(
 TripSchema.index({ userId: 1 });
 TripSchema.index({ status: 1 });
 TripSchema.index({ startDate: 1 });
+TripSchema.index({ visibility: 1 });
+TripSchema.index({ publicId: 1 });
 
 export const Trip = mongoose.model<ITrip>("Trip", TripSchema);

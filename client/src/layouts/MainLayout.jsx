@@ -1,39 +1,100 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
 import Header from '../components/Header';
 import CreateTripModal from '../components/CreateTripModal';
 import ReportsModal from '../components/ReportsModal';
 import SearchModal from '../components/SearchModal';
+import GlobeTrotterAI from '../components/ai/GlobeTrotterAI';
+import { Bot, Sparkles } from 'lucide-react';
+import api from '../services/api';
 
 export default function MainLayout({ kpiData, setKpiData }) {
   const [collapsed, setCollapsed] = useState(false);
   const [theme, setTheme] = useState('light');
+  const [latestTripId, setLatestTripId] = useState(null);
 
   // Modals state
   const [isCreateTripOpen, setIsCreateTripOpen] = useState(false);
   const [isReportsOpen, setIsReportsOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
 
+  // AI Agent State
+  const [isAIOpen, setIsAIOpen] = useState(false);
+  const [aiContext, setAiContext] = useState({ page: 'dashboard' });
+
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Determine active tab from route path
-  const getActiveTabFromPath = (path) => {
-    if (path.includes('/trips/create')) return 'Plan New Trip';
-    if (path.includes('/trips/demo-trip-123/cities')) return 'City Discovery';
-    if (path.includes('/trips/demo-trip-123/activities')) return 'Activity Discovery';
-    if (path.includes('/trips/demo-trip-123/builder')) return 'Itinerary Builder';
-    if (path.includes('/trips/demo-trip-123/itinerary')) return 'Itinerary View';
-    if (path.includes('/trips/demo-trip-123/calendar')) return 'Timeline';
-    if (path.includes('/trips/demo-trip-123/budget')) return 'Trip Budget';
-    if (path.includes('/public')) return 'Public Trips';
-    if (path.includes('/profile')) return 'Profile';
-    if (path.includes('/trips')) return 'My Trips';
-    return 'Dashboard';
+  // Helper to get tripId from current URL path
+  const getTripIdFromPath = (path) => {
+    const tripMatch = path.match(/\/trips\/([a-zA-Z0-9]+)/);
+    return tripMatch && tripMatch[1] !== 'create' ? tripMatch[1] : null;
+  };
+
+  useEffect(() => {
+    const fetchLatestTrip = async () => {
+      const pathTripId = getTripIdFromPath(location.pathname);
+      if (pathTripId) {
+        setLatestTripId(pathTripId);
+        return;
+      }
+      try {
+        const res = await api.get('/trips?limit=1');
+        if (res.data?.success && res.data.data?.length > 0) {
+          setLatestTripId(res.data.data[0]._id);
+        }
+      } catch (err) {
+        // Ignore unauthenticated or fetch error
+      }
+    };
+    fetchLatestTrip();
+  }, [location.pathname]);
+
+  // Extract page and tripId from path for AI
+  const getAiContextFromPath = (path) => {
+    const tripId = getTripIdFromPath(path);
+
+    if (path.includes('/builder') || path.includes('/itinerary')) {
+      return { page: 'itinerary', tripId };
+    }
+    if (path.includes('/budget')) {
+      return { page: 'budget', tripId };
+    }
+    if (path.includes('/cities')) {
+      return { page: 'cities', tripId };
+    }
+    if (path.includes('/activities')) {
+      return { page: 'activities', tripId };
+    }
+    return { page: 'dashboard', tripId };
+  };
+
+  const openAIWithContext = (customCtx = {}) => {
+    const pathCtx = getAiContextFromPath(location.pathname);
+    setAiContext({ ...pathCtx, ...customCtx });
+    setIsAIOpen(true);
   };
 
   const activeTab = getActiveTabFromPath(location.pathname);
+
+  function getActiveTabFromPath(path) {
+    if (path.includes('/admin')) return 'Admin Dashboard';
+    if (path.includes('/trips/create')) return 'Plan New Trip';
+    if (path.includes('/cities')) return 'City Discovery';
+    if (path.includes('/activities')) return 'Activity Discovery';
+    if (path.includes('/builder')) return 'Itinerary Builder';
+    if (path.includes('/itinerary')) return 'Itinerary View';
+    if (path.includes('/calendar')) return 'Timeline';
+    if (path.includes('/budget')) return 'Trip Budget';
+    if (path.includes('/community')) return 'Community';
+    if (path.includes('/public')) return 'Public Trips';
+    if (path.includes('/profile')) return 'Profile';
+    if (path.includes('/trips')) return 'My Trips';
+    if (path.includes('/dashboard')) return 'Home';
+    if (path === '/' || path.includes('/home') || path.includes('/explore') || path.includes('/landing')) return 'Home';
+    return 'Home';
+  }
 
   const handleAddTrip = (newTrip) => {
     if (setKpiData) {
@@ -44,13 +105,27 @@ export default function MainLayout({ kpiData, setKpiData }) {
     }
   };
 
-  const handleSelectTab = (tab) => {
+  const handleSelectTab = async (tab) => {
+    const pathTripId = getTripIdFromPath(location.pathname);
+    let targetTripId = pathTripId || latestTripId;
+
+    if (!targetTripId && (tab === 'Itinerary Builder' || tab === 'Itinerary View' || tab === 'Timeline' || tab === 'Trip Budget')) {
+      try {
+        const res = await api.get('/trips?limit=1');
+        if (res.data?.success && res.data.data?.length > 0) {
+          targetTripId = res.data.data[0]._id;
+          setLatestTripId(targetTripId);
+        }
+      } catch (e) {}
+    }
+
     switch (tab) {
       case 'Home':
+      case 'Dashboard':
         navigate('/');
         break;
-      case 'Dashboard':
-        navigate('/dashboard');
+      case 'Admin Dashboard':
+        navigate('/admin');
         break;
       case 'My Trips':
         navigate('/trips');
@@ -59,37 +134,54 @@ export default function MainLayout({ kpiData, setKpiData }) {
         navigate('/trips/create');
         break;
       case 'City Discovery':
-        navigate('/trips/demo-trip-123/cities');
+        navigate(targetTripId ? `/trips/${targetTripId}/cities` : '/cities');
         break;
       case 'Activity Discovery':
-        navigate('/trips/demo-trip-123/activities');
+        navigate(targetTripId ? `/trips/${targetTripId}/activities` : '/activities');
         break;
       case 'Itinerary Builder':
-        navigate('/trips/demo-trip-123/builder');
+        if (targetTripId) {
+          navigate(`/trips/${targetTripId}/builder`);
+        } else {
+          navigate('/trips');
+        }
         break;
       case 'Itinerary View':
-        navigate('/trips/demo-trip-123/itinerary');
+        if (targetTripId) {
+          navigate(`/trips/${targetTripId}/itinerary`);
+        } else {
+          navigate('/trips');
+        }
         break;
       case 'Timeline':
-        navigate('/trips/demo-trip-123/calendar');
+        if (targetTripId) {
+          navigate(`/trips/${targetTripId}/calendar`);
+        } else {
+          navigate('/trips');
+        }
         break;
       case 'Trip Budget':
-        navigate('/trips/demo-trip-123/budget');
+        if (targetTripId) {
+          navigate(`/trips/${targetTripId}/budget`);
+        } else {
+          navigate('/trips');
+        }
         break;
       case 'Public Trips':
-        navigate('/public/trips/demo-public-1');
+      case 'Community':
+        navigate('/community');
         break;
       case 'Profile':
         navigate('/profile');
         break;
       default:
-        navigate('/dashboard');
+        navigate('/');
     }
   };
 
   return (
-    <div className="app-container">
-      {/* Exact Old Sidebar */}
+    <div className="app-container relative">
+      {/* Sidebar */}
       <Sidebar 
         collapsed={collapsed} 
         setCollapsed={setCollapsed}
@@ -99,24 +191,43 @@ export default function MainLayout({ kpiData, setKpiData }) {
 
       {/* Main Right Section */}
       <div className="main-wrapper">
-        {/* Exact Old Header with Search (⌘K), Theme Switcher, Notifications */}
         <Header 
           theme={theme}
           setTheme={setTheme}
           onSearchClick={() => setIsSearchOpen(true)}
         />
 
-        {/* Dashboard Main Content */}
         <main className="main-content">
           <Outlet context={{ 
             setIsCreateTripOpen, 
             setIsAddEmployeeOpen: setIsCreateTripOpen,
             setIsReportsOpen, 
             setIsSearchOpen,
+            openAIWithContext,
             kpiData
           }} />
         </main>
       </div>
+
+      {/* Floating AI Agent Trigger Button */}
+      {!isAIOpen && (
+        <button
+          onClick={() => openAIWithContext()}
+          className="gt-ai-floating-trigger"
+          title="Open GlobeTrotter AI Assistant"
+        >
+          <span className="gt-ai-trigger-dot"></span>
+          <Sparkles className="w-4 h-4 text-amber-400" />
+          <span>GlobeTrotter AI</span>
+        </button>
+      )}
+
+      {/* GlobeTrotter AI Drawer Component */}
+      <GlobeTrotterAI
+        isOpen={isAIOpen}
+        onClose={() => setIsAIOpen(false)}
+        context={aiContext}
+      />
 
       {/* Modals */}
       <CreateTripModal 

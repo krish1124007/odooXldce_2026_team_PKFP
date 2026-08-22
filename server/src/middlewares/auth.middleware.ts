@@ -50,6 +50,13 @@ export const verifyUser = asyncHandler(async (req: Request, res: Response, next:
             });
         }
 
+        if (user.isActive === false) {
+            return res.status(403).json({
+                success: false,
+                message: "Your account has been disabled. Please contact support."
+            });
+        }
+
         req.user = user;
         next();
     } catch (error: any) {

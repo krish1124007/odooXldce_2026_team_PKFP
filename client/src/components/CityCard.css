@@ -1,0 +1,220 @@
+/* CityCard.css - Premium Explicit Styling for GlobeTrotter Destination Cards */
+
+.city-card-container {
+  background-color: var(--bg-card, #FFFFFF);
+  border: 1px solid var(--border-color, #E2E8F0);
+  border-radius: 16px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 4px 16px -2px rgba(0, 0, 0, 0.04);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  height: 100%;
+}
+
+.city-card-container:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 28px -4px rgba(18, 34, 68, 0.12);
+  border-color: #CBD5E1;
+}
+
+.city-card-media {
+  position: relative;
+  height: 180px;
+  width: 100%;
+  overflow: hidden;
+  background-color: #F1F5F9;
+}
+
+.city-card-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s ease;
+}
+
+.city-card-container:hover .city-card-img {
+  transform: scale(1.06);
+}
+
+.city-card-gradient {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.3) 0%, rgba(15, 23, 42, 0.1) 40%, rgba(15, 23, 42, 0.85) 100%);
+}
+
+.city-badge-tag {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  padding: 4px 10px;
+  border-radius: 9999px;
+  font-size: 11px;
+  font-weight: 700;
+  background: rgba(15, 23, 42, 0.75);
+  color: #FFFFFF;
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  letter-spacing: 0.2px;
+}
+
+.city-bookmark-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  padding: 7px;
+  border-radius: 10px;
+  background: rgba(15, 23, 42, 0.65);
+  color: #FFFFFF;
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.city-bookmark-btn.saved {
+  background: #F59E0B;
+  border-color: #F59E0B;
+  color: #FFFFFF;
+}
+
+.city-title-overlay {
+  position: absolute;
+  bottom: 12px;
+  left: 16px;
+  right: 16px;
+}
+
+.city-name-text {
+  font-family: var(--font-heading, 'Outfit', sans-serif);
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: #FFFFFF;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+  margin: 0;
+  letter-spacing: -0.3px;
+}
+
+.city-card-content {
+  padding: 1.15rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  flex: 1;
+  gap: 1rem;
+}
+
+.city-desc-text {
+  font-size: 12.5px;
+  color: var(--text-secondary, #64748B);
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin: 0;
+}
+
+.city-metrics-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.6rem;
+}
+
+.metric-pill-box {
+  background-color: var(--bg-app, #F8FAFC);
+  border: 1px solid var(--border-darker, #E2E8F0);
+  border-radius: 10px;
+  padding: 0.5rem 0.65rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.metric-icon-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 7px;
+}
+
+.metric-icon-wrap.cost {
+  background-color: #DCFCE7;
+  color: #166534;
+}
+
+.metric-icon-wrap.popularity {
+  background-color: #DBEAFE;
+  color: #1E40AF;
+}
+
+.metric-label-text {
+  font-size: 9.5px;
+  font-weight: 700;
+  color: #64748B;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.metric-val-text {
+  font-size: 12.5px;
+  font-weight: 800;
+  color: #0F172A;
+}
+
+.city-actions-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding-top: 0.25rem;
+}
+
+.btn-card-action {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0.55rem 0.85rem;
+  border-radius: 10px;
+  font-size: 12.5px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.btn-card-action.outline {
+  background-color: #FFFFFF;
+  border: 1px solid #CBD5E1;
+  color: #0F172A;
+}
+
+.btn-card-action.outline:hover {
+  background-color: #F1F5F9;
+  border-color: #94A3B8;
+}
+
+.btn-card-action.primary {
+  background-color: #122244;
+  border: 1px solid #122244;
+  color: #FFFFFF;
+  box-shadow: 0 2px 6px rgba(18, 34, 68, 0.15);
+}
+
+.btn-card-action.primary:hover {
+  background-color: #1C3366;
+  border-color: #1C3366;
+}
+
+.btn-card-action.added {
+  background-color: #DCFCE7;
+  border: 1px solid #86EFAC;
+  color: #166534;
+  cursor: default;
+}

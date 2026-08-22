@@ -1,13 +1,13 @@
 import { Router } from "express";
-import type { Request, Response } from "express";
+import { processAgentChatHandler, confirmActionHandler } from "../controllers/agent.controller.js";
+import { verifyUser } from "../middlewares/auth.middleware.js";
 
 const router = Router();
 
-router.post("/chat", (req: Request, res: Response) => {
-    res.status(501).json({ 
-        success: false, 
-        message: "GlobeTrotter Groq Agentic AI layer will be activated in Phase 6." 
-    });
-});
+// Require authentication for all agent endpoints
+router.use(verifyUser);
+
+router.post("/chat", processAgentChatHandler);
+router.post("/actions/confirm", confirmActionHandler);
 
 export default router;
