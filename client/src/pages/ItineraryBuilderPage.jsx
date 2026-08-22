@@ -513,60 +513,80 @@ export default function ItineraryBuilderPage() {
         <div className="space-y-6">
           {stops.map((stopItem, index) => {
             const { stop, city, activities } = stopItem;
+            const sectionBudget = activities.reduce(
+              (sum, a) => sum + (a.itineraryActivity.estimatedCost || a.activity?.cost || 0),
+              0
+            );
+
             return (
-              <div key={stop._id} className="bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden shadow-lg">
-                {/* Stop Header */}
-                <div className="p-4 bg-slate-50 dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-600 dark:text-cyan-400 font-bold">
-                      #{index + 1}
-                    </div>
+              <div key={stop._id} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden shadow-lg">
+                {/* Section Header Matching Wireframe Screen 5 */}
+                <div className="p-5 bg-slate-50 dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800 flex flex-col gap-3">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <div>
                       <div className="flex items-center gap-2">
-                        <h3 className="text-base font-bold text-slate-900 dark:text-white">{city?.name || 'City Stop'}</h3>
-                        <span className="px-2 py-0.5 rounded-full bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-[10px] font-semibold">
-                          {city?.country}
+                        <span className="px-2.5 py-1 rounded-lg bg-blue-600 text-white text-xs font-extrabold uppercase tracking-wider">
+                          Section {index + 1}
                         </span>
+                        <h3 className="text-lg font-extrabold text-slate-900 dark:text-white">
+                          {city?.name || 'City Stop'}
+                        </h3>
+                        {city?.country && (
+                          <span className="px-2 py-0.5 rounded-full bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-[11px] font-semibold">
+                            {city.country}
+                          </span>
+                        )}
                       </div>
-                      <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 flex items-center gap-2">
-                        <Calendar className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400" />
-                        <span>{formatDate(stop.startDate)} — {formatDate(stop.endDate)}</span>
-                        {stop.notes && <span className="italic text-slate-400">({stop.notes})</span>}
+                      <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                        All the necessary information about this section (travel, stay, and activities for {city?.name || 'this stop'}).
                       </p>
+                    </div>
+
+                    <div className="flex items-center gap-1.5 shrink-0">
+                      <button
+                        onClick={() => handleReorderStops(index, 'up')}
+                        disabled={index === 0}
+                        className="p-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white disabled:opacity-30"
+                        title="Move Up"
+                      >
+                        <ChevronUp size={16} />
+                      </button>
+                      <button
+                        onClick={() => handleReorderStops(index, 'down')}
+                        disabled={index === stops.length - 1}
+                        className="p-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white disabled:opacity-30"
+                        title="Move Down"
+                      >
+                        <ChevronDown size={16} />
+                      </button>
+                      <button
+                        onClick={() => openEditStopModal(stop)}
+                        className="p-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-cyan-600 dark:hover:text-cyan-400"
+                        title="Edit Stop Dates"
+                      >
+                        <Edit3 size={16} />
+                      </button>
+                      <button
+                        onClick={() => handleDeleteStop(stop._id, city?.name || 'City')}
+                        className="p-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-red-500"
+                        title="Remove Stop"
+                      >
+                        <Trash2 size={16} />
+                      </button>
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-1.5 shrink-0">
-                    <button
-                      onClick={() => handleReorderStops(index, 'up')}
-                      disabled={index === 0}
-                      className="p-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white disabled:opacity-30"
-                      title="Move Up"
-                    >
-                      <ChevronUp size={16} />
-                    </button>
-                    <button
-                      onClick={() => handleReorderStops(index, 'down')}
-                      disabled={index === stops.length - 1}
-                      className="p-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white disabled:opacity-30"
-                      title="Move Down"
-                    >
-                      <ChevronDown size={16} />
-                    </button>
-                    <button
-                      onClick={() => openEditStopModal(stop)}
-                      className="p-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-cyan-600 dark:hover:text-cyan-400"
-                      title="Edit Stop Dates"
-                    >
-                      <Edit3 size={16} />
-                    </button>
-                    <button
-                      onClick={() => handleDeleteStop(stop._id, city?.name || 'City')}
-                      className="p-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-red-500"
-                      title="Remove Stop"
-                    >
-                      <Trash2 size={16} />
-                    </button>
+                  {/* Wireframe Screen 5 Pill Boxes */}
+                  <div className="flex flex-wrap items-center gap-3 pt-1">
+                    <div className="px-3.5 py-1.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs font-bold text-slate-800 dark:text-slate-200 flex items-center gap-2 shadow-sm">
+                      <Calendar className="w-3.5 h-3.5 text-blue-600 dark:text-cyan-400" />
+                      <span>Date Range: {formatDate(stop.startDate)} to {formatDate(stop.endDate)}</span>
+                    </div>
+
+                    <div className="px-3.5 py-1.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-2 shadow-sm">
+                      <DollarSign className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                      <span>Budget of this section: ₹{sectionBudget.toLocaleString()}</span>
+                    </div>
                   </div>
                 </div>
 
@@ -574,12 +594,12 @@ export default function ItineraryBuilderPage() {
                 <div className="p-4 space-y-3">
                   {activities.length === 0 ? (
                     <div className="py-6 text-center border border-dashed border-slate-200 dark:border-slate-800 rounded-xl">
-                      <p className="text-xs text-slate-500 dark:text-slate-400">No activities planned for this city stop yet.</p>
+                      <p className="text-xs text-slate-500 dark:text-slate-400">No activities planned for this section yet.</p>
                       <button
                         onClick={() => openAddActivityModal(stopItem)}
                         className="mt-2 text-xs font-semibold text-cyan-600 dark:text-cyan-400 hover:underline inline-flex items-center gap-1"
                       >
-                        <Plus size={14} /> Add Activity
+                        <Plus size={14} /> Add Activity to Section
                       </button>
                     </div>
                   ) : (
@@ -662,7 +682,19 @@ export default function ItineraryBuilderPage() {
               </div>
             );
           })}
+
+          {/* Wireframe Screen 5 Bottom Action Button: + Add another Section */}
+          <div className="flex justify-center pt-6 pb-2">
+            <button
+              onClick={openAddStopModal}
+              className="px-8 py-3.5 rounded-2xl border-2 border-dashed border-blue-500 hover:border-blue-600 bg-blue-50/60 dark:bg-slate-900 text-blue-700 dark:text-cyan-400 font-extrabold text-sm flex items-center gap-2 shadow-sm hover:shadow transition-all"
+            >
+              <Plus size={18} />
+              <span>+ Add another Section</span>
+            </button>
+          </div>
         </div>
+      )}
       )}
 
       {/* MODAL 1: ADD STOP */}
