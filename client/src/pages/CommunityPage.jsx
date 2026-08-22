@@ -113,18 +113,16 @@ export default function CommunityPage() {
   return (
     <div className="community-page-container">
       {/* Community Hero Banner */}
-      <div className="bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 rounded-3xl p-6 sm:p-8 text-white shadow-xl">
-        <div className="max-w-2xl space-y-2">
-          <span className="px-3 py-1 bg-white/20 rounded-full text-xs font-bold inline-flex items-center gap-1.5 backdrop-blur-md">
-            <Globe size={14} /> Public Itinerary Marketplace
-          </span>
-          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
-            Discover & Copy Community Itineraries
-          </h1>
-          <p className="text-xs sm:text-sm text-blue-100 leading-relaxed">
-            Browse real itineraries planned by travelers around the world. Copy any public trip into your personal account and adapt it with your own dates and budget.
-          </p>
-        </div>
+      <div className="community-hero-banner">
+        <span className="community-hero-badge">
+          <Globe size={13} /> Public Itinerary Marketplace
+        </span>
+        <h1 className="community-hero-title">
+          Discover & Copy Community Itineraries
+        </h1>
+        <p className="community-hero-subtitle">
+          Browse real itineraries planned by travelers around the world. Copy any public trip into your personal account and adapt it with your own dates and budget.
+        </p>
       </div>
 
       {/* Wireframe Top Control Bar: Search, Group By, Filter, Sort By */}
@@ -220,12 +218,13 @@ export default function CommunityPage() {
             {trips.map((trip) => {
               const startDateStr = new Date(trip.startDate).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
               const endDateStr = new Date(trip.endDate).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
-              const creatorInitial = trip.creator ? trip.creator[0].toUpperCase() : 'P';
+              const cleanCreator = trip.creator ? trip.creator.replace(/^planned by\s+/i, '') : 'Traveler';
+              const creatorInitial = cleanCreator ? cleanCreator[0].toUpperCase() : 'P';
 
               return (
                 <div key={trip.id || trip.publicId} className="community-feed-item">
                   {/* Wireframe User Avatar Circle */}
-                  <div className="community-user-avatar" title={`Planned by ${trip.creator}`}>
+                  <div className="community-user-avatar" title={`Planned by ${cleanCreator}`}>
                     {creatorInitial}
                   </div>
 
@@ -243,7 +242,7 @@ export default function CommunityPage() {
                       <div className="community-post-header">
                         <div className="community-author-row">
                           <User size={13} className="text-blue-600 dark:text-cyan-400" />
-                          <span>Planned by <strong>{trip.creator}</strong></span>
+                          <span>Planned by <strong>{cleanCreator}</strong></span>
                         </div>
                         <h3 className="community-trip-title">{trip.name}</h3>
                         <p className="community-trip-dates">
