@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useOutletContext } from 'react-router-dom';
 import api from '../services/api';
 import TripCard from '../components/TripCard';
 import { Plus, Search, Filter, Compass, ArrowUpDown, Sparkles, Layers, RefreshCw, X, Calendar, MapPin } from 'lucide-react';
@@ -7,6 +7,8 @@ import './MyTripsPage.css';
 
 export default function MyTripsPage() {
   const navigate = useNavigate();
+  const outletCtx = useOutletContext() || {};
+  const openAIWithContext = outletCtx.openAIWithContext;
 
   const [rawTrips, setRawTrips] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -119,11 +121,14 @@ export default function MyTripsPage() {
   );
 
   const openAIChat = () => {
-    // Open GlobeTrotter AI Agent drawer
-    const event = new CustomEvent('open-ai-agent', {
-      detail: { message: 'Help me plan a personalized multi-city trip.' },
-    });
-    window.dispatchEvent(event);
+    if (openAIWithContext) {
+      openAIWithContext({ page: 'my-trips' });
+    } else {
+      const event = new CustomEvent('open-ai-agent', {
+        detail: { message: 'Help me plan a personalized multi-city trip.' },
+      });
+      window.dispatchEvent(event);
+    }
   };
 
   const isFiltered = search || statusFilter;
@@ -140,9 +145,9 @@ export default function MyTripsPage() {
         <div className="flex items-center gap-3 shrink-0">
           <button
             onClick={openAIChat}
-            className="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs border border-slate-700 shadow-sm transition-all flex items-center gap-1.5 shrink-0"
+            className="px-4 py-2 rounded-xl bg-gradient-to-r from-purple-600 via-indigo-600 to-blue-600 hover:opacity-95 text-white font-bold text-xs shadow-md transition-all flex items-center gap-1.5 shrink-0 border border-purple-400/30"
           >
-            <Sparkles size={15} className="text-amber-400" />
+            <Sparkles size={15} className="text-amber-300" />
             <span>Plan with AI</span>
           </button>
           <Link to="/trips/create" className="btn-primary-action shrink-0">
