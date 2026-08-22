@@ -45,6 +45,14 @@ const TripSchema = new Schema<ITrip>(
       sparse: true,
       trim: true,
     },
+    isCopiedFromPublic: {
+      type: Boolean,
+      default: false,
+    },
+    originalPublicId: {
+      type: String,
+      default: "",
+    },
     budget: {
       amount: {
         type: Number,

@@ -83,7 +83,11 @@ export default function MyTripsPage() {
 
     // 2. Status Filter
     if (statusFilter) {
-      result = result.filter((t) => getTripCategory(t) === statusFilter);
+      if (statusFilter === 'SAVED_PUBLIC') {
+        result = result.filter((t) => t.isCopiedFromPublic || t.originalPublicId || t.name?.toLowerCase().includes('(my version)') || t.name?.toLowerCase().includes('(copy)'));
+      } else {
+        result = result.filter((t) => getTripCategory(t) === statusFilter);
+      }
     }
 
     // 3. Sorting
@@ -107,6 +111,10 @@ export default function MyTripsPage() {
   }, [rawTrips, search, statusFilter, sortBy]);
 
   // Categorized groups
+  const savedPublicTrips = useMemo(
+    () => filteredAndSortedTrips.filter((t) => t.isCopiedFromPublic || t.originalPublicId || t.name?.toLowerCase().includes('(my version)') || t.name?.toLowerCase().includes('(copy)')),
+    [filteredAndSortedTrips]
+  );
   const ongoingTrips = useMemo(
     () => filteredAndSortedTrips.filter((t) => getTripCategory(t) === 'ONGOING'),
     [filteredAndSortedTrips]
@@ -201,6 +209,7 @@ export default function MyTripsPage() {
               title="Filter By Status"
             >
               <option value="">All Statuses</option>
+              <option value="SAVED_PUBLIC">Saved Community Trips 🌐</option>
               <option value="ONGOING">Ongoing</option>
               <option value="UPCOMING">Upcoming</option>
               <option value="COMPLETED">Completed</option>
@@ -381,6 +390,25 @@ export default function MyTripsPage() {
               </div>
             )}
           </div>
+
+          {/* 14. SAVED COMMUNITY TRIPS SECTION */}
+          {savedPublicTrips.length > 0 && (
+            <div>
+              <div className="trip-section-header-box">
+                <div className="trip-section-title-wrap">
+                  <span className="trip-section-dot bg-indigo-500" />
+                  <h2 className="trip-section-title-text">Saved Community Trips 🌐</h2>
+                  <span className="trip-section-count-badge">{savedPublicTrips.length}</span>
+                </div>
+              </div>
+
+              <div className="trips-grid">
+                {savedPublicTrips.map((trip) => (
+                  <TripCard key={trip._id} trip={trip} onDelete={handleDeleteTrip} />
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       )}
     </div>

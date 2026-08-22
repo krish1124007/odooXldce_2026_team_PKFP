@@ -304,6 +304,8 @@ export const copyPublicTrip = asyncHandler(async (req: Request, res: Response) =
     endDate: newEnd,
     status: "UPCOMING",
     visibility: "PRIVATE",
+    isCopiedFromPublic: true,
+    originalPublicId: originalTrip.publicId || String(originalTrip._id),
     budget: {
       amount: originalTrip.budget?.amount || 0,
       currency: originalTrip.budget?.currency || "INR",

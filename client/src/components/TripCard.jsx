@@ -111,7 +111,14 @@ const TripCard = ({ trip, onDelete }) => {
 
           {/* Top Status & Three Dot Menu */}
           <div className="trip-card-top-tags">
-            {getStatusBadge(trip.status)}
+            <div className="flex items-center gap-1.5 flex-wrap">
+              {getStatusBadge(trip.status)}
+              {(trip.isCopiedFromPublic || trip.originalPublicId || trip.name?.toLowerCase().includes('(my version)') || trip.name?.toLowerCase().includes('(copy)')) && (
+                <span className="trip-badge bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold shadow-xs">
+                  🌐 Saved from Community
+                </span>
+              )}
+            </div>
 
             <div className="relative" ref={menuRef}>
               <button
