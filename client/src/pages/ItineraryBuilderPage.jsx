@@ -677,14 +677,14 @@ export default function ItineraryBuilderPage() {
             );
           })}
 
-          {/* Bottom Action Button: + Add Stop / Destination */}
-          <div className="flex justify-center pt-6 pb-2">
+          {/* Bottom Action Button: + Add Another Stop */}
+          <div className="flex justify-center pt-4 pb-2">
             <button
               onClick={openAddStopModal}
-              className="btn-secondary py-3 px-8 text-sm"
+              className="btn-secondary py-2.5 px-6 text-xs"
             >
-              <Plus size={18} />
-              <span>Add Stop / Destination</span>
+              <Plus size={15} />
+              <span>Add Another Stop</span>
             </button>
           </div>
         </div>
