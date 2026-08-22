@@ -177,14 +177,10 @@ export default function CommunityPage() {
           </div>
 
           {/* View Mode Toggle */}
-          <div className="select-control-box p-1">
+          <div className="gt-view-toggle-group">
             <button
               onClick={() => setViewMode('feed')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all ${
-                viewMode === 'feed'
-                  ? 'bg-blue-600 text-white shadow-md'
-                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-              }`}
+              className={`gt-view-toggle-btn ${viewMode === 'feed' ? 'active' : ''}`}
               title="Feed / List View"
             >
               <List size={14} />
@@ -192,11 +188,7 @@ export default function CommunityPage() {
             </button>
             <button
               onClick={() => setViewMode('grid')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all ${
-                viewMode === 'grid'
-                  ? 'bg-blue-600 text-white shadow-md'
-                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-              }`}
+              className={`gt-view-toggle-btn ${viewMode === 'grid' ? 'active' : ''}`}
               title="Grid View"
             >
               <Grid size={14} />

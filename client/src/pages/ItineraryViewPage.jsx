@@ -232,25 +232,17 @@ export default function ItineraryViewPage() {
           </Link>
 
           {/* 7. VIEW MODE TOGGLE */}
-          <div className="select-control-box p-1">
+          <div className="gt-view-toggle-group">
             <button
               onClick={() => setViewMode('list')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all ${
-                viewMode === 'list'
-                  ? 'bg-blue-600 text-white shadow-md'
-                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-              }`}
+              className={`gt-view-toggle-btn ${viewMode === 'list' ? 'active' : ''}`}
             >
               <List size={14} />
               <span>List View</span>
             </button>
             <button
               onClick={() => setViewMode('calendar')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all ${
-                viewMode === 'calendar'
-                  ? 'bg-blue-600 text-white shadow-md'
-                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-              }`}
+              className={`gt-view-toggle-btn ${viewMode === 'calendar' ? 'active' : ''}`}
             >
               <CalendarIcon size={14} />
               <span>Calendar</span>

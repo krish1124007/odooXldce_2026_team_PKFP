@@ -322,6 +322,44 @@ body.dark .gt-form-input:focus, body.dark .gt-form-select:focus, body.dark .gt-f
   transform: translateY(-1px);
 }
 
+/* Universal View Mode Toggle Group System */
+.gt-view-toggle-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  background-color: var(--bg-app, #F1F5F9);
+  border: 1px solid var(--border-darker, #CBD5E1);
+  padding: 0.25rem;
+  border-radius: 12px;
+}
+
+.gt-view-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  padding: 0.4rem 0.85rem;
+  border-radius: 9px;
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--text-secondary, #64748B) !important;
+  background: transparent !important;
+  border: none !important;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+.gt-view-toggle-btn:hover {
+  color: var(--text-primary, #0F172A) !important;
+}
+
+.gt-view-toggle-btn.active {
+  background: linear-gradient(135deg, #122244 0%, #1C3366 100%) !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 2px 8px rgba(18, 34, 68, 0.25) !important;
+}
+
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
