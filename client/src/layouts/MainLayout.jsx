@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
 import Header from '../components/Header';
@@ -7,10 +7,12 @@ import ReportsModal from '../components/ReportsModal';
 import SearchModal from '../components/SearchModal';
 import GlobeTrotterAI from '../components/ai/GlobeTrotterAI';
 import { Bot, Sparkles } from 'lucide-react';
+import api from '../services/api';
 
 export default function MainLayout({ kpiData, setKpiData }) {
   const [collapsed, setCollapsed] = useState(false);
   const [theme, setTheme] = useState('light');
+  const [latestTripId, setLatestTripId] = useState(null);
 
   // Modals state
   const [isCreateTripOpen, setIsCreateTripOpen] = useState(false);
@@ -24,10 +26,34 @@ export default function MainLayout({ kpiData, setKpiData }) {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Extract page and tripId from path
-  const getAiContextFromPath = (path) => {
+  // Helper to get tripId from current URL path
+  const getTripIdFromPath = (path) => {
     const tripMatch = path.match(/\/trips\/([a-zA-Z0-9]+)/);
-    const tripId = tripMatch && tripMatch[1] !== 'create' ? tripMatch[1] : undefined;
+    return tripMatch && tripMatch[1] !== 'create' ? tripMatch[1] : null;
+  };
+
+  useEffect(() => {
+    const fetchLatestTrip = async () => {
+      const pathTripId = getTripIdFromPath(location.pathname);
+      if (pathTripId) {
+        setLatestTripId(pathTripId);
+        return;
+      }
+      try {
+        const res = await api.get('/trips?limit=1');
+        if (res.data?.success && res.data.data?.length > 0) {
+          setLatestTripId(res.data.data[0]._id);
+        }
+      } catch (err) {
+        // Ignore unauthenticated or fetch error
+      }
+    };
+    fetchLatestTrip();
+  }, [location.pathname]);
+
+  // Extract page and tripId from path for AI
+  const getAiContextFromPath = (path) => {
+    const tripId = getTripIdFromPath(path);
 
     if (path.includes('/builder') || path.includes('/itinerary')) {
       return { page: 'itinerary', tripId };
@@ -79,7 +105,20 @@ export default function MainLayout({ kpiData, setKpiData }) {
     }
   };
 
-  const handleSelectTab = (tab) => {
+  const handleSelectTab = async (tab) => {
+    const pathTripId = getTripIdFromPath(location.pathname);
+    let targetTripId = pathTripId || latestTripId;
+
+    if (!targetTripId && (tab === 'Itinerary Builder' || tab === 'Itinerary View' || tab === 'Timeline' || tab === 'Trip Budget')) {
+      try {
+        const res = await api.get('/trips?limit=1');
+        if (res.data?.success && res.data.data?.length > 0) {
+          targetTripId = res.data.data[0]._id;
+          setLatestTripId(targetTripId);
+        }
+      } catch (e) {}
+    }
+
     switch (tab) {
       case 'Home':
       case 'Dashboard':
@@ -95,16 +134,38 @@ export default function MainLayout({ kpiData, setKpiData }) {
         navigate('/trips/create');
         break;
       case 'City Discovery':
-        navigate('/cities');
+        navigate(targetTripId ? `/trips/${targetTripId}/cities` : '/cities');
         break;
       case 'Activity Discovery':
-        navigate('/activities');
+        navigate(targetTripId ? `/trips/${targetTripId}/activities` : '/activities');
         break;
       case 'Itinerary Builder':
+        if (targetTripId) {
+          navigate(`/trips/${targetTripId}/builder`);
+        } else {
+          navigate('/trips');
+        }
+        break;
       case 'Itinerary View':
+        if (targetTripId) {
+          navigate(`/trips/${targetTripId}/itinerary`);
+        } else {
+          navigate('/trips');
+        }
+        break;
       case 'Timeline':
+        if (targetTripId) {
+          navigate(`/trips/${targetTripId}/calendar`);
+        } else {
+          navigate('/trips');
+        }
+        break;
       case 'Trip Budget':
-        navigate('/trips');
+        if (targetTripId) {
+          navigate(`/trips/${targetTripId}/budget`);
+        } else {
+          navigate('/trips');
+        }
         break;
       case 'Public Trips':
       case 'Community':
