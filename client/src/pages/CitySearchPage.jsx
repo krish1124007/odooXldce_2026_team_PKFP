@@ -92,13 +92,18 @@ export default function CitySearchPage() {
     return activeTrip.destinations.some((d) => (typeof d === 'object' ? d._id : d) === cityIdToCheck);
   };
 
+  const formatTripName = (name) => {
+    if (!name) return 'Trip Builder';
+    return name.charAt(0).toUpperCase() + name.slice(1);
+  };
+
   return (
     <div className="my-trips-container">
       <div className="space-y-1">
         {tripId && (
-          <Link to={`/trips/${tripId}/builder`} className="btn-form-cancel text-xs mb-2">
+          <Link to={`/trips/${tripId}/builder`} className="btn-form-cancel text-xs mb-2 inline-flex items-center gap-1">
             <ArrowLeft size={14} />
-            <span>Back to {activeTrip?.name || 'Trip Builder'}</span>
+            <span>Back to {formatTripName(activeTrip?.name)}</span>
           </Link>
         )}
 
@@ -110,7 +115,7 @@ export default function CitySearchPage() {
             </h1>
             <p className="page-sub-title">
               {tripId
-                ? `Select destinations to add to "${activeTrip?.name || 'your trip'}"`
+                ? `Select destinations to add to "${formatTripName(activeTrip?.name)}"`
                 : 'Discover vibrant cities across Asia, Europe, Americas, Africa, and beyond'}
             </p>
           </div>
@@ -118,20 +123,20 @@ export default function CitySearchPage() {
       </div>
 
       {activeTrip && (
-        <div className="bg-blue-50 dark:bg-slate-900 border border-blue-200 dark:border-slate-800 p-4 rounded-xl flex items-center justify-between shadow-sm">
+        <div className="bg-blue-50 dark:bg-slate-900 border border-blue-200 dark:border-slate-800 p-4 rounded-xl flex items-center justify-between shadow-sm gap-4">
           <div className="flex items-center space-x-3">
-            <div className="p-2 rounded-lg bg-blue-600 text-white">
+            <div className="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center shrink-0">
               <MapPin className="w-5 h-5" />
             </div>
             <div>
-              <p className="text-[11px] font-bold text-blue-700 dark:text-cyan-400 uppercase tracking-wider">Active Trip Context</p>
-              <p className="text-sm font-bold text-slate-900 dark:text-slate-100">{activeTrip.name}</p>
+              <p className="text-[11px] font-extrabold text-blue-700 dark:text-cyan-400 uppercase tracking-wider">Active Trip Context</p>
+              <p className="text-base font-bold text-slate-900 dark:text-slate-100 capitalize">{formatTripName(activeTrip.name)}</p>
               <p className="text-xs text-slate-600 dark:text-slate-400">
                 {activeTrip.destinations?.length || 0} cities currently added
               </p>
             </div>
           </div>
-          <Link to={`/trips/${activeTrip._id}/builder`} className="btn-primary-action text-xs">
+          <Link to={`/trips/${activeTrip._id}/builder`} className="btn-primary-action text-xs shrink-0">
             Return to Builder →
           </Link>
         </div>

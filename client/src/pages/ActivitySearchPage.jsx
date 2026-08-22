@@ -136,12 +136,17 @@ export default function ActivitySearchPage() {
     'Photography',
   ];
 
+  const formatTripName = (name) => {
+    if (!name) return 'Trip Builder';
+    return name.charAt(0).toUpperCase() + name.slice(1);
+  };
+
   return (
     <div className="my-trips-container">
       {tripId && (
-        <Link to={`/trips/${tripId}/builder`} className="btn-form-cancel text-xs mb-2">
+        <Link to={`/trips/${tripId}/builder`} className="btn-form-cancel text-xs mb-2 inline-flex items-center gap-1">
           <ArrowLeft size={14} />
-          <span>Back to {activeTrip?.name || 'Trip Builder'}</span>
+          <span>Back to {formatTripName(activeTrip?.name)}</span>
         </Link>
       )}
 
