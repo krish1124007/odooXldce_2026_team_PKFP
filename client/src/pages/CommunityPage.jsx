@@ -20,8 +20,13 @@ import {
   Filter, 
   ChevronLeft, 
   ChevronRight,
-  Plus
+  Layers,
+  ArrowUpDown,
+  List,
+  Grid,
+  Sparkles
 } from 'lucide-react';
+import './CommunityPage.css';
 
 export default function CommunityPage() {
   const { isAuthenticated } = useAuth();
@@ -32,6 +37,9 @@ export default function CommunityPage() {
   const [trips, setTrips] = useState([]);
   const [search, setSearch] = useState('');
   const [sort, setSort] = useState('newest');
+  const [groupBy, setGroupBy] = useState('ALL'); // 'ALL', 'POPULAR'
+  const [categoryFilter, setCategoryFilter] = useState('');
+  const [viewMode, setViewMode] = useState('feed'); // 'feed' (Wireframe list) or 'grid'
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalTrips, setTotalTrips] = useState(0);
@@ -103,9 +111,9 @@ export default function CommunityPage() {
   };
 
   return (
-    <div className="flex flex-col gap-6 py-4 px-2 max-w-7xl mx-auto">
-      {/* Community Hero */}
-      <div className="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-2xl p-6 sm:p-8 text-white shadow-md">
+    <div className="community-page-container">
+      {/* Community Hero Banner */}
+      <div className="bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 rounded-3xl p-6 sm:p-8 text-white shadow-xl">
         <div className="max-w-2xl space-y-2">
           <span className="px-3 py-1 bg-white/20 rounded-full text-xs font-bold inline-flex items-center gap-1.5 backdrop-blur-md">
             <Globe size={14} /> Public Itinerary Marketplace
@@ -119,116 +127,232 @@ export default function CommunityPage() {
         </div>
       </div>
 
-      {/* Search & Filter Bar */}
-      <div className="flex flex-col sm:flex-row justify-between items-center gap-3 bg-white p-4 rounded-xl border border-slate-200 shadow-xs">
-        <div className="relative w-full sm:w-80">
-          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+      {/* Wireframe Top Control Bar: Search, Group By, Filter, Sort By */}
+      <div className="community-controls-bar">
+        {/* Search */}
+        <div className="search-box-wrapper">
+          <Search size={18} className="search-icon-muted" />
           <input
             type="text"
-            placeholder="Search public trips..."
+            placeholder="Search public trips or destinations..."
             value={search}
             onChange={(e) => {
               setSearch(e.target.value);
               setPage(1);
             }}
-            className="w-full pl-9 pr-3 py-2 border border-slate-300 rounded-lg text-xs font-medium focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="search-input-field"
           />
         </div>
 
-        <div className="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-end">
-          <span className="text-xs font-medium text-slate-500 flex items-center gap-1">
-            <Filter size={14} /> Sort:
-          </span>
-          <select
-            value={sort}
-            onChange={(e) => {
-              setSort(e.target.value);
-              setPage(1);
-            }}
-            className="px-3 py-2 border border-slate-300 rounded-lg text-xs font-medium bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            <option value="newest">Newest First</option>
-            <option value="oldest">Oldest First</option>
-            <option value="startDate">Earliest Travel Date</option>
-            <option value="name">Trip Name A-Z</option>
-          </select>
+        <div className="filter-controls-right">
+          {/* Group By */}
+          <div className="select-control-box">
+            <Layers size={15} className="control-icon" />
+            <select
+              value={groupBy}
+              onChange={(e) => setGroupBy(e.target.value)}
+              className="custom-select-element"
+              title="Group By"
+            >
+              <option value="ALL">Group: All Trips</option>
+              <option value="POPULAR">Group: Popular Trips</option>
+            </select>
+          </div>
+
+          {/* Sort By */}
+          <div className="select-control-box">
+            <ArrowUpDown size={15} className="control-icon" />
+            <select
+              value={sort}
+              onChange={(e) => {
+                setSort(e.target.value);
+                setPage(1);
+              }}
+              className="custom-select-element"
+              title="Sort By"
+            >
+              <option value="newest">Sort: Newest First</option>
+              <option value="oldest">Sort: Oldest First</option>
+              <option value="startDate">Earliest Date</option>
+              <option value="name">Name A-Z</option>
+            </select>
+          </div>
+
+          {/* View Mode Toggle */}
+          <div className="select-control-box p-1">
+            <button
+              onClick={() => setViewMode('feed')}
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all ${
+                viewMode === 'feed'
+                  ? 'bg-blue-600 text-white shadow-md'
+                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+              }`}
+              title="Feed / List View"
+            >
+              <List size={14} />
+              <span>Feed</span>
+            </button>
+            <button
+              onClick={() => setViewMode('grid')}
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all ${
+                viewMode === 'grid'
+                  ? 'bg-blue-600 text-white shadow-md'
+                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+              }`}
+              title="Grid View"
+            >
+              <Grid size={14} />
+              <span>Grid</span>
+            </button>
+          </div>
         </div>
       </div>
 
-      {/* Trips Grid / Loading / Empty State */}
+      {/* Trips Content Area */}
       {loading ? (
         <div className="min-h-[40vh] flex items-center justify-center">
           <Loading message="Loading public community trips..." />
         </div>
       ) : trips.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {trips.map((trip) => {
-            const startDateStr = new Date(trip.startDate).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
-            const endDateStr = new Date(trip.endDate).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+        viewMode === 'feed' ? (
+          /* WIREFRAME LIST / FEED VIEW (Avatar Circle + Horizontal Post Card) */
+          <div className="space-y-6">
+            {trips.map((trip) => {
+              const startDateStr = new Date(trip.startDate).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+              const endDateStr = new Date(trip.endDate).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+              const creatorInitial = trip.creator ? trip.creator[0].toUpperCase() : 'P';
 
-            return (
-              <Card key={trip.id || trip.publicId} className="flex flex-col justify-between hover:shadow-md transition-shadow h-full">
-                <div className="space-y-3">
-                  {/* Cover Photo */}
-                  <div className="relative h-44 -mx-5 -mt-5 mb-3 rounded-t-xl overflow-hidden bg-slate-100">
-                    <img
-                      src={trip.coverPhoto || 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=800&q=80'}
-                      alt={trip.name}
-                      className="w-full h-full object-cover"
-                    />
-                    <div className="absolute top-3 right-3 px-2.5 py-1 bg-black/60 backdrop-blur-md text-white text-[10px] font-bold rounded-full flex items-center gap-1">
-                      <User size={12} /> {trip.creator}
+              return (
+                <div key={trip.id || trip.publicId} className="community-feed-item">
+                  {/* Wireframe User Avatar Circle */}
+                  <div className="community-user-avatar" title={`Planned by ${trip.creator}`}>
+                    {creatorInitial}
+                  </div>
+
+                  {/* Horizontal Post Card */}
+                  <div className="community-post-card horizontal">
+                    <div className="community-post-img-side">
+                      <img
+                        src={trip.coverPhoto || 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=800&q=80'}
+                        alt={trip.name}
+                        className="community-post-img"
+                      />
+                    </div>
+
+                    <div className="community-post-content">
+                      <div className="community-post-header">
+                        <div className="community-author-row">
+                          <User size={13} className="text-blue-600 dark:text-cyan-400" />
+                          <span>Planned by <strong>{trip.creator}</strong></span>
+                        </div>
+                        <h3 className="community-trip-title">{trip.name}</h3>
+                        <p className="community-trip-dates">
+                          <Calendar size={13} /> {startDateStr} – {endDateStr}
+                        </p>
+                        {trip.description && (
+                          <p className="text-xs text-slate-600 dark:text-slate-400 line-clamp-2 mt-1 leading-relaxed">
+                            {trip.description}
+                          </p>
+                        )}
+                        <div className="community-trip-meta-row">
+                          <span className="meta-pill">
+                            <MapPin size={13} className="text-blue-600" /> {trip.destinationsCount} Destinations
+                          </span>
+                          {trip.budget?.amount > 0 && (
+                            <span className="meta-pill budget">
+                              💰 {trip.budget.currency || 'INR'} {trip.budget.amount.toLocaleString()}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="community-actions-row">
+                        <Link to={`/public/trips/${trip.publicId || trip.id}`} className="flex-1">
+                          <button className="px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-700 transition-all flex items-center justify-center gap-1.5 w-full">
+                            <Eye size={14} />
+                            <span>View Itinerary</span>
+                          </button>
+                        </Link>
+                        <button
+                          className="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs shadow-md shadow-blue-500/20 transition-all flex items-center justify-center gap-1.5 flex-1"
+                          onClick={() => handleOpenCopyModal(trip)}
+                        >
+                          <Copy size={14} />
+                          <span>Copy Trip</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        ) : (
+          /* GRID VIEW MODE */
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {trips.map((trip) => {
+              const startDateStr = new Date(trip.startDate).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+              const endDateStr = new Date(trip.endDate).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+
+              return (
+                <Card key={trip.id || trip.publicId} className="flex flex-col justify-between hover:shadow-md transition-shadow h-full">
+                  <div className="space-y-3">
+                    <div className="relative h-44 -mx-5 -mt-5 mb-3 rounded-t-xl overflow-hidden bg-slate-100">
+                      <img
+                        src={trip.coverPhoto || 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=800&q=80'}
+                        alt={trip.name}
+                        className="w-full h-full object-cover"
+                      />
+                      <div className="absolute top-3 right-3 px-2.5 py-1 bg-black/60 backdrop-blur-md text-white text-[10px] font-bold rounded-full flex items-center gap-1">
+                        <User size={12} /> {trip.creator}
+                      </div>
+                    </div>
+
+                    <div>
+                      <h3 className="font-bold text-slate-900 dark:text-white text-base line-clamp-1">{trip.name}</h3>
+                      <p className="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1 mt-0.5">
+                        <Calendar size={13} /> {startDateStr} – {endDateStr}
+                      </p>
+                    </div>
+
+                    {trip.description && (
+                      <p className="text-xs text-slate-600 dark:text-slate-400 line-clamp-2 leading-relaxed">
+                        {trip.description}
+                      </p>
+                    )}
+
+                    <div className="flex flex-wrap items-center gap-2 text-xs pt-1">
+                      <span className="px-2.5 py-1 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-semibold flex items-center gap-1">
+                        <MapPin size={13} className="text-blue-600" /> {trip.destinationsCount} Destinations
+                      </span>
+                      {trip.budget?.amount > 0 && (
+                        <span className="px-2.5 py-1 rounded-md bg-emerald-50 text-emerald-800 dark:bg-emerald-500/10 dark:text-emerald-400 font-bold flex items-center gap-1 border border-emerald-200 dark:border-emerald-800">
+                          <DollarSign size={13} /> {trip.budget.currency || 'INR'} {trip.budget.amount.toLocaleString()}
+                        </span>
+                      )}
                     </div>
                   </div>
 
-                  {/* Header */}
-                  <div>
-                    <h3 className="font-bold text-slate-900 text-base line-clamp-1">{trip.name}</h3>
-                    <p className="text-xs text-slate-500 flex items-center gap-1 mt-0.5">
-                      <Calendar size={13} /> {startDateStr} – {endDateStr}
-                    </p>
-                  </div>
-
-                  {/* Description */}
-                  {trip.description && (
-                    <p className="text-xs text-slate-600 line-clamp-2 leading-relaxed">
-                      {trip.description}
-                    </p>
-                  )}
-
-                  {/* Badges */}
-                  <div className="flex flex-wrap items-center gap-2 text-xs pt-1">
-                    <span className="px-2.5 py-1 rounded-md bg-slate-100 text-slate-700 font-semibold flex items-center gap-1">
-                      <MapPin size={13} className="text-blue-600" /> {trip.destinationsCount} Destinations
-                    </span>
-                    {trip.budget?.amount > 0 && (
-                      <span className="px-2.5 py-1 rounded-md bg-emerald-50 text-emerald-800 font-bold flex items-center gap-1 border border-emerald-200">
-                        <DollarSign size={13} /> {trip.budget.currency || 'INR'} {trip.budget.amount.toLocaleString()}
-                      </span>
-                    )}
-                  </div>
-                </div>
-
-                {/* Card Footer Actions */}
-                <div className="flex items-center gap-2 pt-4 mt-4 border-t border-slate-100">
-                  <Link to={`/public/trips/${trip.publicId || trip.id}`} className="flex-1">
-                    <Button variant="secondary" icon={Eye} className="w-full text-xs">
-                      View
+                  <div className="flex items-center gap-2 pt-4 mt-4 border-t border-slate-100 dark:border-slate-800">
+                    <Link to={`/public/trips/${trip.publicId || trip.id}`} className="flex-1">
+                      <Button variant="secondary" icon={Eye} className="w-full text-xs">
+                        View
+                      </Button>
+                    </Link>
+                    <Button
+                      variant="primary"
+                      icon={Copy}
+                      className="flex-1 text-xs"
+                      onClick={() => handleOpenCopyModal(trip)}
+                    >
+                      Copy
                     </Button>
-                  </Link>
-                  <Button
-                    variant="primary"
-                    icon={Copy}
-                    className="flex-1 text-xs"
-                    onClick={() => handleOpenCopyModal(trip)}
-                  >
-                    Copy
-                  </Button>
-                </div>
-              </Card>
-            );
-          })}
-        </div>
+                  </div>
+                </Card>
+              );
+            })}
+          </div>
+        )
       ) : (
         <EmptyState
           title="No public trips found"
@@ -249,7 +373,7 @@ export default function CommunityPage() {
           >
             Previous
           </Button>
-          <span className="text-xs font-semibold text-slate-700">
+          <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">
             Page {page} of {totalPages} ({totalTrips} public trips)
           </span>
           <Button
@@ -270,7 +394,7 @@ export default function CommunityPage() {
         title="Copy Public Itinerary"
       >
         <form onSubmit={handleExecuteCopy} className="space-y-4">
-          <p className="text-xs text-slate-600">
+          <p className="text-xs text-slate-600 dark:text-slate-400">
             Create a personal copy of <strong>{selectedTrip?.name}</strong> in your account.
           </p>
 
@@ -289,7 +413,7 @@ export default function CommunityPage() {
             required
           />
 
-          <div className="flex justify-end gap-2 pt-2 border-t border-slate-100">
+          <div className="flex justify-end gap-2 pt-2 border-t border-slate-100 dark:border-slate-800">
             <Button variant="secondary" onClick={() => setIsCopyModalOpen(false)} type="button">
               Cancel
             </Button>
