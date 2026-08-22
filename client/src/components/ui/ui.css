@@ -1,0 +1,283 @@
+/* GlobeTrotter UI Component System */
+
+/* Button styles */
+.gt-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  border-radius: 8px;
+  transition: all 0.15s ease-in-out;
+  cursor: pointer;
+  border: none;
+  font-family: inherit;
+  white-space: nowrap;
+}
+
+.gt-btn-sm { padding: 0.35rem 0.75rem; font-size: 12.5px; }
+.gt-btn-md { padding: 0.55rem 1.15rem; font-size: 13.5px; }
+.gt-btn-lg { padding: 0.75rem 1.5rem; font-size: 15px; }
+
+.gt-btn-primary {
+  background-color: var(--primary-navy, #122244);
+  color: #FFFFFF;
+  box-shadow: 0 2px 6px rgba(18, 34, 68, 0.2);
+}
+.gt-btn-primary:hover {
+  background-color: #1C3366;
+  transform: translateY(-1px);
+}
+
+.gt-btn-secondary {
+  background-color: var(--bg-card, #FFFFFF);
+  color: var(--text-primary, #0F172A);
+  border: 1px solid var(--border-darker, #E2E8F0);
+}
+.gt-btn-secondary:hover {
+  background-color: var(--border-color, #F1F5F9);
+}
+
+.gt-btn-outline {
+  background-color: transparent;
+  color: var(--primary-navy, #122244);
+  border: 1px solid var(--primary-navy, #122244);
+}
+.gt-btn-outline:hover {
+  background-color: rgba(18, 34, 68, 0.05);
+}
+
+.gt-btn-danger {
+  background-color: #EF4444;
+  color: #FFFFFF;
+}
+.gt-btn-danger:hover {
+  background-color: #DC2626;
+}
+
+/* Spinner */
+.gt-btn-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #FFFFFF;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Input styles */
+.gt-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  width: 100%;
+}
+
+.gt-input-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary, #64748B);
+}
+
+.gt-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.gt-input-icon {
+  position: absolute;
+  left: 0.85rem;
+  color: var(--text-muted, #94A3B8);
+  pointer-events: none;
+}
+
+.gt-input {
+  width: 100%;
+  padding: 0.6rem 0.85rem;
+  border-radius: 8px;
+  border: 1px solid var(--border-darker, #E2E8F0);
+  background-color: var(--bg-app, #F8FAFC);
+  color: var(--text-primary, #0F172A);
+  font-size: 13.5px;
+  outline: none;
+  transition: all 0.15s ease;
+}
+
+.gt-input.has-icon {
+  padding-left: 2.5rem;
+}
+
+.gt-input:focus {
+  border-color: #3B82F6;
+  background-color: #FFFFFF;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+.gt-input-error {
+  font-size: 12px;
+  color: #EF4444;
+}
+
+/* Card styles */
+.gt-card {
+  background-color: var(--bg-card, #FFFFFF);
+  border: 1px solid var(--border-color, #F1F5F9);
+  border-radius: 12px;
+  box-shadow: var(--shadow-card, 0 4px 20px -2px rgba(0, 0, 0, 0.03));
+  overflow: hidden;
+}
+
+.gt-card-header {
+  padding: 1.1rem 1.25rem;
+  border-bottom: 1px solid var(--border-color, #F1F5F9);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.gt-card-title {
+  font-family: var(--font-heading, sans-serif);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-primary, #0F172A);
+}
+
+.gt-card-subtitle {
+  font-size: 12.5px;
+  color: var(--text-muted, #94A3B8);
+  margin-top: 2px;
+}
+
+.gt-card-body {
+  padding: 1.25rem;
+}
+
+/* Modal */
+.gt-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.4);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.gt-modal-container {
+  background: var(--bg-card, #FFFFFF);
+  border: 1px solid var(--border-color, #F1F5F9);
+  border-radius: 16px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  width: 90%;
+  max-width: 520px;
+  padding: 1.5rem;
+}
+
+.gt-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.gt-modal-title {
+  font-family: var(--font-heading, sans-serif);
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text-primary, #0F172A);
+}
+
+.gt-modal-close {
+  color: var(--text-muted, #94A3B8);
+  padding: 4px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.gt-modal-close:hover {
+  background-color: var(--border-color, #F1F5F9);
+}
+
+/* Loading */
+.gt-loading-full {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+  gap: 0.75rem;
+}
+
+.gt-loading-inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.gt-spinner-lg {
+  width: 32px;
+  height: 32px;
+  border: 3px solid #E2E8F0;
+  border-top-color: #122244;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+.gt-spinner-md {
+  width: 20px;
+  height: 20px;
+  border: 2px solid #E2E8F0;
+  border-top-color: #122244;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+.gt-loading-text {
+  font-size: 13.5px;
+  color: var(--text-muted, #94A3B8);
+}
+
+/* Empty State */
+.gt-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1.5rem;
+  text-align: center;
+}
+
+.gt-empty-icon-box {
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  background-color: #F1F5F9;
+  color: #64748B;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.gt-empty-title {
+  font-family: var(--font-heading, sans-serif);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-primary, #0F172A);
+  margin-bottom: 0.35rem;
+}
+
+.gt-empty-desc {
+  font-size: 13px;
+  color: var(--text-muted, #94A3B8);
+  max-width: 380px;
+  margin-bottom: 1.25rem;
+}

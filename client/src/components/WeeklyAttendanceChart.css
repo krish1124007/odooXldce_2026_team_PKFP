@@ -1,0 +1,70 @@
+/* WeeklyAttendanceChart Styling */
+.chart-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.chart-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+}
+
+.chart-title {
+  font-family: var(--font-heading);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.chart-container {
+  width: 100%;
+  flex: 1;
+}
+
+.custom-chart-tooltip {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-darker);
+  border-radius: 8px;
+  padding: 0.65rem 0.85rem;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.tooltip-title {
+  font-weight: 700;
+  font-size: 12px;
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 0.2rem;
+}
+
+.tooltip-item {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.tooltip-item .dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+}
+
+.tooltip-item .dot.navy {
+  background-color: #122244;
+}
+
+.tooltip-item .dot.orange {
+  background-color: #EFA00B;
+}
+
+.tooltip-item .dot.blue {
+  background-color: #2A9DF4;
+}

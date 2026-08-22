@@ -1,0 +1,204 @@
+/* GlobeTrotter Design System & Base CSS */
+@import './components/ui/ui.css';
+@import './layouts/layout.css';
+
+:root {
+  --font-family: 'DM Sans', 'Plus Jakarta Sans', -apple-system, sans-serif;
+  --font-heading: 'Outfit', 'DM Sans', sans-serif;
+  --font-number: 'Space Grotesk', 'Outfit', sans-serif;
+  
+  /* Light Mode Colors matching screenshot */
+  --bg-app: #F8FAFC;
+  --bg-sidebar: #FFFFFF;
+  --bg-header: #FFFFFF;
+  --bg-card: #FFFFFF;
+  
+  --text-primary: #0F172A;
+  --text-secondary: #64748B;
+  --text-muted: #94A3B8;
+  
+  --border-color: #F1F5F9;
+  --border-darker: #E2E8F0;
+  
+  --primary-navy: #122244;
+  --primary-navy-hover: #1C3366;
+  --nav-active-bg: #EDF2F7;
+  --nav-active-text: #0F172A;
+  
+  --kpi-icon-bg: #F1F5F9;
+  --kpi-icon-color: #475569;
+  
+  --chart-navy: #122244;
+  --chart-orange: #EFA00B;
+  --chart-blue: #2A9DF4;
+  
+  --badge-admin-bg: #E2E8F0;
+  --badge-admin-text: #334155;
+  --online-green: #22C55E;
+  
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.03);
+  --shadow-card: 0 4px 20px -2px rgba(0, 0, 0, 0.03), 0 2px 6px -1px rgba(0, 0, 0, 0.02);
+  --shadow-dropdown: 0 10px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
+  
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
+  
+  --sidebar-width: 260px;
+  --sidebar-width-collapsed: 72px;
+  --header-height: 70px;
+}
+
+/* Dark Mode Theme */
+[data-theme="dark"] {
+  --bg-app: #0B0F19;
+  --bg-sidebar: #111827;
+  --bg-header: #111827;
+  --bg-card: #1E293B;
+  
+  --text-primary: #F8FAFC;
+  --text-secondary: #94A3B8;
+  --text-muted: #64748B;
+  
+  --border-color: #1E293B;
+  --border-darker: #334155;
+  
+  --primary-navy: #38BDF8;
+  --primary-navy-hover: #0284C7;
+  --nav-active-bg: #334155;
+  --nav-active-text: #F8FAFC;
+  
+  --kpi-icon-bg: #334155;
+  --kpi-icon-color: #CBD5E1;
+  
+  --badge-admin-bg: #334155;
+  --badge-admin-text: #93C5FD;
+  
+  --shadow-card: 0 4px 20px -2px rgba(0, 0, 0, 0.3);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-family);
+  background-color: var(--bg-app);
+  color: var(--text-primary);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+input, select, textarea {
+  font-family: inherit;
+}
+
+/* App Layout Structure */
+.app-container {
+  display: flex;
+  min-height: 100vh;
+  width: 100vw;
+  background-color: var(--bg-app);
+}
+
+.main-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.main-content {
+  flex: 1;
+  padding: 2rem 2.5rem;
+  overflow-y: auto;
+  max-width: 1600px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+/* Custom Scrollbar matching screenshot */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+  border-radius: 9999px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #94A3B8;
+}
+
+/* Common Card Style */
+.dashboard-card {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  padding: 1.5rem;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.dashboard-card:hover {
+  box-shadow: 0 6px 24px -4px rgba(0, 0, 0, 0.05);
+}
+
+/* Modal Overlay Styling */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.4);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.modal-container {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-xl);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  width: 90%;
+  max-width: 540px;
+  padding: 1.75rem;
+  animation: slideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(12px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+  .main-content {
+    padding: 1.5rem 1rem;
+  }
+}

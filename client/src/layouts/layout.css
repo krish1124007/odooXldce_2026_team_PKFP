@@ -1,0 +1,146 @@
+/* GlobeTrotter Layout Styling */
+
+.gt-app-shell {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: var(--bg-app, #F8FAFC);
+}
+
+.gt-navbar {
+  height: 66px;
+  background-color: #FFFFFF;
+  border-bottom: 1px solid var(--border-color, #F1F5F9);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+}
+
+.gt-navbar-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  height: 100%;
+  padding: 0 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.gt-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  text-decoration: none;
+}
+
+.gt-brand-logo {
+  width: 36px;
+  height: 36px;
+  background-color: var(--primary-navy, #122244);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 10px rgba(18, 34, 68, 0.2);
+}
+
+.gt-brand-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.gt-brand-title {
+  font-family: var(--font-heading, sans-serif);
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--text-primary, #0F172A);
+  letter-spacing: -0.4px;
+}
+
+.gt-brand-badge {
+  font-size: 10px;
+  font-weight: 700;
+  color: #2563EB;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.gt-nav-links {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.gt-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.5rem 0.85rem;
+  border-radius: 8px;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--text-secondary, #64748B);
+  text-decoration: none;
+  transition: all 0.15s ease;
+}
+
+.gt-nav-item:hover {
+  background-color: var(--border-color, #F1F5F9);
+  color: var(--text-primary, #0F172A);
+}
+
+.gt-nav-item.active {
+  background-color: #EDF2F7;
+  color: var(--primary-navy, #122244);
+  font-weight: 600;
+}
+
+.gt-navbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.gt-auth-btn {
+  font-size: 13px;
+  font-weight: 600;
+  padding: 0.45rem 0.95rem;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: all 0.15s ease;
+}
+
+.gt-auth-btn.login {
+  color: var(--text-secondary, #64748B);
+}
+
+.gt-auth-btn.login:hover {
+  color: var(--text-primary, #0F172A);
+}
+
+.gt-auth-btn.signup {
+  background-color: var(--primary-navy, #122244);
+  color: #FFFFFF;
+}
+
+.gt-auth-btn.signup:hover {
+  background-color: #1C3366;
+}
+
+.gt-main-content {
+  flex: 1;
+  max-width: 1400px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+}
+
+.gt-footer {
+  border-top: 1px solid var(--border-color, #F1F5F9);
+  background-color: #FFFFFF;
+  padding: 1.25rem 1.5rem;
+  text-align: center;
+  font-size: 12.5px;
+  color: var(--text-muted, #94A3B8);
+}

@@ -1,0 +1,56 @@
+/* App Grid & Container Layout */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr 400px;
+  gap: 1.5rem;
+  align-items: stretch;
+}
+
+.chart-column {
+  min-width: 0;
+}
+
+.widget-column {
+  min-width: 0;
+}
+
+.tab-view-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.placeholder-card {
+  padding: 3rem 2rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  min-height: 400px;
+}
+
+.placeholder-card h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.placeholder-card p {
+  font-size: 14px;
+  color: var(--text-muted);
+  max-width: 480px;
+}
+
+@media (max-width: 1280px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr 340px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+}
