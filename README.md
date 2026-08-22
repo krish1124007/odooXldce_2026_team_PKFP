@@ -1,29 +1,86 @@
-# 🌍 GlobeTrotter — Agentic Travel Planning Platform And though
+# 🌍 GlobeTrotter — Personalized, Intelligent & Collaborative Travel Platform
 
-GlobeTrotter is an intelligent, collaborative MERN-stack travel platform powered by an **Agentic AI engine (Groq API)**. It enables users to discover cities, plan multi-day itineraries, manage travel budgets, share public itineraries, and collaborate with an AI assistant that can execute real database tool actions upon user confirmation.
+GlobeTrotter is a personalized, intelligent, and collaborative MERN-stack travel platform powered by an **Agentic AI Engine (Groq API)**. It enables travelers to discover global destinations, construct multi-city itineraries, track travel budgets and daily expenses, share public itineraries, and collaborate with an AI assistant that can execute real database tool actions upon user confirmation.
 
 ---
 
 ## 🛠️ Technology Stack
 
-- **Frontend**: React 18, Vite, React Router DOM v6, Vanilla CSS / Tailwind CSS, Lucide React, Axios.
-- **Backend**: Node.js, Express.js, Mongoose, TypeScript.
-- **Database**: MongoDB (User, Trip, City, Activity, TripStop, ItineraryActivity, Expense, AIUsage).
+- **Frontend**: React 18, Vite, React Router DOM v6, Vanilla CSS / Tailwind CSS, Lucide Icons, Recharts, Axios.
+- **Backend**: Node.js, Express.js, Mongoose, TypeScript (`server/src`).
+- **Database**: MongoDB (Collections: `users`, `trips`, `cities`, `activities`, `tripstops`, `itineraryactivities`, `expenses`, `aiusages`).
 - **AI Agentic Layer**: Groq API (`groq-sdk` with `llama-3.3-70b-versatile`) with server-side allowlisted tool calling and action confirmation store.
 - **Authentication & Security**: JWT (JSON Web Tokens), bcrypt password hashing, Role-Based Access Control (`USER` / `ADMIN`), CORS, rate limiting, centralized error handling.
 
 ---
 
-## 🚀 Key Features by Phase
+## 🚀 Key Features & UI Screens
 
 1. **PHASE 1 — Foundation**: MERN architecture, Express API, Vite React frontend, `/api/health` monitoring.
 2. **PHASE 2 — Auth & Profiles**: Registration, JWT login, profile settings, travel preferences (`travelStyle`, `interests`, `travelPace`).
-3. **PHASE 3 — Trips & Discovery**: Trip creation, destination city search, activity discovery catalog, saved destinations.
-4. **PHASE 4 — Itinerary Engine**: Multi-city trip stops, day-by-day itinerary builder, activity reordering, calendar timeline.
-5. **PHASE 5 — Budget & Community**: Category expense tracking, daily budget breakdown, public itinerary sharing, trip copying.
+3. **PHASE 3 — Trips & Discovery (Screen 4 & 8)**: Trip creation, destination city search, activity discovery catalog, saved destination bookmarks.
+4. **PHASE 4 — Itinerary Engine & Calendar (Screen 5 & 11)**: Multi-city trip stops, day-by-day itinerary builder, activity reordering, 7-column monthly calendar timeline.
+5. **PHASE 5 — Budget & Community (Screen 9 & 10)**: Category expense tracking, daily budget breakdown, donut distribution charts, public itinerary sharing, community marketplace, trip copying.
 6. **PHASE 6 — Agentic AI Engine**: Groq LLM tool calling, multi-turn travel context, write action proposals with user confirmation.
-7. **PHASE 7 — Admin Analytics**: Deterministic platform metrics dashboard, user management table (search, filter, role switch, account status toggle), AI monitoring.
-8. **PHASE 8 — Final Hardening**: Complete API error auditing, zero console errors, database indexes, seed scripts, and hackathon demo readiness.
+7. **PHASE 7 — Admin Analytics**: Deterministic platform metrics dashboard, user management table (search, filter, role switch, account status toggle), AI monitoring logs.
+8. **PHASE 8 — Development Demo Seed System**: Repeatable demo data script (`npm run seed:demo`) creating realistic accounts, trips, stops, activities, budgets, expenses, and public itineraries.
+
+---
+
+## 🔑 Demo Accounts (Password: `Demo@12345`)
+
+To visually inspect the application across all UI states and edge cases, use the pre-seeded development accounts:
+
+| Account Role / Purpose | Email Address | Password | Key UI States Covered |
+| :--- | :--- | :--- | :--- |
+| **Normal Active User** | `demo@globetrotter.dev` | `Demo@12345` | Healthy collection of ongoing, upcoming, completed, and draft trips. |
+| **Busy Traveler** | `busy@globetrotter.dev` | `Demo@12345` | **12 trips** across multiple destinations to test crowded UI, long lists, and large calendars. |
+| **Empty State User** | `empty@globetrotter.dev` | `Demo@12345` | **0 trips** account to verify true empty state dashboard, empty my trips, and empty itinerary. |
+| **Budget Edge User** | `budget@globetrotter.dev` | `Demo@12345` | Trips demonstrating under-budget, near-limit, and over-budget states with daily spending alerts. |
+| **Public Creator** | `creator@globetrotter.dev` | `Demo@12345` | **4 public itineraries** for testing the Community Discovery page and Public Itinerary views. |
+
+---
+
+## ⚙️ Installation & Quick Start
+
+1. **Clone & Install Dependencies**:
+   ```bash
+   # Install client dependencies
+   cd client && npm install
+
+   # Install server dependencies
+   cd ../server && npm install
+   ```
+
+2. **Environment Setup**:
+   Create a `.env` file in the `server` directory based on `.env.example`:
+   ```env
+   PORT=5000
+   NODE_ENV=development
+   CORS_ORIGIN=http://localhost:5173
+   MONGODB_URI=mongodb://127.0.0.1:27017/globetrotter
+   JWT_SECRET=globetrotter_default_secret_key_2026
+   GROQ_API_KEY=your_groq_api_key_here
+   GROQ_MODEL=llama-3.3-70b-versatile
+   ```
+
+3. **Seed Database (Demo Data System)**:
+   From the root directory or `server/` directory:
+   ```bash
+   npm run seed:demo
+   ```
+   *Seeds 5 demo accounts, 22 trips, 34 stops, 101 activities, 145 expenses, and 5 public itineraries.*
+
+4. **Run Application**:
+   From the root workspace directory:
+   ```bash
+   # Run both Client (5173) and Server (5000) concurrently
+   npm run dev
+
+   # Or run individually:
+   npm run server   # Server dev mode
+   npm run client   # Client dev mode
+   ```
 
 ---
 
@@ -36,13 +93,10 @@ GlobeTrotter is an intelligent, collaborative MERN-stack travel platform powered
 | **AUTH** | POST | `/api/auth/login` | No | Authenticate user and issue JWT token |
 | **AUTH** | POST | `/api/auth/logout` | Yes | Logout current user session |
 | **AUTH** | GET | `/api/auth/me` | Yes | Fetch authenticated user profile data |
-| **AUTH** | POST | `/api/auth/forgot-password` | No | Request password reset token |
-| **AUTH** | POST | `/api/auth/reset-password` | No | Reset user password using token |
 | **USER** | GET | `/api/users/profile` | Yes | Get user profile details |
 | **USER** | PUT | `/api/users/profile` | Yes | Update user profile and travel preferences |
 | **USER** | POST | `/api/users/saved-destinations` | Yes | Save a city to user bookmarks |
 | **USER** | DELETE | `/api/users/saved-destinations/:destinationId` | Yes | Remove a saved city bookmark |
-| **USER** | DELETE | `/api/users/account` | Yes | Delete user account |
 | **TRIPS** | POST | `/api/trips` | Yes | Create a new trip itinerary |
 | **TRIPS** | GET | `/api/trips` | Yes | List user trips with search/filter |
 | **TRIPS** | GET | `/api/trips/:id` | Yes | Get trip details by ID |
@@ -53,10 +107,8 @@ GlobeTrotter is an intelligent, collaborative MERN-stack travel platform powered
 | **TRIPS** | POST | `/api/trips/:id/copy` | Yes | Copy a public trip to user account |
 | **CITIES** | GET | `/api/cities` | No | Search and filter cities catalog |
 | **CITIES** | GET | `/api/cities/:id` | No | Get single city details and activities |
-| **CITIES** | POST | `/api/cities` | Admin | Add new city to catalog |
 | **ACTIVITIES** | GET | `/api/activities` | No | Search and filter activities by city, type, budget |
 | **ACTIVITIES** | GET | `/api/activities/:id` | No | Get single activity details |
-| **ACTIVITIES** | POST | `/api/activities` | Admin | Add new activity to catalog |
 | **ITINERARY** | GET | `/api/itinerary/:tripId` | Yes | Fetch complete trip itinerary (stops + activities) |
 | **ITINERARY** | POST | `/api/stops` | Yes | Add a destination city stop to a trip |
 | **ITINERARY** | DELETE | `/api/stops/:stopId` | Yes | Remove a stop and its scheduled activities |
@@ -74,76 +126,30 @@ GlobeTrotter is an intelligent, collaborative MERN-stack travel platform powered
 | **ADMIN** | GET | `/api/admin/users` | Admin | Search, filter, and paginate user accounts |
 | **ADMIN** | PUT | `/api/admin/users/:id/role` | Admin | Toggle user role (`USER` / `ADMIN`) |
 | **ADMIN** | PUT | `/api/admin/users/:id/status` | Admin | Enable/disable user account |
-| **ADMIN** | GET | `/api/admin/analytics/trips` | Admin | View detailed trip metrics |
-| **ADMIN** | GET | `/api/admin/analytics/cities` | Admin | View popular cities analytics |
-| **ADMIN** | GET | `/api/admin/analytics/ai` | Admin | View AI model usage and tool invocation stats |
 
 ---
 
-## ⚙️ Installation & Setup
-
-1. **Clone & Install Dependencies**:
-   ```bash
-   # Install client dependencies
-   cd client && npm install
-
-   # Install server dependencies
-   cd ../server && npm install
-   ```
-
-2. **Environment Variables**:
-   Create a `.env` file in the `server` directory based on `.env.example`:
-   ```env
-   PORT=5000
-   NODE_ENV=development
-   CORS_ORIGIN=http://localhost:5173
-   MONGODB_URI=mongodb://127.0.0.1:27017/globetrotter
-   JWT_SECRET=globetrotter_default_secret_key_2026
-   GROQ_API_KEY=your_groq_api_key_here
-   GROQ_MODEL=llama-3.3-70b-versatile
-   ```
-
-3. **Seed Database (Demo Content)**:
-   ```bash
-   cd server
-   npm run seed:demo
-   ```
-
----
-
-## 💻 Development Commands
+## 💻 Workspace Commands Summary
 
 ```bash
-# Run Client (Port 5173)
-cd client && npm run dev
+# Run application (Both client & server)
+npm run dev
 
-# Run Server (Port 5000)
-cd server && npm run dev
+# Seed demo data (from root or server)
+npm run seed:demo
 
-# Production Build Checks
-cd client && npm run build
-cd server && npm run build
+# Build verification
+npm run build
 ```
-
----
-
-## 🛡️ Admin & Security Configuration
-
-- **Admin Dashboard Route**: `/admin` (Protected by `<AdminRoute />` on client and `verifyUser` + `requireRole("ADMIN")` on Express server).
-- **Health Check Endpoint**:
-  ```http
-  GET /api/health
-  ```
-  Returns real-time database connection status (`healthy` / `degraded`) and environment info.
 
 ---
 
 ## 🎬 Hackathon Demo Flow Script
 
-1. **Dashboard**: View active journeys and KPI summary metrics.
-2. **AI Planning**: Open GlobeTrotter AI and ask: *"Plan a 5-day Japan trip under ₹50,000 focused on food and culture."*
-3. **Trip Creation**: Confirm AI proposal to automatically create stops and activities in MongoDB.
-4. **Itinerary & Calendar**: Inspect day-wise itinerary schedule and calendar timeline.
-5. **AI Budget Optimization**: Ask AI: *"Bring this trip below ₹50,000 without removing food experiences."* Apply proposed activity swaps upon confirmation.
-6. **Public Sharing & Community**: Publish trip, open public view URL, copy trip into another account.
-7. **Admin Analytics**: Login as `ADMIN` to view deterministic user metrics, trip statistics, popular cities/activities, and AI monitoring logs.
+1. **Dashboard**: Log in as `demo@globetrotter.dev` (`Demo@12345`). View ongoing journey (`Japan Adventure`), upcoming trips, and KPI summary.
+2. **City & Activity Discovery**: Open City Search (Screen 8) to explore cities with Group By, Filter, and Cost Index metrics.
+3. **Itinerary Builder (Screen 5)**: Build a multi-city journey with numbered stops (`01`, `02`, `03`), city banner images, and activity schedules.
+4. **Calendar Timeline (Screen 11)**: Switch to Calendar View to inspect the interactive 7-column monthly grid, day activity badges, and selected day detail panel.
+5. **Trip Budget (Screen 9)**: Open Budget View to inspect Total Budget vs Actual Spent, category breakdown cards, donut distribution chart, and daily spending over-budget alerts.
+6. **Public Sharing & Community (Screen 10)**: View public itinerary share links and explore the Community Trip Discovery gallery. Copy a community trip into your account.
+7. **Admin Analytics**: Log in with an `ADMIN` account to view deterministic user statistics, trip metrics, and AI model usage.
