@@ -252,7 +252,7 @@ export const getPublicTripByPublicId = asyncHandler(async (req: Request, res: Re
 export const copyPublicTrip = asyncHandler(async (req: Request, res: Response) => {
   const publicIdStr = (req.params.publicId || "") as string;
   const userId = req.user._id || req.user.id;
-  const { name, startDate, endDate } = req.body;
+  const { name, startDate, endDate } = req.body || {};
 
   const isMongoId = mongoose.Types.ObjectId.isValid(publicIdStr);
 

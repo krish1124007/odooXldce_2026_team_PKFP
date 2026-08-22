@@ -13,7 +13,7 @@ import { verifyUser } from "../middlewares/auth.middleware.js";
 const router = Router();
 
 // Budget summary & updates
-router.get("/:tripId", getTripBudget);
+router.get("/:tripId", verifyUser, getTripBudget);
 router.put("/:tripId", verifyUser, updateTripBudget);
 
 // Expenses sub-resource
@@ -26,4 +26,3 @@ router.put("/expenses/:id", verifyUser, updateExpense);
 router.delete("/expenses/:id", verifyUser, deleteExpense);
 
 export default router;
-
