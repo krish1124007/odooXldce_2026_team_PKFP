@@ -19,7 +19,10 @@ import userRouter from "./routers/user.routes.js";
 const app = express();
 
 app.use(cors({
-    origin: process.env.CORS_ORIGIN || "http://localhost:5173",
+    origin: (origin, callback) => {
+        if (!origin) return callback(null, true);
+        return callback(null, origin);
+    },
     credentials: true
 }));
 
