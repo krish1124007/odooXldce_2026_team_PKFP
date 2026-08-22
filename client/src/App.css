@@ -1,3 +1,7 @@
+/* ==========================================================================
+   GlobeTrotter — Advanced Component UI & Animation System
+   ========================================================================== */
+
 /* App Grid & Container Layout */
 .dashboard-grid {
   display: grid;
@@ -20,29 +24,122 @@
   gap: 1.5rem;
 }
 
-.placeholder-card {
-  padding: 3rem 2rem;
-  text-align: center;
+/* Glassmorphism & Surface Utilities */
+.glass-panel {
+  background: rgba(30, 41, 59, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.4);
+}
+
+.glass-panel-glow {
+  background: rgba(30, 41, 59, 0.85);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(56, 189, 248, 0.2);
+  box-shadow: 0 0 25px rgba(6, 182, 212, 0.15), 0 10px 30px -5px rgba(0, 0, 0, 0.5);
+}
+
+/* Gradient Text Utilities */
+.text-gradient-cyan {
+  background: linear-gradient(135deg, #38BDF8 0%, #818CF8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.text-gradient-purple {
+  background: linear-gradient(135deg, #C084FC 0%, #E879F9 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.text-gradient-amber {
+  background: linear-gradient(135deg, #FBBF24 0%, #F59E0B 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Odoo Control Panel Toolbar */
+.odoo-control-panel {
   display: flex;
-  flex-direction: column;
+  flex-wrap: wrap;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   gap: 1rem;
-  min-height: 400px;
+  background: rgba(17, 24, 39, 0.8);
+  backdrop-filter: blur(12px);
+  border: 1px solid #1E293B;
+  padding: 1rem 1.25rem;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
 }
 
-.placeholder-card h2 {
-  font-size: 1.5rem;
+.odoo-btn-primary {
+  background: linear-gradient(135deg, #714B67 0%, #5B3A53 100%);
+  color: #FFFFFF;
   font-weight: 700;
-  color: var(--text-primary);
+  font-size: 0.8rem;
+  letter-spacing: 0.03em;
+  padding: 0.6rem 1.1rem;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(113, 75, 103, 0.35);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
-.placeholder-card p {
-  font-size: 14px;
-  color: var(--text-muted);
-  max-width: 480px;
+.odoo-btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(113, 75, 103, 0.5);
+  background: linear-gradient(135deg, #85597A 0%, #6B4462 100%);
 }
 
+.odoo-btn-teal {
+  background: linear-gradient(135deg, #017E84 0%, #00A09D 100%);
+  color: #FFFFFF;
+  font-weight: 700;
+  font-size: 0.8rem;
+  letter-spacing: 0.03em;
+  padding: 0.6rem 1.1rem;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(1, 126, 132, 0.35);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.odoo-btn-teal:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(1, 126, 132, 0.5);
+}
+
+/* Card Hover Lift & Glow */
+.card-hover-effect {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card-hover-effect:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 32px -4px rgba(0, 0, 0, 0.5), 0 0 20px rgba(56, 189, 248, 0.12);
+  border-color: #334155;
+}
+
+/* Shimmer Loading Skeleton */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.skeleton-shimmer {
+  background: linear-gradient(90deg, #1E293B 25%, #334155 50%, #1E293B 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 8px;
+}
+
+/* Responsive adjustments */
 @media (max-width: 1280px) {
   .dashboard-grid {
     grid-template-columns: 1fr 340px;
