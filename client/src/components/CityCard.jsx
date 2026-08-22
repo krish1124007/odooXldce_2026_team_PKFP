@@ -1,6 +1,7 @@
 import React from 'react';
-import { MapPin, Bookmark, Plus, Check, Eye, DollarSign, TrendingUp } from 'lucide-react';
+import { Bookmark, Plus, Check, Eye, DollarSign, TrendingUp } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import './CityCard.css';
 
 const CityCard = ({ city, onSelect, onAdd, isAddedInCurrentTrip, onViewDetails }) => {
   const { isDestinationSaved, saveDestination, removeSavedDestination } = useAuth();
@@ -15,84 +16,99 @@ const CityCard = ({ city, onSelect, onAdd, isAddedInCurrentTrip, onViewDetails }
     }
   };
 
+  const handleAddClick = (e) => {
+    e.stopPropagation();
+    if (onAdd) {
+      onAdd(city);
+    } else if (onSelect) {
+      onSelect(city);
+    }
+  };
+
+  const handleDetailsClick = (e) => {
+    e.stopPropagation();
+    if (onViewDetails) {
+      onViewDetails(city);
+    }
+  };
+
   return (
-    <div className="group bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden hover:shadow-md transition-all duration-200 flex flex-col">
-      <div className="relative h-44 w-full overflow-hidden bg-slate-100">
+    <div className="city-card-container">
+      {/* Media Image Header */}
+      <div className="city-card-media">
         <img
           src={city.image || 'https://images.unsplash.com/photo-1477959858617-67f30ac4ce78?auto=format&fit=crop&w=800&q=80'}
           alt={city.name}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+          className="city-card-img"
           onError={(e) => {
             e.target.src = 'https://images.unsplash.com/photo-1477959858617-67f30ac4ce78?auto=format&fit=crop&w=800&q=80';
           }}
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent" />
+        <div className="city-card-gradient" />
 
         <button
           onClick={handleToggleSave}
-          className={`absolute top-3 right-3 p-1.5 rounded-lg backdrop-blur-md transition-all ${
-            isSaved
-              ? 'bg-amber-500 text-white shadow'
-              : 'bg-slate-900/60 text-white hover:bg-slate-900'
-          }`}
+          className={`city-bookmark-btn ${isSaved ? 'saved' : ''}`}
           title={isSaved ? 'Remove from saved' : 'Save destination'}
         >
           <Bookmark className={`w-3.5 h-3.5 ${isSaved ? 'fill-current' : ''}`} />
         </button>
 
-        <div className="absolute top-3 left-3">
-          <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-900/80 text-white backdrop-blur-sm border border-slate-700">
-            {city.country} • {city.region}
-          </span>
+        <div className="city-badge-tag">
+          {city.country} • {city.region}
         </div>
 
-        <div className="absolute bottom-3 left-4 right-4">
-          <h3 className="text-xl font-bold text-white tracking-tight drop-shadow">
+        <div className="city-title-overlay">
+          <h3 className="city-name-text">
             {city.name}
           </h3>
         </div>
       </div>
 
-      <div className="p-4 flex-1 flex flex-col justify-between space-y-4">
-        <p className="text-xs text-slate-600 dark:text-slate-400 line-clamp-2 leading-relaxed">
+      {/* Card Body */}
+      <div className="city-card-content">
+        <p className="city-desc-text">
           {city.description}
         </p>
 
-        <div className="grid grid-cols-2 gap-2 text-xs">
-          <div className="bg-slate-50 dark:bg-slate-950 p-2 rounded-lg border border-slate-200 dark:border-slate-800 flex items-center space-x-2">
-            <DollarSign className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+        {/* Metrics Grid */}
+        <div className="city-metrics-grid">
+          <div className="metric-pill-box">
+            <div className="metric-icon-wrap cost">
+              <DollarSign className="w-3.5 h-3.5" />
+            </div>
             <div>
-              <p className="text-[10px] text-slate-500 uppercase font-semibold">Cost Index</p>
-              <p className="font-bold text-slate-900 dark:text-slate-100">{city.costIndex} / 100</p>
+              <div className="metric-label-text">Cost Index</div>
+              <div className="metric-val-text">{city.costIndex} / 100</div>
             </div>
           </div>
 
-          <div className="bg-slate-50 dark:bg-slate-950 p-2 rounded-lg border border-slate-200 dark:border-slate-800 flex items-center space-x-2">
-            <TrendingUp className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
+          <div className="metric-pill-box">
+            <div className="metric-icon-wrap popularity">
+              <TrendingUp className="w-3.5 h-3.5" />
+            </div>
             <div>
-              <p className="text-[10px] text-slate-500 uppercase font-semibold">Popularity</p>
-              <p className="font-bold text-slate-900 dark:text-slate-100">{city.popularity} / 100</p>
+              <div className="metric-label-text">Popularity</div>
+              <div className="metric-val-text">{city.popularity} / 100</div>
             </div>
           </div>
         </div>
 
-        <div className="pt-2 flex items-center space-x-2">
+        {/* Action Buttons */}
+        <div className="city-actions-group">
           <button
-            onClick={() => onViewDetails && onViewDetails(city)}
-            className="flex-1 py-1.5 px-3 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 text-slate-800 dark:text-slate-200 text-xs font-semibold transition-colors flex items-center justify-center space-x-1"
+            onClick={handleDetailsClick}
+            className="btn-card-action outline"
+            title="View Details"
           >
-            <Eye className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
+            <Eye className="w-3.5 h-3.5 text-blue-600" />
             <span>Details</span>
           </button>
 
           <button
-            onClick={() => onAdd ? onAdd(city) : onSelect(city)}
+            onClick={handleAddClick}
             disabled={isAddedInCurrentTrip}
-            className={`flex-1 py-1.5 px-3 rounded-lg text-xs font-semibold transition-all flex items-center justify-center space-x-1.5 ${
-              isAddedInCurrentTrip
-                ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-500/20 dark:text-emerald-400 cursor-default'
-                : 'bg-blue-600 hover:bg-blue-700 text-white shadow-sm'
-            }`}
+            className={`btn-card-action ${isAddedInCurrentTrip ? 'added' : 'primary'}`}
           >
             {isAddedInCurrentTrip ? (
               <>
