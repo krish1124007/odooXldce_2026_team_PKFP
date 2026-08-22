@@ -6,13 +6,13 @@ import TripCard from '../components/TripCard';
 import CityCard from '../components/CityCard';
 import CityDetailModal from '../components/CityDetailModal';
 import TripSelectModal from '../components/TripSelectModal';
-import { Plus, Compass, MapPin, Calendar, DollarSign, ArrowRight, Sparkles, TrendingUp, Bookmark } from 'lucide-react';
+import { Plus, Compass, MapPin, Calendar, DollarSign, ArrowRight, Sparkles, TrendingUp, Bookmark, Bot } from 'lucide-react';
 import '../App.css';
 
 export default function DashboardPage() {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const { setIsCreateTripOpen } = useOutletContext() || {};
+  const { setIsCreateTripOpen, openAIWithContext } = useOutletContext() || {};
 
   const [trips, setTrips] = useState([]);
   const [popularCities, setPopularCities] = useState([]);
@@ -89,18 +89,26 @@ export default function DashboardPage() {
         <div className="relative z-10 max-w-2xl space-y-4">
           <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-xs font-semibold">
             <Sparkles className="w-3.5 h-3.5" />
-            <span>Smart Travel Dashboard</span>
+            <span>Agentic AI Travel Dashboard</span>
           </div>
           <h1 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
             Welcome back, {user?.firstName || 'Traveler'}! ✈️
           </h1>
           <p className="text-sm text-slate-300 leading-relaxed">
-            Plan multi-city journeys, discover authentic local activities, manage budgets, and construct perfect travel itineraries.
+            Plan multi-city journeys, discover authentic local activities, manage budgets, and construct perfect travel itineraries with tool-using Groq AI.
           </p>
           <div className="pt-2 flex flex-wrap gap-3">
+            <button
+              onClick={() => openAIWithContext && openAIWithContext({ page: 'dashboard' })}
+              className="px-5 py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:opacity-95 text-white font-semibold text-xs shadow-lg shadow-cyan-500/25 transition-all flex items-center space-x-2"
+            >
+              <Sparkles className="w-4 h-4 text-cyan-200" />
+              <span>✨ Plan with GlobeTrotter AI</span>
+            </button>
+
             <Link
               to="/trips/create"
-              className="px-5 py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:opacity-95 text-white font-semibold text-xs shadow-lg shadow-cyan-500/25 transition-all flex items-center space-x-2"
+              className="px-5 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-xs transition-colors flex items-center space-x-2"
             >
               <Plus className="w-4 h-4" />
               <span>Plan New Trip</span>
@@ -108,7 +116,7 @@ export default function DashboardPage() {
 
             <Link
               to="/cities"
-              className="px-5 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-xs transition-colors flex items-center space-x-2"
+              className="px-5 py-3 rounded-xl bg-slate-800/60 hover:bg-slate-800 text-slate-300 font-semibold text-xs transition-colors flex items-center space-x-2 border border-slate-800"
             >
               <MapPin className="w-4 h-4 text-cyan-400" />
               <span>Explore Cities</span>
