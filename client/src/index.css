@@ -185,28 +185,90 @@ h1, h2, h3, h4, h5, h6 {
   box-shadow: 0 6px 24px -4px rgba(0, 0, 0, 0.05);
 }
 
-/* Modal Overlay Styling */
-.modal-overlay {
+/* Modal Overlay & Card Styling System */
+.modal-overlay, .gt-modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(15, 23, 42, 0.5);
-  backdrop-filter: blur(4px);
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1000;
+  padding: 1rem;
   animation: fadeIn 0.2s ease-out;
 }
 
-.modal-container {
-  background: var(--bg-card);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-xl);
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
+.modal-container, .gt-modal-card {
+  background-color: var(--bg-card, #FFFFFF);
+  border: 1px solid var(--border-darker, #CBD5E1);
+  border-radius: var(--radius-xl, 24px);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
   width: 90%;
   max-width: 540px;
   padding: 1.75rem;
   animation: slideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+[data-theme="dark"] .modal-container, [data-theme="dark"] .gt-modal-card,
+body.dark .modal-container, body.dark .gt-modal-card {
+  background-color: #0F172A;
+  border-color: #1E293B;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+}
+
+/* Form Fields Universal High-Contrast Styling */
+.gt-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.gt-form-label {
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: #475569;
+}
+
+[data-theme="dark"] .gt-form-label, body.dark .gt-form-label {
+  color: #94A3B8;
+}
+
+.gt-form-input, .gt-form-select, .gt-form-textarea {
+  width: 100%;
+  padding: 0.65rem 0.9rem;
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: 12px;
+  background-color: #F8FAFC;
+  border: 1px solid #CBD5E1;
+  color: #0F172A;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+  transition: all 0.15s ease;
+  outline: none;
+}
+
+.gt-form-input:focus, .gt-form-select:focus, .gt-form-textarea:focus {
+  border-color: #0284C7;
+  background-color: #FFFFFF;
+  box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
+}
+
+[data-theme="dark"] .gt-form-input, [data-theme="dark"] .gt-form-select, [data-theme="dark"] .gt-form-textarea,
+body.dark .gt-form-input, body.dark .gt-form-select, body.dark .gt-form-textarea {
+  background-color: #0B0F19;
+  border-color: #1F2937;
+  color: #F8FAFC;
+}
+
+[data-theme="dark"] .gt-form-input:focus, [data-theme="dark"] .gt-form-select:focus, [data-theme="dark"] .gt-form-textarea:focus,
+body.dark .gt-form-input:focus, body.dark .gt-form-select:focus, body.dark .gt-form-textarea:focus {
+  border-color: #38BDF8;
+  background-color: #111827;
+  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2);
 }
 
 @keyframes fadeIn {

@@ -698,26 +698,34 @@ export default function ItineraryBuilderPage() {
 
       {/* MODAL 1: ADD STOP */}
       {isAddStopOpen && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 max-w-md w-full shadow-2xl space-y-4">
+        <div className="gt-modal-overlay">
+          <div className="gt-modal-card max-w-md animate-in fade-in zoom-in-95 duration-150">
             <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
-              <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                <MapPin className="w-5 h-5 text-cyan-600 dark:text-cyan-400" />
-                <span>Add City Stop</span>
-              </h3>
-              <button onClick={() => setIsAddStopOpen(false)} className="text-slate-400 hover:text-slate-900 dark:hover:text-white">
-                <X size={18} />
+              <div className="flex items-center gap-2.5">
+                <div className="w-9 h-9 rounded-xl bg-blue-50 dark:bg-slate-800 border border-blue-100 dark:border-slate-700 flex items-center justify-center text-blue-600 dark:text-cyan-400 font-bold shrink-0">
+                  <MapPin size={18} />
+                </div>
+                <div>
+                  <h3 className="text-base font-extrabold text-slate-900 dark:text-white">Add City Stop</h3>
+                  <p className="text-[11px] text-slate-500 dark:text-slate-400">Schedule a new city stop for your journey</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setIsAddStopOpen(false)}
+                className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all"
+              >
+                <X size={16} />
               </button>
             </div>
 
-            <form onSubmit={handleCreateStop} className="space-y-4">
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Select City</label>
+            <form onSubmit={handleCreateStop} className="space-y-4 pt-1">
+              <div className="gt-form-group">
+                <label className="gt-form-label">Select Destination City</label>
                 <select
                   value={stopFormData.cityId}
                   onChange={(e) => setStopFormData({ ...stopFormData, cityId: e.target.value })}
                   required
-                  className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-cyan-500"
+                  className="gt-form-select"
                 >
                   <option value="">Select Destination City</option>
                   {availableCities.map((c) => (
@@ -729,46 +737,54 @@ export default function ItineraryBuilderPage() {
               </div>
 
               <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Start Date</label>
+                <div className="gt-form-group">
+                  <label className="gt-form-label">Start Date</label>
                   <input
                     type="date"
                     value={stopFormData.startDate}
                     onChange={(e) => setStopFormData({ ...stopFormData, startDate: e.target.value })}
                     required
-                    className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-cyan-500"
+                    className="gt-form-input"
                   />
                 </div>
-                <div>
-                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">End Date</label>
+                <div className="gt-form-group">
+                  <label className="gt-form-label">End Date</label>
                   <input
                     type="date"
                     value={stopFormData.endDate}
                     onChange={(e) => setStopFormData({ ...stopFormData, endDate: e.target.value })}
                     required
-                    className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-cyan-500"
+                    className="gt-form-input"
                   />
                 </div>
               </div>
 
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Notes (Optional)</label>
+              <div className="gt-form-group">
+                <label className="gt-form-label">Notes (Optional)</label>
                 <input
                   type="text"
                   placeholder="e.g. Stay at Shinjuku Prince Hotel"
                   value={stopFormData.notes}
                   onChange={(e) => setStopFormData({ ...stopFormData, notes: e.target.value })}
-                  className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-cyan-500"
+                  className="gt-form-input"
                 />
               </div>
 
-              <div className="flex justify-end gap-2 pt-2">
-                <Button type="button" variant="secondary" size="sm" onClick={() => setIsAddStopOpen(false)}>
+              <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-slate-100 dark:border-slate-800">
+                <button
+                  type="button"
+                  onClick={() => setIsAddStopOpen(false)}
+                  className="px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-700 transition-all shadow-xs"
+                >
                   Cancel
-                </Button>
-                <Button type="submit" variant="primary" size="sm">
-                  Add Stop
-                </Button>
+                </button>
+                <button
+                  type="submit"
+                  className="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs shadow-md shadow-blue-500/20 transition-all flex items-center gap-1.5"
+                >
+                  <Plus size={15} />
+                  <span>Add Stop</span>
+                </button>
               </div>
             </form>
           </div>
@@ -777,59 +793,75 @@ export default function ItineraryBuilderPage() {
 
       {/* MODAL 2: EDIT STOP */}
       {isEditStopOpen && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 max-w-md w-full shadow-2xl space-y-4">
+        <div className="gt-modal-overlay">
+          <div className="gt-modal-card max-w-md animate-in fade-in zoom-in-95 duration-150">
             <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
-              <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                <Edit3 className="w-5 h-5 text-cyan-600 dark:text-cyan-400" />
-                <span>Edit Stop Dates</span>
-              </h3>
-              <button onClick={() => setIsEditStopOpen(false)} className="text-slate-400 hover:text-slate-900 dark:hover:text-white">
-                <X size={18} />
+              <div className="flex items-center gap-2.5">
+                <div className="w-9 h-9 rounded-xl bg-blue-50 dark:bg-slate-800 border border-blue-100 dark:border-slate-700 flex items-center justify-center text-blue-600 dark:text-cyan-400 font-bold shrink-0">
+                  <Edit3 size={18} />
+                </div>
+                <div>
+                  <h3 className="text-base font-extrabold text-slate-900 dark:text-white">Edit Stop Dates</h3>
+                  <p className="text-[11px] text-slate-500 dark:text-slate-400">Update schedule dates and notes for this stop</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setIsEditStopOpen(false)}
+                className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all"
+              >
+                <X size={16} />
               </button>
             </div>
 
-            <form onSubmit={handleUpdateStop} className="space-y-4">
+            <form onSubmit={handleUpdateStop} className="space-y-4 pt-1">
               <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Start Date</label>
+                <div className="gt-form-group">
+                  <label className="gt-form-label">Start Date</label>
                   <input
                     type="date"
                     value={stopFormData.startDate}
                     onChange={(e) => setStopFormData({ ...stopFormData, startDate: e.target.value })}
                     required
-                    className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-cyan-500"
+                    className="gt-form-input"
                   />
                 </div>
-                <div>
-                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">End Date</label>
+                <div className="gt-form-group">
+                  <label className="gt-form-label">End Date</label>
                   <input
                     type="date"
                     value={stopFormData.endDate}
                     onChange={(e) => setStopFormData({ ...stopFormData, endDate: e.target.value })}
                     required
-                    className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-cyan-500"
+                    className="gt-form-input"
                   />
                 </div>
               </div>
 
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Notes</label>
+              <div className="gt-form-group">
+                <label className="gt-form-label">Notes</label>
                 <input
                   type="text"
                   value={stopFormData.notes}
                   onChange={(e) => setStopFormData({ ...stopFormData, notes: e.target.value })}
-                  className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-cyan-500"
+                  className="gt-form-input"
                 />
               </div>
 
-              <div className="flex justify-end gap-2 pt-2">
-                <Button type="button" variant="secondary" size="sm" onClick={() => setIsEditStopOpen(false)}>
+              <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-slate-100 dark:border-slate-800">
+                <button
+                  type="button"
+                  onClick={() => setIsEditStopOpen(false)}
+                  className="px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-700 transition-all shadow-xs"
+                >
                   Cancel
-                </Button>
-                <Button type="submit" variant="primary" size="sm">
-                  Save Changes
-                </Button>
+                </button>
+                <button
+                  type="submit"
+                  className="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs shadow-md shadow-blue-500/20 transition-all flex items-center gap-1.5"
+                >
+                  <Check size={15} />
+                  <span>Save Changes</span>
+                </button>
               </div>
             </form>
           </div>
@@ -838,33 +870,40 @@ export default function ItineraryBuilderPage() {
 
       {/* MODAL 3: ADD ACTIVITY TO STOP */}
       {isAddActivityOpen && (
-        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 max-w-xl w-full shadow-2xl space-y-4 max-h-[90vh] flex flex-col">
+        <div className="gt-modal-overlay">
+          <div className="gt-modal-card max-w-xl max-h-[90vh] flex flex-col animate-in fade-in zoom-in-95 duration-150">
             <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3 shrink-0">
-              <div>
-                <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                  <Compass className="w-5 h-5 text-cyan-600 dark:text-cyan-400" />
-                  <span>Add Activity to {activeStopForActivity?.city?.name}</span>
-                </h3>
-                <p className="text-xs text-slate-500 dark:text-slate-400">Select an activity and assign its schedule timing</p>
+              <div className="flex items-center gap-2.5">
+                <div className="w-9 h-9 rounded-xl bg-blue-50 dark:bg-slate-800 border border-blue-100 dark:border-slate-700 flex items-center justify-center text-blue-600 dark:text-cyan-400 font-bold shrink-0">
+                  <Compass size={18} />
+                </div>
+                <div>
+                  <h3 className="text-base font-extrabold text-slate-900 dark:text-white">
+                    Add Activity to {activeStopForActivity?.city?.name}
+                  </h3>
+                  <p className="text-[11px] text-slate-500 dark:text-slate-400">Select an experience and assign its schedule timing</p>
+                </div>
               </div>
-              <button onClick={() => setIsAddActivityOpen(false)} className="text-slate-400 hover:text-slate-900 dark:hover:text-white">
-                <X size={18} />
+              <button
+                onClick={() => setIsAddActivityOpen(false)}
+                className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all"
+              >
+                <X size={16} />
               </button>
             </div>
 
-            <div className="overflow-y-auto space-y-4 flex-1 pr-1 custom-scrollbar">
+            <div className="overflow-y-auto space-y-4 flex-1 pr-1 custom-scrollbar pt-2">
               {/* Activity Selection List */}
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Choose Activity</label>
+              <div className="gt-form-group">
+                <label className="gt-form-label">Choose Activity</label>
                 <div className="relative mb-2">
-                  <Search className="w-4 h-4 text-slate-400 dark:text-slate-500 absolute left-3 top-2.5" />
+                  <Search className="w-4 h-4 text-slate-400 dark:text-slate-500 absolute left-3 top-3" />
                   <input
                     type="text"
                     placeholder="Search city activities..."
                     value={activitySearch}
                     onChange={(e) => setActivitySearch(e.target.value)}
-                    className="w-full pl-9 pr-3 py-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-xs text-slate-900 dark:text-slate-100 focus:outline-none focus:border-cyan-500"
+                    className="gt-form-input pl-9"
                   />
                 </div>
 
@@ -877,7 +916,7 @@ export default function ItineraryBuilderPage() {
                         onClick={() => setSelectedActivity(act)}
                         className={`p-3 rounded-xl border cursor-pointer flex items-center justify-between transition-all ${
                           isSelected
-                            ? 'bg-cyan-500/10 border-cyan-500 text-slate-900 dark:text-white'
+                            ? 'bg-blue-500/10 border-blue-500 text-slate-900 dark:text-white font-bold'
                             : 'bg-slate-50 dark:bg-slate-950/60 border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-700'
                         }`}
                       >
@@ -887,7 +926,7 @@ export default function ItineraryBuilderPage() {
                             {act.type} • {act.durationMinutes || 60} mins • ₹{act.cost}
                           </p>
                         </div>
-                        {isSelected && <Check size={16} className="text-cyan-600 dark:text-cyan-400" />}
+                        {isSelected && <Check size={16} className="text-blue-600 dark:text-cyan-400" />}
                       </div>
                     );
                   })}
@@ -896,52 +935,60 @@ export default function ItineraryBuilderPage() {
 
               {/* Schedule Input */}
               {selectedActivity && (
-                <form onSubmit={handleAddActivitySubmit} className="space-y-4 pt-2 border-t border-slate-100 dark:border-slate-800">
-                  <div className="p-3 bg-cyan-500/10 border border-cyan-500/30 rounded-xl text-xs text-cyan-800 dark:text-cyan-300 flex justify-between items-center">
-                    <span>Selected: <strong>{selectedActivity.name}</strong></span>
-                    <span>₹{selectedActivity.cost}</span>
+                <form onSubmit={handleAddActivitySubmit} className="space-y-4 pt-3 border-t border-slate-100 dark:border-slate-800">
+                  <div className="p-3 bg-blue-50 dark:bg-slate-800/80 border border-blue-200 dark:border-slate-700 rounded-xl text-xs text-blue-900 dark:text-cyan-300 flex justify-between items-center font-bold">
+                    <span>Selected: {selectedActivity.name}</span>
+                    <span className="text-emerald-600 dark:text-emerald-400">₹{selectedActivity.cost}</span>
                   </div>
 
                   <div className="grid grid-cols-3 gap-3">
-                    <div>
-                      <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Date</label>
+                    <div className="gt-form-group">
+                      <label className="gt-form-label">Date</label>
                       <input
                         type="date"
                         value={actFormData.date}
                         onChange={(e) => setActFormData({ ...actFormData, date: e.target.value })}
                         required
-                        className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-cyan-500"
+                        className="gt-form-input"
                       />
                     </div>
-                    <div>
-                      <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Start Time</label>
+                    <div className="gt-form-group">
+                      <label className="gt-form-label">Start Time</label>
                       <input
                         type="time"
                         value={actFormData.startTime}
                         onChange={(e) => setActFormData({ ...actFormData, startTime: e.target.value })}
                         required
-                        className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-cyan-500"
+                        className="gt-form-input"
                       />
                     </div>
-                    <div>
-                      <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">End Time</label>
+                    <div className="gt-form-group">
+                      <label className="gt-form-label">End Time</label>
                       <input
                         type="time"
                         value={actFormData.endTime}
                         onChange={(e) => setActFormData({ ...actFormData, endTime: e.target.value })}
                         required
-                        className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-cyan-500"
+                        className="gt-form-input"
                       />
                     </div>
                   </div>
 
-                  <div className="flex justify-end gap-2 pt-2">
-                    <Button type="button" variant="secondary" size="sm" onClick={() => setIsAddActivityOpen(false)}>
+                  <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-slate-100 dark:border-slate-800">
+                    <button
+                      type="button"
+                      onClick={() => setIsAddActivityOpen(false)}
+                      className="px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-700 transition-all shadow-xs"
+                    >
                       Cancel
-                    </Button>
-                    <Button type="submit" variant="primary" size="sm">
-                      Add to Schedule
-                    </Button>
+                    </button>
+                    <button
+                      type="submit"
+                      className="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs shadow-md shadow-blue-500/20 transition-all flex items-center gap-1.5"
+                    >
+                      <Plus size={15} />
+                      <span>Add to Schedule</span>
+                    </button>
                   </div>
                 </form>
               )}
@@ -952,59 +999,75 @@ export default function ItineraryBuilderPage() {
 
       {/* MODAL 4: EDIT ACTIVITY TIMING */}
       {isEditActivityOpen && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 max-w-md w-full shadow-2xl space-y-4">
+        <div className="gt-modal-overlay">
+          <div className="gt-modal-card max-w-md animate-in fade-in zoom-in-95 duration-150">
             <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
-              <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                <Clock className="w-5 h-5 text-cyan-600 dark:text-cyan-400" />
-                <span>Edit Activity Schedule</span>
-              </h3>
-              <button onClick={() => setIsEditActivityOpen(false)} className="text-slate-400 hover:text-slate-900 dark:hover:text-white">
-                <X size={18} />
+              <div className="flex items-center gap-2.5">
+                <div className="w-9 h-9 rounded-xl bg-blue-50 dark:bg-slate-800 border border-blue-100 dark:border-slate-700 flex items-center justify-center text-blue-600 dark:text-cyan-400 font-bold shrink-0">
+                  <Clock size={18} />
+                </div>
+                <div>
+                  <h3 className="text-base font-extrabold text-slate-900 dark:text-white">Edit Schedule Timing</h3>
+                  <p className="text-[11px] text-slate-500 dark:text-slate-400">Update scheduled date and timing slots</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setIsEditActivityOpen(false)}
+                className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all"
+              >
+                <X size={16} />
               </button>
             </div>
 
-            <form onSubmit={handleUpdateActivitySubmit} className="space-y-4">
+            <form onSubmit={handleUpdateActivitySubmit} className="space-y-4 pt-1">
               <div className="grid grid-cols-3 gap-3">
-                <div>
-                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Date</label>
+                <div className="gt-form-group">
+                  <label className="gt-form-label">Date</label>
                   <input
                     type="date"
                     value={actFormData.date}
                     onChange={(e) => setActFormData({ ...actFormData, date: e.target.value })}
                     required
-                    className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-cyan-500"
+                    className="gt-form-input"
                   />
                 </div>
-                <div>
-                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Start Time</label>
+                <div className="gt-form-group">
+                  <label className="gt-form-label">Start Time</label>
                   <input
                     type="time"
                     value={actFormData.startTime}
                     onChange={(e) => setActFormData({ ...actFormData, startTime: e.target.value })}
                     required
-                    className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-cyan-500"
+                    className="gt-form-input"
                   />
                 </div>
-                <div>
-                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">End Time</label>
+                <div className="gt-form-group">
+                  <label className="gt-form-label">End Time</label>
                   <input
                     type="time"
                     value={actFormData.endTime}
                     onChange={(e) => setActFormData({ ...actFormData, endTime: e.target.value })}
                     required
-                    className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-cyan-500"
+                    className="gt-form-input"
                   />
                 </div>
               </div>
 
-              <div className="flex justify-end gap-2 pt-2">
-                <Button type="button" variant="secondary" size="sm" onClick={() => setIsEditActivityOpen(false)}>
+              <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-slate-100 dark:border-slate-800">
+                <button
+                  type="button"
+                  onClick={() => setIsEditActivityOpen(false)}
+                  className="px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-700 transition-all shadow-xs"
+                >
                   Cancel
-                </Button>
-                <Button type="submit" variant="primary" size="sm">
-                  Save Schedule
-                </Button>
+                </button>
+                <button
+                  type="submit"
+                  className="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs shadow-md shadow-blue-500/20 transition-all flex items-center gap-1.5"
+                >
+                  <Check size={15} />
+                  <span>Save Schedule</span>
+                </button>
               </div>
             </form>
           </div>
