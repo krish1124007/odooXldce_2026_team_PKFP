@@ -16,7 +16,8 @@ import {
   LogOut,
   LogIn,
   Edit3,
-  Eye
+  Eye,
+  ShieldCheck
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import './Sidebar.css';
@@ -215,6 +216,21 @@ export default function Sidebar({ collapsed, setCollapsed, activeTab, setActiveT
             {!collapsed && <span>Public Trips</span>}
           </button>
         </div>
+
+        {/* ADMINISTRATION SECTION (ADMIN Only) */}
+        {user?.role === 'ADMIN' && (
+          <div className="nav-group">
+            {!collapsed && <div className="group-title">ADMINISTRATION</div>}
+
+            <button 
+              className={`nav-item ${activeTab === 'Admin Dashboard' ? 'active' : ''}`}
+              onClick={() => setActiveTab('Admin Dashboard')}
+            >
+              <ShieldCheck size={18} className="item-icon" />
+              {!collapsed && <span>Admin Dashboard</span>}
+            </button>
+          </div>
+        )}
 
         {/* ACCOUNT SECTION */}
         <div className="nav-group">

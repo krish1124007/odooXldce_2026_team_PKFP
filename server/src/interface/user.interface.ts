@@ -19,6 +19,7 @@ interface IUser extends Document {
     travelPace: string;
     savedDestinations: ISavedDestination[];
     role: "USER" | "ADMIN";
+    isActive?: boolean;
     resetPasswordToken?: string;
     resetPasswordExpires?: Date;
     createdAt: Date;

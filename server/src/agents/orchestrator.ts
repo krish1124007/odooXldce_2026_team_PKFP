@@ -6,6 +6,7 @@ import type { AgentContext } from "./contextBuilder.js";
 import { getGroqToolsDefinitions, executeTool, isWriteTool } from "./toolRegistry.js";
 import { createPendingAction } from "./actionStore.js";
 import { formatAgentResponse } from "./responseFormatter.js";
+import { AIUsage } from "../models/aiUsage.models.js";
 
 const MAX_TOOL_ITERATIONS = 8;
 
@@ -14,7 +15,9 @@ export const processAgentChat = async (params: {
   message: string;
   context?: AgentContext;
 }) => {
+  const startTime = Date.now();
   const { userId, message, context } = params;
+  let isSuccess = true;
 
   const agentContext = await buildAgentContext(userId, context);
   const tools = getGroqToolsDefinitions();
@@ -132,6 +135,7 @@ export const processAgentChat = async (params: {
     }
   } catch (error: any) {
     console.warn("Groq Agent offline/fallback mode active:", error.message);
+    isSuccess = false;
 
     // Fallback offline handler using database tools directly
     const offlineResult = await handleOfflineAgentQuery(message, userId, agentContext);
@@ -144,6 +148,18 @@ export const processAgentChat = async (params: {
       requiresConfirmation = offlineResult.requiresConfirmation;
     }
   }
+
+  // Non-blocking AI usage metric logging for Phase 7 Admin Analytics
+  const durationMs = Date.now() - startTime;
+  AIUsage.create({
+    userId,
+    conversationId: context?.conversationId || "",
+    requestType: proposedActions.length > 0 ? "proposal" : "chat",
+    success: isSuccess,
+    toolCalls: toolsUsed.length,
+    durationMs,
+    aiModel: process.env.GROQ_MODEL || "llama-3.3-70b-versatile",
+  }).catch((err) => console.warn("Failed to log AI usage metric:", err.message));
 
   return formatAgentResponse({
     message: finalMessage,
