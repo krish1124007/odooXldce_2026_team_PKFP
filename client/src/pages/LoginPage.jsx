@@ -1,10 +1,21 @@
 import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import Card from '../components/ui/Card';
-import Input from '../components/ui/Input';
-import Button from '../components/ui/Button';
-import { Mail, Lock, LogIn, AlertCircle, KeyRound, CheckCircle2, ArrowLeft } from 'lucide-react';
+import { 
+  Mail, 
+  Lock, 
+  LogIn, 
+  AlertCircle, 
+  KeyRound, 
+  CheckCircle2, 
+  ArrowLeft,
+  Compass,
+  Sparkles,
+  Globe,
+  MapPin,
+  UserCheck
+} from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import './AuthPages.css';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -44,6 +55,20 @@ export default function LoginPage() {
     }
   };
 
+  const handleDemoLogin = async () => {
+    setEmail('alex.traveler@example.com');
+    setPassword('password123');
+    setIsSubmitting(true);
+    const result = await login({ email: 'alex.traveler@example.com', password: 'password123' });
+    setIsSubmitting(false);
+
+    if (result.success) {
+      navigate(from, { replace: true });
+    } else {
+      setErrorMessage(result.message || 'Demo login failed');
+    }
+  };
+
   const handleForgotPasswordSubmit = async (e) => {
     e.preventDefault();
     setForgotFeedback(null);
@@ -64,116 +89,227 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="max-w-md mx-auto py-12 px-4">
-      {!showForgotPassword ? (
-        <Card title="Welcome Back to GlobeTrotter" subtitle="Log in to access your personalized travel itineraries">
-          {errorMessage && (
-            <div className="mb-4 p-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-xs flex items-center gap-2">
-              <AlertCircle size={16} className="shrink-0 text-red-500" />
-              <span>{errorMessage}</span>
-            </div>
-          )}
+    <div className="auth-page-wrapper">
+      <div className="auth-split-container">
+        {/* Left Hero Column */}
+        <div className="auth-hero-column">
+          <img
+            src="https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=1600&q=80"
+            alt="Travel Globe"
+            className="auth-hero-bg-img"
+          />
+          <div className="auth-hero-overlay-gradient" />
 
-          <form onSubmit={handleSubmit} className="flex flex-col gap-4 mt-2">
-            <Input 
-              label="Email Address" 
-              type="email" 
-              placeholder="you@example.com" 
-              icon={Mail} 
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required 
-            />
-            
-            <div>
-              <Input 
-                label="Password" 
-                type="password" 
-                placeholder="••••••••" 
-                icon={Lock} 
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required 
-              />
-              <div className="flex justify-end mt-1">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setResetEmail(email);
-                    setShowForgotPassword(true);
-                    setForgotFeedback(null);
-                  }}
-                  className="text-xs text-blue-600 hover:text-blue-800 font-medium transition-colors"
-                >
-                  Forgot password?
-                </button>
+          <div className="auth-hero-content">
+            <div className="auth-brand-logo-badge">
+              <div className="logo-icon-box">GT</div>
+              <div className="brand-text-wrapper">
+                <span className="brand-title-lg">GlobeTrotter</span>
+                <span className="brand-tagline-sm">AI Travel Engine</span>
               </div>
             </div>
 
-            <Button 
-              variant="primary" 
-              icon={LogIn} 
-              className="w-full mt-2"
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? 'Logging in...' : 'Log In'}
-            </Button>
+            <div className="hero-message-box">
+              <h1 className="hero-main-title">
+                Your Next Journey Starts Here
+              </h1>
+              <p className="hero-main-desc">
+                Plan multi-city itineraries, budget with precision, and explore curated travel destinations across the globe.
+              </p>
 
-            <div className="text-center text-xs text-gray-500 mt-2">
-              Don't have an account?{' '}
-              <Link to="/signup" className="text-blue-600 font-semibold hover:underline">
-                Sign up
-              </Link>
+              <div className="hero-feature-list">
+                <div className="hero-feature-item">
+                  <div className="hero-feature-icon"><Globe size={18} /></div>
+                  <span>500+ Curated Global Cities & Destinations</span>
+                </div>
+                <div className="hero-feature-item">
+                  <div className="hero-feature-icon"><Sparkles size={18} /></div>
+                  <span>Deterministic Multi-City Itinerary Engine</span>
+                </div>
+                <div className="hero-feature-item">
+                  <div className="hero-feature-icon"><Compass size={18} /></div>
+                  <span>Schedule Conflict Detection & Day-by-Day Timeline</span>
+                </div>
+              </div>
             </div>
-          </form>
-        </Card>
-      ) : (
-        <Card title="Reset Password" subtitle="Enter your email address to receive password recovery steps">
-          {forgotFeedback && (
-            <div className={`mb-4 p-3 rounded-lg border text-xs flex items-start gap-2 ${
-              forgotFeedback.type === 'success' 
-                ? 'bg-emerald-50 border-emerald-200 text-emerald-800' 
-                : 'bg-red-50 border-red-200 text-red-700'
-            }`}>
-              {forgotFeedback.type === 'success' ? (
-                <CheckCircle2 size={16} className="shrink-0 text-emerald-600 mt-0.5" />
-              ) : (
-                <AlertCircle size={16} className="shrink-0 text-red-500 mt-0.5" />
-              )}
-              <span>{forgotFeedback.text}</span>
+
+            <div className="hero-footer-copy">
+              © {new Date().getFullYear()} GlobeTrotter Inc. All rights reserved.
             </div>
-          )}
+          </div>
+        </div>
 
-          <form onSubmit={handleForgotPasswordSubmit} className="flex flex-col gap-4 mt-2">
-            <Input 
-              label="Registered Email" 
-              type="email" 
-              placeholder="you@example.com" 
-              icon={Mail} 
-              value={resetEmail}
-              onChange={(e) => setResetEmail(e.target.value)}
-              required 
-            />
+        {/* Right Form Column */}
+        <div className="auth-form-column">
+          <div className="auth-form-card">
+            {!showForgotPassword ? (
+              <>
+                <div className="auth-form-header">
+                  <h2 className="auth-form-title">Welcome Back</h2>
+                  <p className="auth-form-sub">
+                    Log in to access your personalized travel itineraries
+                  </p>
+                </div>
 
-            <Button 
-              variant="primary" 
-              icon={KeyRound} 
-              className="w-full mt-2"
-              disabled={forgotSubmitting}
-            >
-              {forgotSubmitting ? 'Sending Request...' : 'Send Reset Link'}
-            </Button>
+                {/* Quick Demo Login Button */}
+                <button 
+                  type="button" 
+                  onClick={handleDemoLogin} 
+                  className="demo-login-btn"
+                  title="Click for instant test login"
+                >
+                  <UserCheck size={16} />
+                  <span>One-Click Demo Account Login</span>
+                </button>
 
-            <button
-              type="button"
-              onClick={() => setShowForgotPassword(false)}
-              className="flex items-center justify-center gap-1.5 text-xs text-slate-600 hover:text-slate-900 mt-2 font-medium"
-            >
-              <ArrowLeft size={14} /> Back to Login
-            </button>
-          </form>
-        </Card>
-      )}
+                <div className="divider-line-box">
+                  <div className="divider-line" />
+                  <span className="divider-text">Or sign in with email</span>
+                  <div className="divider-line" />
+                </div>
+
+                {errorMessage && (
+                  <div className="auth-error-alert">
+                    <AlertCircle size={16} className="shrink-0 text-red-500" />
+                    <span>{errorMessage}</span>
+                  </div>
+                )}
+
+                <form onSubmit={handleSubmit} className="auth-form-body">
+                  <div className="auth-input-group">
+                    <label className="auth-label">Email Address</label>
+                    <div className="auth-input-wrapper">
+                      <Mail size={16} className="auth-input-icon" />
+                      <input
+                        type="email"
+                        required
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        placeholder="you@example.com"
+                        className="auth-input-field"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="auth-input-group">
+                    <div className="auth-row-between">
+                      <label className="auth-label">Password</label>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setResetEmail(email);
+                          setShowForgotPassword(true);
+                          setForgotFeedback(null);
+                        }}
+                        className="auth-link text-xs"
+                      >
+                        Forgot password?
+                      </button>
+                    </div>
+                    <div className="auth-input-wrapper">
+                      <Lock size={16} className="auth-input-icon" />
+                      <input
+                        type="password"
+                        required
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        placeholder="••••••••"
+                        className="auth-input-field"
+                      />
+                    </div>
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="auth-submit-btn"
+                  >
+                    {isSubmitting ? (
+                      <span>Signing in...</span>
+                    ) : (
+                      <>
+                        <LogIn size={16} />
+                        <span>Log In</span>
+                      </>
+                    )}
+                  </button>
+                </form>
+
+                <p className="auth-footer-text">
+                  Don't have an account yet?{' '}
+                  <Link to="/signup" className="auth-link font-bold">
+                    Sign up now
+                  </Link>
+                </p>
+              </>
+            ) : (
+              <>
+                <div className="auth-form-header">
+                  <h2 className="auth-form-title">Reset Password</h2>
+                  <p className="auth-form-sub">
+                    Enter your email address to receive password recovery instructions
+                  </p>
+                </div>
+
+                {forgotFeedback && (
+                  <div className={`auth-error-alert ${
+                    forgotFeedback.type === 'success'
+                      ? 'bg-emerald-50 border-emerald-200 text-emerald-800'
+                      : ''
+                  }`}>
+                    {forgotFeedback.type === 'success' ? (
+                      <CheckCircle2 size={16} className="text-emerald-600 shrink-0" />
+                    ) : (
+                      <AlertCircle size={16} className="text-red-500 shrink-0" />
+                    )}
+                    <span>{forgotFeedback.text}</span>
+                  </div>
+                )}
+
+                <form onSubmit={handleForgotPasswordSubmit} className="auth-form-body">
+                  <div className="auth-input-group">
+                    <label className="auth-label">Registered Email</label>
+                    <div className="auth-input-wrapper">
+                      <Mail size={16} className="auth-input-icon" />
+                      <input
+                        type="email"
+                        required
+                        value={resetEmail}
+                        onChange={(e) => setResetEmail(e.target.value)}
+                        placeholder="you@example.com"
+                        className="auth-input-field"
+                      />
+                    </div>
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={forgotSubmitting}
+                    className="auth-submit-btn"
+                  >
+                    {forgotSubmitting ? (
+                      <span>Sending Request...</span>
+                    ) : (
+                      <>
+                        <KeyRound size={16} />
+                        <span>Send Reset Link</span>
+                      </>
+                    )}
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setShowForgotPassword(false)}
+                    className="flex items-center justify-center gap-1 text-xs text-slate-600 hover:text-slate-900 font-semibold mt-2"
+                  >
+                    <ArrowLeft size={14} /> Back to Login
+                  </button>
+                </form>
+              </>
+            )}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

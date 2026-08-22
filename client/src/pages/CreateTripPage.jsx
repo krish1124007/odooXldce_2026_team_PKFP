@@ -1,7 +1,19 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import api from '../services/api';
-import { Compass, AlertCircle, ArrowLeft } from 'lucide-react';
+import { 
+  Compass, 
+  AlertCircle, 
+  ArrowLeft, 
+  Calendar, 
+  MapPin, 
+  DollarSign, 
+  ImageIcon, 
+  FileText, 
+  Lock, 
+  Sparkles 
+} from 'lucide-react';
+import './CreateTripPage.css';
 
 export default function CreateTripPage() {
   const navigate = useNavigate();
@@ -71,115 +83,137 @@ export default function CreateTripPage() {
   };
 
   return (
-    <div className="max-w-3xl mx-auto py-8 space-y-6">
-      <Link
-        to="/trips"
-        className="inline-flex items-center space-x-1.5 text-xs text-slate-400 hover:text-cyan-400 font-semibold transition-colors"
-      >
-        <ArrowLeft className="w-4 h-4" />
+    <div className="create-trip-page-container">
+      {/* Navigation link */}
+      <Link to="/trips" className="back-link-btn">
+        <ArrowLeft size={16} />
         <span>Back to My Trips</span>
       </Link>
 
-      <div className="bg-slate-900/90 border border-slate-800 p-8 rounded-3xl shadow-2xl backdrop-blur-xl space-y-6">
-        <div>
-          <h1 className="text-2xl font-extrabold text-white">Create New Trip</h1>
-          <p className="text-xs text-slate-400">Set up your trip details and planned travel budget</p>
+      {/* Main Form Card */}
+      <div className="create-trip-form-card">
+        <div className="form-card-header">
+          <div className="badge-pill-cyan">
+            <Sparkles size={14} />
+            <span>Trip Creation</span>
+          </div>
+          <h1 className="form-card-title">Create New Trip</h1>
+          <p className="form-card-subtitle">
+            Set up your trip schedule, cover photo, and planned travel budget
+          </p>
         </div>
 
         {error && (
-          <div className="p-4 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs flex items-center space-x-2">
-            <AlertCircle className="w-4 h-4 shrink-0" />
+          <div className="error-alert-banner">
+            <AlertCircle size={16} className="error-alert-icon" />
             <span>{error}</span>
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-5">
-          <div>
-            <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">
-              Trip Name <span className="text-rose-400">*</span>
+        <form onSubmit={handleSubmit} className="create-trip-form-body">
+          {/* Trip Name */}
+          <div className="form-input-group">
+            <label className="input-field-label">
+              Trip Name <span className="required-star">*</span>
             </label>
-            <input
-              type="text"
-              required
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="e.g. Japan Autumn Adventure 2026"
-              className="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-slate-100 placeholder-slate-500 focus:outline-none focus:border-cyan-500 text-sm"
-            />
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">
-                Start Date <span className="text-rose-400">*</span>
-              </label>
+            <div className="input-field-wrapper">
+              <MapPin size={16} className="input-field-icon" />
               <input
-                type="date"
+                type="text"
                 required
-                value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
-                className="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-slate-100 focus:outline-none focus:border-cyan-500 text-sm"
-              />
-            </div>
-
-            <div>
-              <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">
-                End Date <span className="text-rose-400">*</span>
-              </label>
-              <input
-                type="date"
-                required
-                value={endDate}
-                onChange={(e) => setEndDate(e.target.value)}
-                className="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-slate-100 focus:outline-none focus:border-cyan-500 text-sm"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="e.g. Japan Autumn Adventure 2026"
+                className="input-field-element"
               />
             </div>
           </div>
 
-          <div>
-            <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">
-              Description
-            </label>
-            <textarea
-              rows="3"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              placeholder="Write a brief overview or goal for this journey..."
-              className="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-slate-100 placeholder-slate-500 focus:outline-none focus:border-cyan-500 text-sm"
-            />
-          </div>
-
-          <div>
-            <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">
-              Cover Image URL
-            </label>
-            <input
-              type="url"
-              value={coverPhoto}
-              onChange={(e) => setCoverPhoto(e.target.value)}
-              placeholder="https://images.unsplash.com/..."
-              className="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-slate-100 placeholder-slate-500 focus:outline-none focus:border-cyan-500 text-sm"
-            />
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">
-                Planned Budget
+          {/* Dates Grid */}
+          <div className="form-grid-two-cols">
+            <div className="form-input-group">
+              <label className="input-field-label">
+                Start Date <span className="required-star">*</span>
               </label>
-              <div className="flex space-x-2">
+              <div className="input-field-wrapper">
+                <Calendar size={16} className="input-field-icon" />
                 <input
-                  type="number"
-                  min="0"
-                  value={budgetAmount}
-                  onChange={(e) => setBudgetAmount(e.target.value)}
-                  placeholder="80000"
-                  className="flex-1 px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-slate-100 placeholder-slate-500 focus:outline-none focus:border-cyan-500 text-sm"
+                  type="date"
+                  required
+                  value={startDate}
+                  onChange={(e) => setStartDate(e.target.value)}
+                  className="input-field-element"
                 />
+              </div>
+            </div>
+
+            <div className="form-input-group">
+              <label className="input-field-label">
+                End Date <span className="required-star">*</span>
+              </label>
+              <div className="input-field-wrapper">
+                <Calendar size={16} className="input-field-icon" />
+                <input
+                  type="date"
+                  required
+                  value={endDate}
+                  onChange={(e) => setEndDate(e.target.value)}
+                  className="input-field-element"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Description */}
+          <div className="form-input-group">
+            <label className="input-field-label">Description</label>
+            <div className="input-field-wrapper textarea-wrapper">
+              <FileText size={16} className="input-field-icon textarea-icon" />
+              <textarea
+                rows="3"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="Write a brief overview or goal for this trip..."
+                className="input-field-element textarea-element"
+              />
+            </div>
+          </div>
+
+          {/* Cover Photo URL */}
+          <div className="form-input-group">
+            <label className="input-field-label">Cover Image URL</label>
+            <div className="input-field-wrapper">
+              <ImageIcon size={16} className="input-field-icon" />
+              <input
+                type="url"
+                value={coverPhoto}
+                onChange={(e) => setCoverPhoto(e.target.value)}
+                placeholder="https://images.unsplash.com/..."
+                className="input-field-element"
+              />
+            </div>
+          </div>
+
+          {/* Budget & Visibility */}
+          <div className="form-grid-two-cols">
+            <div className="form-input-group">
+              <label className="input-field-label">Planned Budget</label>
+              <div className="input-split-row">
+                <div className="input-field-wrapper flex-1">
+                  <DollarSign size={16} className="input-field-icon" />
+                  <input
+                    type="number"
+                    min="0"
+                    value={budgetAmount}
+                    onChange={(e) => setBudgetAmount(e.target.value)}
+                    placeholder="80000"
+                    className="input-field-element"
+                  />
+                </div>
                 <select
                   value={currency}
                   onChange={(e) => setCurrency(e.target.value)}
-                  className="px-3 py-3 bg-slate-950 border border-slate-800 rounded-xl text-slate-100 text-sm"
+                  className="currency-select-box"
                 >
                   <option value="INR">INR (₹)</option>
                   <option value="USD">USD ($)</option>
@@ -189,38 +223,37 @@ export default function CreateTripPage() {
               </div>
             </div>
 
-            <div>
-              <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">
-                Visibility
-              </label>
-              <select
-                value={visibility}
-                onChange={(e) => setVisibility(e.target.value)}
-                className="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-slate-100 text-sm"
-              >
-                <option value="PRIVATE">Private (Only Me)</option>
-                <option value="PUBLIC">Public (Shareable)</option>
-              </select>
+            <div className="form-input-group">
+              <label className="input-field-label">Visibility</label>
+              <div className="input-field-wrapper">
+                <Lock size={16} className="input-field-icon" />
+                <select
+                  value={visibility}
+                  onChange={(e) => setVisibility(e.target.value)}
+                  className="input-field-element select-element"
+                >
+                  <option value="PRIVATE">Private (Only Me)</option>
+                  <option value="PUBLIC">Public (Shareable)</option>
+                </select>
+              </div>
             </div>
           </div>
 
-          <div className="pt-4 border-t border-slate-800 flex items-center justify-end space-x-3">
-            <Link
-              to="/trips"
-              className="px-5 py-3 rounded-xl border border-slate-800 text-slate-400 hover:text-white hover:bg-slate-800 text-xs font-semibold transition-colors"
-            >
+          {/* Form Actions */}
+          <div className="form-footer-actions">
+            <Link to="/trips" className="btn-form-cancel">
               Cancel
             </Link>
             <button
               type="submit"
               disabled={loading}
-              className="px-6 py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:opacity-95 text-white font-semibold text-xs shadow-lg shadow-cyan-500/25 transition-all flex items-center space-x-2"
+              className="btn-form-submit"
             >
               {loading ? (
                 <span>Creating Trip...</span>
               ) : (
                 <>
-                  <Compass className="w-4 h-4" />
+                  <Compass size={16} />
                   <span>Create Trip</span>
                 </>
               )}

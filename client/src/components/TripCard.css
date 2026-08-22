@@ -1,0 +1,211 @@
+/* TripCard CSS Styling */
+.trip-card-container {
+  background-color: var(--bg-card, #FFFFFF);
+  border: 1px solid var(--border-color, #F1F5F9);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: var(--shadow-card, 0 4px 20px -2px rgba(0, 0, 0, 0.03));
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+}
+
+.trip-card-container:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 30px -5px rgba(0, 0, 0, 0.08);
+  border-color: var(--border-darker, #E2E8F0);
+}
+
+.trip-card-image-box {
+  position: relative;
+  width: 100%;
+  height: 160px;
+  background-color: #F1F5F9;
+  overflow: hidden;
+}
+
+.trip-card-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.trip-card-container:hover .trip-card-image {
+  transform: scale(1.05);
+}
+
+.trip-card-overlay-gradient {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.2) 0%, rgba(15, 23, 42, 0.8) 100%);
+}
+
+.trip-card-top-tags {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  right: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.trip-badge {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.status-upcoming {
+  background-color: #DBEAFE;
+  color: #1E40AF;
+}
+
+.status-ongoing {
+  background-color: #E0F2FE;
+  color: #0369A1;
+}
+
+.status-completed {
+  background-color: #E2E8F0;
+  color: #334155;
+}
+
+.status-draft {
+  background-color: #FEF3C7;
+  color: #92400E;
+}
+
+.visibility-badge {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(4px);
+  color: #FFFFFF;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.trip-card-title-box {
+  position: absolute;
+  bottom: 12px;
+  left: 14px;
+  right: 14px;
+}
+
+.trip-card-name {
+  font-family: var(--font-heading, 'Outfit', sans-serif);
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #FFFFFF;
+  line-height: 1.25;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.trip-card-body-content {
+  padding: 1.15rem;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.trip-card-desc {
+  font-size: 12.5px;
+  color: var(--text-secondary, #64748B);
+  line-height: 1.45;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.trip-card-meta-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.meta-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 12.5px;
+  color: var(--text-primary, #0F172A);
+}
+
+.meta-icon-blue {
+  color: #2563EB;
+  flex-shrink: 0;
+}
+
+.meta-icon-green {
+  color: #10B981;
+  flex-shrink: 0;
+}
+
+.trip-card-footer-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid var(--border-color, #F1F5F9);
+  padding-top: 0.85rem;
+}
+
+.icon-actions-group {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.action-icon-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  color: var(--text-muted, #94A3B8);
+  transition: all 0.15s ease;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.action-icon-link:hover {
+  background-color: var(--border-color, #F1F5F9);
+  color: var(--text-primary, #0F172A);
+}
+
+.action-icon-link.danger:hover {
+  background-color: #FEE2E2;
+  color: #EF4444;
+}
+
+.btn-view-trip-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.45rem 0.95rem;
+  border-radius: 8px;
+  background-color: var(--primary-navy, #122244);
+  color: #FFFFFF;
+  font-size: 12.5px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.15s ease;
+}
+
+.btn-view-trip-link:hover {
+  background-color: #1C3366;
+}

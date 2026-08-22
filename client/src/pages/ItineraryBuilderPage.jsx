@@ -31,8 +31,10 @@ import {
   Compass, 
   Eye, 
   Check, 
-  Globe 
+  Globe,
+  ArrowLeft
 } from 'lucide-react';
+import './ItineraryPages.css';
 
 export default function ItineraryBuilderPage() {
   const { tripId } = useParams();
@@ -372,8 +374,8 @@ export default function ItineraryBuilderPage() {
 
   if (loading && !itineraryData) {
     return (
-      <div className="py-20 text-center text-slate-400">
-        <div className="animate-spin w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full mx-auto mb-4"></div>
+      <div className="py-20 text-center text-slate-500 dark:text-slate-400">
+        <div className="animate-spin w-8 h-8 border-4 border-cyan-500 border-t-transparent rounded-full mx-auto mb-4"></div>
         <p className="text-sm font-semibold">Loading Itinerary Engine...</p>
       </div>
     );
@@ -385,59 +387,72 @@ export default function ItineraryBuilderPage() {
   const conflicts = itineraryData?.conflicts || [];
 
   return (
-    <div className="flex flex-col gap-6 max-w-7xl mx-auto pb-12">
+    <div className="itinerary-page-container">
       {/* Messages */}
       {errorMsg && (
-        <div className="p-4 rounded-xl bg-red-500/10 border border-red-500/30 text-red-600 text-xs font-semibold flex items-center justify-between">
-          <span>{errorMsg}</span>
-          <button onClick={() => setErrorMsg('')}><X size={16} /></button>
+        <div className="alert-banner-box error">
+          <div className="flex items-center gap-2">
+            <AlertTriangle size={16} />
+            <span>{errorMsg}</span>
+          </div>
+          {errorMsg.toLowerCase().includes('auth') || errorMsg.toLowerCase().includes('not found') ? (
+            <Link to="/trips" className="btn-primary-action text-xs py-1 px-3">
+              View All Trips
+            </Link>
+          ) : (
+            <button onClick={() => setErrorMsg('')}><X size={16} /></button>
+          )}
         </div>
       )}
       {successMsg && (
-        <div className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-600 text-xs font-semibold flex items-center justify-between">
+        <div className="alert-banner-box success">
           <span>{successMsg}</span>
           <button onClick={() => setSuccessMsg('')}><X size={16} /></button>
         </div>
       )}
 
       {/* Sub-nav Header Bar */}
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-lg flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
+      <div className="itinerary-header-card">
+        <div className="header-info-group">
           <div className="flex items-center gap-2">
-            <span className="px-2.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-400 text-[10px] font-bold tracking-wider uppercase">
+            <span className="engine-badge">
               Phase 4 Engine
             </span>
-            <span className="text-xs font-medium text-slate-400">ID: {tripId}</span>
+            <span className="text-xs text-slate-500 font-medium">ID: {tripId}</span>
           </div>
-          <h1 className="text-2xl font-extrabold text-white mt-1">{trip?.name || 'Itinerary Builder'}</h1>
-          <p className="text-xs text-slate-400 mt-0.5">
+          <h1 className="header-title-text">{trip?.name || 'Itinerary Builder'}</h1>
+          <p className="header-sub-text">
             {formatDate(trip?.startDate)} — {formatDate(trip?.endDate)} • {stops.length} Scheduled Cities
           </p>
         </div>
 
-        <div className="flex flex-wrap gap-2">
-          <Link to={`/trips/${tripId}/cities`}>
-            <Button variant="secondary" size="sm" icon={MapPin}>Discover Cities</Button>
+        <div className="header-actions-row">
+          <Link to={`/trips/${tripId}/cities`} className="nav-action-btn secondary">
+            <MapPin size={14} />
+            <span>Discover Cities</span>
           </Link>
-          <Link to={`/trips/${tripId}/activities`}>
-            <Button variant="secondary" size="sm" icon={Compass}>Discover Activities</Button>
+          <Link to={`/trips/${tripId}/activities`} className="nav-action-btn secondary">
+            <Compass size={14} />
+            <span>Discover Activities</span>
           </Link>
-          <Link to={`/trips/${tripId}/calendar`}>
-            <Button variant="secondary" size="sm" icon={Calendar}>Timeline View</Button>
+          <Link to={`/trips/${tripId}/calendar`} className="nav-action-btn secondary">
+            <Calendar size={14} />
+            <span>Timeline View</span>
           </Link>
-          <Link to={`/trips/${tripId}/itinerary`}>
-            <Button variant="primary" size="sm" icon={Eye}>View Final Itinerary</Button>
+          <Link to={`/trips/${tripId}/itinerary`} className="nav-action-btn primary">
+            <Eye size={14} />
+            <span>View Final Itinerary</span>
           </Link>
         </div>
       </div>
 
       {/* Conflict Alert Banner */}
       {hasConflicts && (
-        <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/40 text-amber-900 flex items-start gap-3">
-          <AlertTriangle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+        <div className="alert-banner-box warning">
+          <AlertTriangle className="w-5 h-5 shrink-0" />
           <div className="flex-1 text-xs">
-            <h4 className="font-bold text-amber-800 text-sm">Schedule Conflicts Detected ({conflicts.length})</h4>
-            <ul className="mt-1.5 space-y-1 text-amber-700">
+            <h4 className="font-bold text-sm">Schedule Conflicts Detected ({conflicts.length})</h4>
+            <ul className="mt-1 space-y-1">
               {conflicts.map((c, idx) => (
                 <li key={idx}>• {c.message}</li>
               ))}
@@ -448,19 +463,19 @@ export default function ItineraryBuilderPage() {
 
       {/* Phase 3 -> Phase 4 Destination Initialization Banner */}
       {stops.length === 0 && trip?.destinations?.length > 0 && (
-        <div className="p-6 rounded-2xl bg-gradient-to-r from-blue-900/40 to-cyan-900/40 border border-cyan-500/30 text-white flex flex-col md:flex-row items-center justify-between gap-4">
+        <div className="p-6 rounded-2xl bg-gradient-to-r from-blue-900 to-indigo-900 text-white flex flex-col md:flex-row items-center justify-between gap-4 shadow-md">
           <div>
-            <h3 className="text-base font-bold flex items-center gap-2 text-cyan-300">
-              <Sparkles className="w-5 h-5" />
+            <h3 className="text-base font-bold flex items-center gap-2">
+              <Sparkles className="w-5 h-5 text-amber-400" />
               <span>Destinations Ready for Itinerary Scheduling</span>
             </h3>
-            <p className="text-xs text-slate-300 mt-1 max-w-xl">
+            <p className="text-xs text-slate-200 mt-1 max-w-xl">
               You have {trip.destinations.length} destination(s) saved in Phase 3. Click below to automatically convert them into scheduled trip stops.
             </p>
           </div>
           <button
             onClick={handleInitializeStops}
-            className="px-5 py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 text-xs font-bold shadow-lg shadow-cyan-500/20 transition-all shrink-0"
+            className="nav-action-btn primary shrink-0"
           >
             Initialize Stops Schedule
           </button>
@@ -468,48 +483,55 @@ export default function ItineraryBuilderPage() {
       )}
 
       {/* Action Toolbar */}
-      <div className="flex items-center justify-between">
-        <h2 className="text-lg font-bold text-slate-100 flex items-center gap-2">
-          <Globe className="w-5 h-5 text-cyan-400" />
+      <div className="section-toolbar-row">
+        <h2 className="section-heading-text">
+          <Globe className="w-5 h-5 text-blue-600" />
           <span>Scheduled Cities & Stops</span>
         </h2>
-        <Button variant="primary" size="sm" icon={Plus} onClick={openAddStopModal}>
-          Add Stop / Destination
-        </Button>
+        <button className="nav-action-btn primary" onClick={openAddStopModal}>
+          <Plus size={15} />
+          <span>Add Stop / Destination</span>
+        </button>
       </div>
 
       {/* Stops & Days Section */}
       {stops.length === 0 ? (
-        <div className="bg-slate-900/60 border border-slate-800 rounded-3xl p-12 text-center space-y-3">
-          <MapPin className="w-12 h-12 text-slate-500 mx-auto" />
-          <h3 className="text-base font-bold text-slate-200">No destinations scheduled yet</h3>
-          <p className="text-xs text-slate-400 max-w-sm mx-auto">
+        <div className="itinerary-empty-card">
+          <div className="itinerary-empty-icon">
+            <MapPin size={30} />
+          </div>
+          <h3 className="itinerary-empty-title">No destinations scheduled yet</h3>
+          <p className="itinerary-empty-sub">
             Click "+ Add Stop / Destination" to schedule cities for your journey.
           </p>
+          <button className="nav-action-btn primary" onClick={openAddStopModal}>
+            <Plus size={15} />
+            <span>Add Stop / Destination</span>
+          </button>
         </div>
       ) : (
         <div className="space-y-6">
           {stops.map((stopItem, index) => {
             const { stop, city, activities } = stopItem;
             return (
-              <div key={stop._id} className="bg-slate-900/90 border border-slate-800 rounded-2xl overflow-hidden shadow-lg">
+              <div key={stop._id} className="bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden shadow-lg">
                 {/* Stop Header */}
-                <div className="p-4 bg-slate-950 border-b border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div className="p-4 bg-slate-50 dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                   <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 font-bold">
+                    <div className="w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-600 dark:text-cyan-400 font-bold">
                       #{index + 1}
                     </div>
                     <div>
                       <div className="flex items-center gap-2">
-                        <h3 className="text-base font-bold text-white">{city?.name || 'City Stop'}</h3>
-                        <span className="px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 text-[10px] font-semibold">
+                        <h3 className="text-base font-bold text-slate-900 dark:text-white">{city?.name || 'City Stop'}</h3>
+                        <span className="px-2 py-0.5 rounded-full bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-[10px] font-semibold">
                           {city?.country}
                         </span>
                       </div>
-                      <p className="text-xs text-slate-400 mt-0.5 flex items-center gap-2">
-                        <Calendar className="w-3.5 h-3.5 text-cyan-400" />
+                      <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 flex items-center gap-2">
+                        <Calendar className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400" />
                         <span>{formatDate(stop.startDate)} — {formatDate(stop.endDate)}</span>
-                        {stop.notes && <span className="italic text-slate-500">({stop.notes})</span>}
+                        {stop.notes && <span className="italic text-slate-400">({stop.notes})</span>}
                       </p>
                     </div>
                   </div>
@@ -518,7 +540,7 @@ export default function ItineraryBuilderPage() {
                     <button
                       onClick={() => handleReorderStops(index, 'up')}
                       disabled={index === 0}
-                      className="p-1.5 rounded-lg bg-slate-800 text-slate-300 hover:text-white disabled:opacity-30"
+                      className="p-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white disabled:opacity-30"
                       title="Move Up"
                     >
                       <ChevronUp size={16} />
@@ -526,21 +548,21 @@ export default function ItineraryBuilderPage() {
                     <button
                       onClick={() => handleReorderStops(index, 'down')}
                       disabled={index === stops.length - 1}
-                      className="p-1.5 rounded-lg bg-slate-800 text-slate-300 hover:text-white disabled:opacity-30"
+                      className="p-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white disabled:opacity-30"
                       title="Move Down"
                     >
                       <ChevronDown size={16} />
                     </button>
                     <button
                       onClick={() => openEditStopModal(stop)}
-                      className="p-1.5 rounded-lg bg-slate-800 text-slate-300 hover:text-cyan-400"
+                      className="p-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-cyan-600 dark:hover:text-cyan-400"
                       title="Edit Stop Dates"
                     >
                       <Edit3 size={16} />
                     </button>
                     <button
                       onClick={() => handleDeleteStop(stop._id, city?.name || 'City')}
-                      className="p-1.5 rounded-lg bg-slate-800 text-slate-300 hover:text-red-400"
+                      className="p-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-red-500"
                       title="Remove Stop"
                     >
                       <Trash2 size={16} />
@@ -551,11 +573,11 @@ export default function ItineraryBuilderPage() {
                 {/* Stop Activities List */}
                 <div className="p-4 space-y-3">
                   {activities.length === 0 ? (
-                    <div className="py-6 text-center border border-dashed border-slate-800 rounded-xl">
-                      <p className="text-xs text-slate-500">No activities planned for this city stop yet.</p>
+                    <div className="py-6 text-center border border-dashed border-slate-200 dark:border-slate-800 rounded-xl">
+                      <p className="text-xs text-slate-500 dark:text-slate-400">No activities planned for this city stop yet.</p>
                       <button
                         onClick={() => openAddActivityModal(stopItem)}
-                        className="mt-2 text-xs font-semibold text-cyan-400 hover:underline inline-flex items-center gap-1"
+                        className="mt-2 text-xs font-semibold text-cyan-600 dark:text-cyan-400 hover:underline inline-flex items-center gap-1"
                       >
                         <Plus size={14} /> Add Activity
                       </button>
@@ -567,23 +589,23 @@ export default function ItineraryBuilderPage() {
                         return (
                           <div
                             key={itineraryActivity._id}
-                            className="p-3 bg-slate-950/70 border border-slate-800/80 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:border-slate-700 transition-all"
+                            className="p-3 bg-slate-50 dark:bg-slate-950/70 border border-slate-200 dark:border-slate-800/80 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:border-slate-300 dark:hover:border-slate-700 transition-all"
                           >
                             <div className="flex items-center space-x-3">
-                              <div className="px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 text-xs font-bold text-cyan-400 shrink-0 text-center">
+                              <div className="px-3 py-1.5 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs font-bold text-cyan-600 dark:text-cyan-400 shrink-0 text-center">
                                 {itineraryActivity.startTime} – {itineraryActivity.endTime}
                               </div>
                               <div>
                                 <div className="flex items-center gap-2">
-                                  <h4 className="text-xs font-bold text-slate-100">{activity?.name || 'Activity'}</h4>
-                                  <span className="px-2 py-0.5 rounded bg-blue-500/20 text-blue-400 text-[10px] font-semibold">
+                                  <h4 className="text-xs font-bold text-slate-900 dark:text-slate-100">{activity?.name || 'Activity'}</h4>
+                                  <span className="px-2 py-0.5 rounded bg-blue-500/10 text-blue-600 dark:text-blue-400 text-[10px] font-semibold">
                                     {activity?.type}
                                   </span>
                                 </div>
-                                <div className="flex items-center gap-3 text-[11px] text-slate-400 mt-1">
+                                <div className="flex items-center gap-3 text-[11px] text-slate-500 dark:text-slate-400 mt-1">
                                   <span>📅 {formatDate(itineraryActivity.date)}</span>
                                   <span>⏱️ {activity?.durationMinutes || 60} mins</span>
-                                  <span className="text-emerald-400 font-semibold">
+                                  <span className="text-emerald-600 dark:text-emerald-400 font-semibold">
                                     ₹{itineraryActivity.estimatedCost || activity?.cost || 0}
                                   </span>
                                 </div>
@@ -594,27 +616,27 @@ export default function ItineraryBuilderPage() {
                               <button
                                 onClick={() => handleReorderActivities(stop._id, activities, actIdx, 'up')}
                                 disabled={actIdx === 0}
-                                className="p-1 rounded text-slate-400 hover:text-white disabled:opacity-20"
+                                className="p-1 rounded text-slate-400 hover:text-slate-900 dark:hover:text-white disabled:opacity-20"
                               >
                                 <ChevronUp size={14} />
                               </button>
                               <button
                                 onClick={() => handleReorderActivities(stop._id, activities, actIdx, 'down')}
                                 disabled={actIdx === activities.length - 1}
-                                className="p-1 rounded text-slate-400 hover:text-white disabled:opacity-20"
+                                className="p-1 rounded text-slate-400 hover:text-slate-900 dark:hover:text-white disabled:opacity-20"
                               >
                                 <ChevronDown size={14} />
                               </button>
                               <button
                                 onClick={() => openEditActivityModal(itineraryActivity)}
-                                className="p-1.5 rounded bg-slate-900 text-slate-400 hover:text-cyan-400"
+                                className="p-1.5 rounded bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:text-cyan-600 dark:hover:text-cyan-400"
                                 title="Edit Timing"
                               >
                                 <Edit3 size={14} />
                               </button>
                               <button
                                 onClick={() => handleDeleteItineraryActivity(itineraryActivity._id, activity?.name)}
-                                className="p-1.5 rounded bg-slate-900 text-slate-400 hover:text-red-400"
+                                className="p-1.5 rounded bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:text-red-500"
                                 title="Remove Activity"
                               >
                                 <Trash2 size={14} />
@@ -646,25 +668,25 @@ export default function ItineraryBuilderPage() {
       {/* MODAL 1: ADD STOP */}
       {isAddStopOpen && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 max-w-md w-full shadow-2xl space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-              <h3 className="text-base font-bold text-white flex items-center gap-2">
-                <MapPin className="w-5 h-5 text-cyan-400" />
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 max-w-md w-full shadow-2xl space-y-4">
+            <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+              <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                <MapPin className="w-5 h-5 text-cyan-600 dark:text-cyan-400" />
                 <span>Add City Stop</span>
               </h3>
-              <button onClick={() => setIsAddStopOpen(false)} className="text-slate-400 hover:text-white">
+              <button onClick={() => setIsAddStopOpen(false)} className="text-slate-400 hover:text-slate-900 dark:hover:text-white">
                 <X size={18} />
               </button>
             </div>
 
             <form onSubmit={handleCreateStop} className="space-y-4">
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">Select City</label>
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Select City</label>
                 <select
                   value={stopFormData.cityId}
                   onChange={(e) => setStopFormData({ ...stopFormData, cityId: e.target.value })}
                   required
-                  className="w-full bg-slate-950 border border-slate-800 text-slate-100 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-cyan-500"
+                  className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-cyan-500"
                 >
                   <option value="">Select Destination City</option>
                   {availableCities.map((c) => (
@@ -677,35 +699,35 @@ export default function ItineraryBuilderPage() {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">Start Date</label>
+                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Start Date</label>
                   <input
                     type="date"
                     value={stopFormData.startDate}
                     onChange={(e) => setStopFormData({ ...stopFormData, startDate: e.target.value })}
                     required
-                    className="w-full bg-slate-950 border border-slate-800 text-slate-100 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-cyan-500"
+                    className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-cyan-500"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">End Date</label>
+                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">End Date</label>
                   <input
                     type="date"
                     value={stopFormData.endDate}
                     onChange={(e) => setStopFormData({ ...stopFormData, endDate: e.target.value })}
                     required
-                    className="w-full bg-slate-950 border border-slate-800 text-slate-100 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-cyan-500"
+                    className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-cyan-500"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">Notes (Optional)</label>
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Notes (Optional)</label>
                 <input
                   type="text"
                   placeholder="e.g. Stay at Shinjuku Prince Hotel"
                   value={stopFormData.notes}
                   onChange={(e) => setStopFormData({ ...stopFormData, notes: e.target.value })}
-                  className="w-full bg-slate-950 border border-slate-800 text-slate-100 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-cyan-500"
+                  className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-cyan-500"
                 />
               </div>
 
@@ -725,13 +747,13 @@ export default function ItineraryBuilderPage() {
       {/* MODAL 2: EDIT STOP */}
       {isEditStopOpen && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 max-w-md w-full shadow-2xl space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-              <h3 className="text-base font-bold text-white flex items-center gap-2">
-                <Edit3 className="w-5 h-5 text-cyan-400" />
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 max-w-md w-full shadow-2xl space-y-4">
+            <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+              <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                <Edit3 className="w-5 h-5 text-cyan-600 dark:text-cyan-400" />
                 <span>Edit Stop Dates</span>
               </h3>
-              <button onClick={() => setIsEditStopOpen(false)} className="text-slate-400 hover:text-white">
+              <button onClick={() => setIsEditStopOpen(false)} className="text-slate-400 hover:text-slate-900 dark:hover:text-white">
                 <X size={18} />
               </button>
             </div>
@@ -739,34 +761,34 @@ export default function ItineraryBuilderPage() {
             <form onSubmit={handleUpdateStop} className="space-y-4">
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">Start Date</label>
+                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Start Date</label>
                   <input
                     type="date"
                     value={stopFormData.startDate}
                     onChange={(e) => setStopFormData({ ...stopFormData, startDate: e.target.value })}
                     required
-                    className="w-full bg-slate-950 border border-slate-800 text-slate-100 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-cyan-500"
+                    className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-cyan-500"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">End Date</label>
+                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">End Date</label>
                   <input
                     type="date"
                     value={stopFormData.endDate}
                     onChange={(e) => setStopFormData({ ...stopFormData, endDate: e.target.value })}
                     required
-                    className="w-full bg-slate-950 border border-slate-800 text-slate-100 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-cyan-500"
+                    className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-cyan-500"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">Notes</label>
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Notes</label>
                 <input
                   type="text"
                   value={stopFormData.notes}
                   onChange={(e) => setStopFormData({ ...stopFormData, notes: e.target.value })}
-                  className="w-full bg-slate-950 border border-slate-800 text-slate-100 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-cyan-500"
+                  className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-cyan-500"
                 />
               </div>
 
@@ -786,16 +808,16 @@ export default function ItineraryBuilderPage() {
       {/* MODAL 3: ADD ACTIVITY TO STOP */}
       {isAddActivityOpen && (
         <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 max-w-xl w-full shadow-2xl space-y-4 max-h-[90vh] flex flex-col">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-3 shrink-0">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 max-w-xl w-full shadow-2xl space-y-4 max-h-[90vh] flex flex-col">
+            <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3 shrink-0">
               <div>
-                <h3 className="text-base font-bold text-white flex items-center gap-2">
-                  <Compass className="w-5 h-5 text-cyan-400" />
+                <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                  <Compass className="w-5 h-5 text-cyan-600 dark:text-cyan-400" />
                   <span>Add Activity to {activeStopForActivity?.city?.name}</span>
                 </h3>
-                <p className="text-xs text-slate-400">Select an activity and assign its schedule timing</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400">Select an activity and assign its schedule timing</p>
               </div>
-              <button onClick={() => setIsAddActivityOpen(false)} className="text-slate-400 hover:text-white">
+              <button onClick={() => setIsAddActivityOpen(false)} className="text-slate-400 hover:text-slate-900 dark:hover:text-white">
                 <X size={18} />
               </button>
             </div>
@@ -803,15 +825,15 @@ export default function ItineraryBuilderPage() {
             <div className="overflow-y-auto space-y-4 flex-1 pr-1 custom-scrollbar">
               {/* Activity Selection List */}
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1.5">Choose Activity</label>
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Choose Activity</label>
                 <div className="relative mb-2">
-                  <Search className="w-4 h-4 text-slate-500 absolute left-3 top-2.5" />
+                  <Search className="w-4 h-4 text-slate-400 dark:text-slate-500 absolute left-3 top-2.5" />
                   <input
                     type="text"
                     placeholder="Search city activities..."
                     value={activitySearch}
                     onChange={(e) => setActivitySearch(e.target.value)}
-                    className="w-full pl-9 pr-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-slate-100 focus:outline-none focus:border-cyan-500"
+                    className="w-full pl-9 pr-3 py-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-xs text-slate-900 dark:text-slate-100 focus:outline-none focus:border-cyan-500"
                   />
                 </div>
 
@@ -824,17 +846,17 @@ export default function ItineraryBuilderPage() {
                         onClick={() => setSelectedActivity(act)}
                         className={`p-3 rounded-xl border cursor-pointer flex items-center justify-between transition-all ${
                           isSelected
-                            ? 'bg-cyan-500/20 border-cyan-500 text-white'
-                            : 'bg-slate-950/60 border-slate-800 text-slate-300 hover:border-slate-700'
+                            ? 'bg-cyan-500/10 border-cyan-500 text-slate-900 dark:text-white'
+                            : 'bg-slate-50 dark:bg-slate-950/60 border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-700'
                         }`}
                       >
                         <div>
                           <p className="text-xs font-bold">{act.name}</p>
-                          <p className="text-[11px] text-slate-400">
+                          <p className="text-[11px] text-slate-500 dark:text-slate-400">
                             {act.type} • {act.durationMinutes || 60} mins • ₹{act.cost}
                           </p>
                         </div>
-                        {isSelected && <Check size={16} className="text-cyan-400" />}
+                        {isSelected && <Check size={16} className="text-cyan-600 dark:text-cyan-400" />}
                       </div>
                     );
                   })}
@@ -843,41 +865,41 @@ export default function ItineraryBuilderPage() {
 
               {/* Schedule Input */}
               {selectedActivity && (
-                <form onSubmit={handleAddActivitySubmit} className="space-y-4 pt-2 border-t border-slate-800">
-                  <div className="p-3 bg-cyan-500/10 border border-cyan-500/30 rounded-xl text-xs text-cyan-300 flex justify-between items-center">
+                <form onSubmit={handleAddActivitySubmit} className="space-y-4 pt-2 border-t border-slate-100 dark:border-slate-800">
+                  <div className="p-3 bg-cyan-500/10 border border-cyan-500/30 rounded-xl text-xs text-cyan-800 dark:text-cyan-300 flex justify-between items-center">
                     <span>Selected: <strong>{selectedActivity.name}</strong></span>
                     <span>₹{selectedActivity.cost}</span>
                   </div>
 
                   <div className="grid grid-cols-3 gap-3">
                     <div>
-                      <label className="block text-xs font-semibold text-slate-300 mb-1">Date</label>
+                      <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Date</label>
                       <input
                         type="date"
                         value={actFormData.date}
                         onChange={(e) => setActFormData({ ...actFormData, date: e.target.value })}
                         required
-                        className="w-full bg-slate-950 border border-slate-800 text-slate-100 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-cyan-500"
+                        className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-cyan-500"
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-semibold text-slate-300 mb-1">Start Time</label>
+                      <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Start Time</label>
                       <input
                         type="time"
                         value={actFormData.startTime}
                         onChange={(e) => setActFormData({ ...actFormData, startTime: e.target.value })}
                         required
-                        className="w-full bg-slate-950 border border-slate-800 text-slate-100 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-cyan-500"
+                        className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-cyan-500"
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-semibold text-slate-300 mb-1">End Time</label>
+                      <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">End Time</label>
                       <input
                         type="time"
                         value={actFormData.endTime}
                         onChange={(e) => setActFormData({ ...actFormData, endTime: e.target.value })}
                         required
-                        className="w-full bg-slate-950 border border-slate-800 text-slate-100 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-cyan-500"
+                        className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-cyan-500"
                       />
                     </div>
                   </div>
@@ -900,13 +922,13 @@ export default function ItineraryBuilderPage() {
       {/* MODAL 4: EDIT ACTIVITY TIMING */}
       {isEditActivityOpen && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 max-w-md w-full shadow-2xl space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-              <h3 className="text-base font-bold text-white flex items-center gap-2">
-                <Clock className="w-5 h-5 text-cyan-400" />
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 max-w-md w-full shadow-2xl space-y-4">
+            <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+              <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                <Clock className="w-5 h-5 text-cyan-600 dark:text-cyan-400" />
                 <span>Edit Activity Schedule</span>
               </h3>
-              <button onClick={() => setIsEditActivityOpen(false)} className="text-slate-400 hover:text-white">
+              <button onClick={() => setIsEditActivityOpen(false)} className="text-slate-400 hover:text-slate-900 dark:hover:text-white">
                 <X size={18} />
               </button>
             </div>
@@ -914,33 +936,33 @@ export default function ItineraryBuilderPage() {
             <form onSubmit={handleUpdateActivitySubmit} className="space-y-4">
               <div className="grid grid-cols-3 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">Date</label>
+                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Date</label>
                   <input
                     type="date"
                     value={actFormData.date}
                     onChange={(e) => setActFormData({ ...actFormData, date: e.target.value })}
                     required
-                    className="w-full bg-slate-950 border border-slate-800 text-slate-100 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-cyan-500"
+                    className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-cyan-500"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">Start Time</label>
+                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Start Time</label>
                   <input
                     type="time"
                     value={actFormData.startTime}
                     onChange={(e) => setActFormData({ ...actFormData, startTime: e.target.value })}
                     required
-                    className="w-full bg-slate-950 border border-slate-800 text-slate-100 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-cyan-500"
+                    className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-cyan-500"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">End Time</label>
+                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">End Time</label>
                   <input
                     type="time"
                     value={actFormData.endTime}
                     onChange={(e) => setActFormData({ ...actFormData, endTime: e.target.value })}
                     required
-                    className="w-full bg-slate-950 border border-slate-800 text-slate-100 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-cyan-500"
+                    className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-cyan-500"
                   />
                 </div>
               </div>

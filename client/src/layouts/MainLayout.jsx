@@ -59,22 +59,16 @@ export default function MainLayout({ kpiData, setKpiData }) {
         navigate('/trips/create');
         break;
       case 'City Discovery':
-        navigate('/trips/demo-trip-123/cities');
+        navigate('/cities');
         break;
       case 'Activity Discovery':
-        navigate('/trips/demo-trip-123/activities');
+        navigate('/activities');
         break;
       case 'Itinerary Builder':
-        navigate('/trips/demo-trip-123/builder');
-        break;
       case 'Itinerary View':
-        navigate('/trips/demo-trip-123/itinerary');
-        break;
       case 'Timeline':
-        navigate('/trips/demo-trip-123/calendar');
-        break;
       case 'Trip Budget':
-        navigate('/trips/demo-trip-123/budget');
+        navigate('/trips');
         break;
       case 'Public Trips':
         navigate('/public/trips/demo-public-1');

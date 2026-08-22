@@ -1,10 +1,8 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import Card from '../components/ui/Card';
-import Input from '../components/ui/Input';
-import Button from '../components/ui/Button';
-import { User, Mail, Lock, UserPlus, AlertCircle } from 'lucide-react';
+import { User, Mail, Lock, UserPlus, AlertCircle, Globe, Sparkles, Compass } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import './AuthPages.css';
 
 export default function SignupPage() {
   const [firstName, setFirstName] = useState('');
@@ -61,82 +59,176 @@ export default function SignupPage() {
   };
 
   return (
-    <div className="max-w-md mx-auto py-12 px-4">
-      <Card title="Join GlobeTrotter" subtitle="Create your account to start planning AI-powered journeys">
-        {errorMessage && (
-          <div className="mb-4 p-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-xs flex items-center gap-2">
-            <AlertCircle size={16} className="shrink-0 text-red-500" />
-            <span>{errorMessage}</span>
-          </div>
-        )}
-
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4 mt-2">
-          <div className="grid grid-cols-2 gap-3">
-            <Input 
-              label="First Name" 
-              placeholder="Alex" 
-              icon={User} 
-              value={firstName}
-              onChange={(e) => setFirstName(e.target.value)}
-              required 
-            />
-            <Input 
-              label="Last Name" 
-              placeholder="Morgan" 
-              icon={User} 
-              value={lastName}
-              onChange={(e) => setLastName(e.target.value)}
-              required 
-            />
-          </div>
-
-          <Input 
-            label="Email Address" 
-            type="email" 
-            placeholder="you@example.com" 
-            icon={Mail} 
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required 
+    <div className="auth-page-wrapper">
+      <div className="auth-split-container">
+        {/* Left Hero Column */}
+        <div className="auth-hero-column">
+          <img
+            src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1600&q=80"
+            alt="Travel Paradise"
+            className="auth-hero-bg-img"
           />
+          <div className="auth-hero-overlay-gradient" />
 
-          <Input 
-            label="Password" 
-            type="password" 
-            placeholder="•••••••• (Min 6 chars)" 
-            icon={Lock} 
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required 
-          />
+          <div className="auth-hero-content">
+            <div className="auth-brand-logo-badge">
+              <div className="logo-icon-box">GT</div>
+              <div className="brand-text-wrapper">
+                <span className="brand-title-lg">GlobeTrotter</span>
+                <span className="brand-tagline-sm">AI Travel Platform</span>
+              </div>
+            </div>
 
-          <Input 
-            label="Confirm Password" 
-            type="password" 
-            placeholder="••••••••" 
-            icon={Lock} 
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            required 
-          />
+            <div className="hero-message-box">
+              <h1 className="hero-main-title">
+                Create Your Free Travel Account
+              </h1>
+              <p className="hero-main-desc">
+                Join thousands of travelers building multi-city itineraries, discovering activities, and managing travel budgets.
+              </p>
 
-          <Button 
-            variant="primary" 
-            icon={UserPlus} 
-            className="w-full mt-2"
-            disabled={isSubmitting}
-          >
-            {isSubmitting ? 'Creating Account...' : 'Create Account'}
-          </Button>
+              <div className="hero-feature-list">
+                <div className="hero-feature-item">
+                  <div className="hero-feature-icon"><Globe size={18} /></div>
+                  <span>Instant Access to 500+ Curated Destinations</span>
+                </div>
+                <div className="hero-feature-item">
+                  <div className="hero-feature-icon"><Sparkles size={18} /></div>
+                  <span>Phase 4 Itinerary Engine & Conflict Detection</span>
+                </div>
+                <div className="hero-feature-item">
+                  <div className="hero-feature-icon"><Compass size={18} /></div>
+                  <span>Free Personal Travel Dashboard</span>
+                </div>
+              </div>
+            </div>
 
-          <div className="text-center text-xs text-gray-500 mt-2">
-            Already have an account?{' '}
-            <Link to="/login" className="text-blue-600 font-semibold hover:underline">
-              Log in
-            </Link>
+            <div className="hero-footer-copy">
+              © {new Date().getFullYear()} GlobeTrotter Inc. All rights reserved.
+            </div>
           </div>
-        </form>
-      </Card>
+        </div>
+
+        {/* Right Form Column */}
+        <div className="auth-form-column">
+          <div className="auth-form-card">
+            <div className="auth-form-header">
+              <h2 className="auth-form-title">Join GlobeTrotter</h2>
+              <p className="auth-form-sub">
+                Set up your account in seconds to start planning
+              </p>
+            </div>
+
+            {errorMessage && (
+              <div className="auth-error-alert">
+                <AlertCircle size={16} className="shrink-0 text-red-500" />
+                <span>{errorMessage}</span>
+              </div>
+            )}
+
+            <form onSubmit={handleSubmit} className="auth-form-body">
+              <div className="grid grid-cols-2 gap-3">
+                <div className="auth-input-group">
+                  <label className="auth-label">First Name</label>
+                  <div className="auth-input-wrapper">
+                    <User size={16} className="auth-input-icon" />
+                    <input
+                      type="text"
+                      required
+                      value={firstName}
+                      onChange={(e) => setFirstName(e.target.value)}
+                      placeholder="Alex"
+                      className="auth-input-field"
+                    />
+                  </div>
+                </div>
+
+                <div className="auth-input-group">
+                  <label className="auth-label">Last Name</label>
+                  <div className="auth-input-wrapper">
+                    <User size={16} className="auth-input-icon" />
+                    <input
+                      type="text"
+                      required
+                      value={lastName}
+                      onChange={(e) => setLastName(e.target.value)}
+                      placeholder="Morgan"
+                      className="auth-input-field"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="auth-input-group">
+                <label className="auth-label">Email Address</label>
+                <div className="auth-input-wrapper">
+                  <Mail size={16} className="auth-input-icon" />
+                  <input
+                    type="email"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="you@example.com"
+                    className="auth-input-field"
+                  />
+                </div>
+              </div>
+
+              <div className="auth-input-group">
+                <label className="auth-label">Password</label>
+                <div className="auth-input-wrapper">
+                  <Lock size={16} className="auth-input-icon" />
+                  <input
+                    type="password"
+                    required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="•••••••• (Min 6 chars)"
+                    className="auth-input-field"
+                  />
+                </div>
+              </div>
+
+              <div className="auth-input-group">
+                <label className="auth-label">Confirm Password</label>
+                <div className="auth-input-wrapper">
+                  <Lock size={16} className="auth-input-icon" />
+                  <input
+                    type="password"
+                    required
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    placeholder="••••••••"
+                    className="auth-input-field"
+                  />
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="auth-submit-btn mt-2"
+              >
+                {isSubmitting ? (
+                  <span>Creating Account...</span>
+                ) : (
+                  <>
+                    <UserPlus size={16} />
+                    <span>Create Free Account</span>
+                  </>
+                )}
+              </button>
+            </form>
+
+            <p className="auth-footer-text">
+              Already have an account?{' '}
+              <Link to="/login" className="auth-link font-bold">
+                Log in here
+              </Link>
+            </p>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

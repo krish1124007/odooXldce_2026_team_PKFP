@@ -1,3 +1,7 @@
+@import "tailwindcss";
+
+@variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
 /* GlobeTrotter Design System & Base CSS */
 @import './components/ui/ui.css';
 @import './layouts/layout.css';
