@@ -1,10 +1,9 @@
 import { Router } from "express";
-import type { Request, Response } from "express";
+import { getActivities, getActivityById } from "../controllers/activity.controller.js";
 
 const router = Router();
 
-router.get("/", (req: Request, res: Response) => {
-    res.status(501).json({ success: false, message: "Activity discovery endpoints will be activated in Phase 3." });
-});
+router.get("/", getActivities);
+router.get("/:id", getActivityById);
 
 export default router;
